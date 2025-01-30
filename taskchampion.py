@@ -1,3 +1,5 @@
+'''Entry point for the TaskChampion Application.'''
+
 import sys
 from PySide6 import QtCore, QtWidgets
 from taskw_ng import TaskWarrior

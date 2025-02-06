@@ -5,34 +5,10 @@ from PySide6 import QtCore, QtWidgets
 from taskw_ng import TaskWarrior
 from typing import TypeAlias, Literal
 from utils.task import Task, status_t, priority_t
-
-# class TableRow()
-w = TaskWarrior()
-
-def hello():
-    print("hello world")
-
-class Checkbox:
-    def __init__(self, taskID : str):
-        self.task = Task(w.get_task(uuid=taskID)[1])
-        self.task_text: str = str(self.task.get_description())
-
-        self.checkbox = QtWidgets.QCheckBox(self.task_text)
-        self.checkbox.setChecked(self.task.get_status() == 'completed')
-
-        self.checkbox.stateChanged.connect(lambda: self.checkCheckbox()) # Have to pass 
-
-        
-    @QtCore.Slot()
-    def checkCheckbox(self):
-        if self.checkbox.isChecked():
-            w.task_update({"uuid": self.task.get_uuid(), "status": 'completed'})
-
-        else:
-            w.task_update({"uuid": self.task.get_uuid(), "status": 'pending'})
-
-    def linkToLayout(self, layout : QtWidgets.QVBoxLayout):
-        layout.addWidget(self.checkbox)
+from components.checkbox import Checkbox
+from components.textbox import Textbox
+from components import TaskRow, COLS, ALIGN
+from utils import w
 
 
 class TaskChampionWidget(QtWidgets.QWidget):
@@ -42,20 +18,49 @@ class TaskChampionWidget(QtWidgets.QWidget):
 
         # Initialize the layout
         self.qtLayout = QtWidgets.QVBoxLayout(self)
+        self.grid = QtWidgets.QGridLayout()
+        self.qtLayout.addLayout(self.grid)
+
+        
+        
+        self.addHeader()
+        self.rows = 1
+
+        # self.grid.setColumnStretch()
+
+        # self.headers = QtWidgets.
+        # self.tabs = QtWidgets.QTabWidget()
+        # self.lesserLayout = QtWidgets.QVBoxLayout()
+        # self.tabs.addTab(self.lesserLayout, 'Tab Name')
+        # self.qtLayout.addChildWidget(self.tabs)
     
     def addTask(self, newTask: Task) -> None:
-        layout = QtWidgets.QHBoxLayout(self)
-        task_name = QtWidgets.QTextEdit(str(newTask.get_description()))
-        
-        task_check = Checkbox(str(newTask.get_uuid()))
+        # layout = QtWidgets.QHBoxLayout()
+        # # task_name = QtWidgets.QTextEdit(str(newTask.get_description()))
+        uuid = str(newTask.get_uuid())
+        # task_check = Checkbox(uuid)
+        # task_name = Textbox(uuid, 'description')
 
-        # task_check_cell = QtWidgets.QTableWidgetItem()
+        # layout.addWidget(task_check.checkbox)
+        # layout.addWidget(task_name.textbox)
 
-        layout.addWidget(task_check.checkbox)
-        layout.addWidget(task_name)
-        # self.table.setItem(rowNum,  1, QtWidgets.QTableWidgetItem(task_check.checkbox))
-        self.qtLayout.addLayout(layout)
+        row = TaskRow(uuid)
+        row.insert(self.grid, self.rows)
+        self.rows += 1
         
+        # self.qtLayout.addLayout(layout.row)
+        
+    def addHeader(self):
+        self.grid.setRowStretch(0, 0)
+
+        self.grid.addWidget(QtWidgets.QLabel("Completed?"), 0, 0, ALIGN.TL)
+        self.grid.setColumnStretch(0, 4)
+
+        for i in range(len(COLS)):
+            self.grid.addWidget(QtWidgets.QLabel(COLS[i]), 0, i+1, ALIGN.TL)
+            self.grid.setColumnStretch(i, 0)
+
+
 
 class TaskChampionGUI:
     '''The main application class for Task Champion.'''

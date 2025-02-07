@@ -1,7 +1,7 @@
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets
 # from taskw_ng import TaskWarrior
-from utils import w
+from utils import taskWarriorInstance
 
 
 
@@ -30,7 +30,7 @@ class Textbox:
         layout.addWidget(self.textbox)
     
     def update(self) -> None:
-        self.task = Task(w.get_task(uuid=self.task_id)[1])
+        self.task = Task(taskWarriorInstance.get_task(uuid=self.task_id)[1])
         self.text = str(self.task.get(self.attribute) or "") 
         self.textbox.setText(self.text)
         

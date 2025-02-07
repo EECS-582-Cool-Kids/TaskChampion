@@ -8,7 +8,7 @@ from utils.task import Task, status_t, priority_t
 from components.checkbox import Checkbox
 from components.textbox import Textbox
 from components import TaskRow, COLS, ALIGN
-from utils import w
+from utils import taskWarriorInstance
 
 
 class TaskChampionWidget(QtWidgets.QWidget):
@@ -82,7 +82,7 @@ class TaskChampionGUI:
 # Program entry point
 if __name__ == "__main__":
     app = TaskChampionGUI()
-    tasks = w.load_tasks()
+    tasks = taskWarriorInstance.load_tasks()
 
     for task in [*tasks['pending'], *tasks['completed']]:
         app.mainWidget.addTask(Task(task))

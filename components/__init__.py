@@ -1,7 +1,7 @@
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets
 # from taskw_ng import TaskWarrior
-from utils import w
+from utils import taskWarriorInstance
 from .checkbox import Checkbox
 from .textbox import Textbox
 from typing import Final

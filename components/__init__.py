@@ -6,9 +6,13 @@ from .checkbox import Checkbox
 from .textbox import Textbox
 from typing import Final
 
+# The names of the columns.
+# TODO: in the image Richard posted, the second col was Age instead of 'start', but taskw_ng doesn't have an age.
+# Should we keep it as start? do something else? Idk what start even means.
 COLS: Final = ('id', 'start', 'priority', 'project', 'recur', 'due', 'until', 'description', 'urgency')
 
 class ALIGN:
+    # Declare where at in a layout an item aligns itself to.
     TL = QtCore.Qt.AlignmentFlag.AlignTop | QtCore.Qt.AlignmentFlag.AlignLeft
     TC = QtCore.Qt.AlignmentFlag.AlignTop | QtCore.Qt.AlignmentFlag.AlignHCenter
     CC = QtCore.Qt.AlignmentFlag.AlignCenter
@@ -16,26 +20,29 @@ class ALIGN:
 
 class TaskRow:
     def __init__(self, taskID: str):
-        # self.row = QtWidgets.QHBoxLayout()
+
         self.check = Checkbox(taskID)
         self.cols = [Textbox(taskID, attr) for attr in COLS]
+        # TODO: Temporary, edit button and delete button should be declared separately, 
+        # but the address book demo used this so I took a shortcut for proof-of-concept.
         self.buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Discard)
         self.edit_button = None
         self.delete_button = None
 
-
-        # self.row.addWidget(self.check.checkbox)
-        # for tb in self.cols:
-        #     self.row.addWidget(tb.textbox)
-
     def insert(self, grid: QtWidgets.QGridLayout, rowNum: int):
+        # Row stretch of 0 means take up bare minimum amount of space?
+        # TODO: Figure out how to make it so that if we have two tasks, they are pushed towards the top
+        # Instead of being evenly distributed.
         grid.setRowStretch(rowNum, 1)
         
         grid.addWidget(self.check.checkbox, rowNum, 0, ALIGN.CC)
 
+
         for i in range(len(self.cols)):
             grid.addWidget(self.cols[i].textbox, rowNum, i + 1, ALIGN.CL)
-        
-        grid.addWidget(self.buttons, rowNum, len(self.cols)+1, ALIGN.CL)
+
+        # TODO: Whenever we use the `self.edit_button` / `self.delete_button` vars,
+        # this will need to be changed.
+        grid.addWidget(self.buttons, rowNum, len(self.cols) + 1, ALIGN.CL)
         
         

@@ -17,43 +17,36 @@ class TaskChampionWidget(QtWidgets.QWidget):
         super().__init__()
 
         # Initialize the layout
+        # Will be used for more than just holding the grid at some point.
         self.qtLayout = QtWidgets.QVBoxLayout(self)
+
+        # The object that holds info on all the tasks *in this module*.
+        # At some point, we *might* want to have an array of grids?
         self.grid = QtWidgets.QGridLayout()
         self.qtLayout.addLayout(self.grid)
 
-        
-        
         self.addHeader()
         self.rows = 1
-
-        # self.grid.setColumnStretch()
-
-        # self.headers = QtWidgets.
-        # self.tabs = QtWidgets.QTabWidget()
-        # self.lesserLayout = QtWidgets.QVBoxLayout()
-        # self.tabs.addTab(self.lesserLayout, 'Tab Name')
-        # self.qtLayout.addChildWidget(self.tabs)
     
     def addTask(self, newTask: Task) -> None:
-        # layout = QtWidgets.QHBoxLayout()
-        # # task_name = QtWidgets.QTextEdit(str(newTask.get_description()))
+        
         uuid = str(newTask.get_uuid())
-        # task_check = Checkbox(uuid)
-        # task_name = Textbox(uuid, 'description')
-
-        # layout.addWidget(task_check.checkbox)
-        # layout.addWidget(task_name.textbox)
-
         row = TaskRow(uuid)
+        # Row inserts itself into the grid, insertion logic is handled in `TaskRow` obj.
+        # Note that this may be tricky when changing order of tasks w.r.t column sorting, 
+        # as that logic will happen in this class.
+        # but idk what method we will use for sorting, for all I know qt makes it very easy.
         row.insert(self.grid, self.rows)
         self.rows += 1
         
-        # self.qtLayout.addLayout(layout.row)
-        
     def addHeader(self):
+        # Make header row take up as little vertical space as it needs.
         self.grid.setRowStretch(0, 0)
 
+        # QLabel is just simple text.
         self.grid.addWidget(QtWidgets.QLabel("Completed?"), 0, 0, ALIGN.TL)
+        # TODO: may be no point in setting column stretch like this and below,
+        # Consider changing.
         self.grid.setColumnStretch(0, 4)
 
         for i in range(len(COLS)):
@@ -67,7 +60,6 @@ class TaskChampionGUI:
     def __init__(self):
         # Initialize the Qt App and TaskWarrior objects
         self.qtapp = QtWidgets.QApplication([])
-        # self.warrior = TaskWarrior()
 
         # Initialize the main Qt Widget
         self.mainWidget = TaskChampionWidget()
@@ -84,6 +76,7 @@ if __name__ == "__main__":
     app = TaskChampionGUI()
     tasks = taskWarriorInstance.load_tasks()
 
+    # Add both pending and completed tasks.
     for task in [*tasks['pending'], *tasks['completed']]:
         app.mainWidget.addTask(Task(task))
         

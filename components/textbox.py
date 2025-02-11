@@ -1,20 +1,22 @@
 from utils.task import Task
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets, QtGui
 # from taskw_ng import TaskWarrior
 from utils import taskWarriorInstance
 from typing import Final
 
 
-class Textbox:
+class Textbox(QtWidgets.QLabel):
     # Generic implementation of a label that contains an attribute for a task.
     # If the task get's updated, every textbox should have it's `update` method called 
     # so that the changes are reflected in real time.
 
     def __init__(self, taskID : str, attribute: str):
+        super().__init__()
         # These two should be treated as a constant; 
         # a textbox object should be tied to a specific task's attribtue.
         self.attribute: Final = attribute
         self.task_id: Final = taskID 
+        self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Maximum, QtWidgets.QSizePolicy.Policy.Maximum)
 
         # Note that these don't *really* need to store the task object,
         # If anything this should be stored in the `TaskRow` class.
@@ -22,15 +24,28 @@ class Textbox:
         # `self.task` and `self.text` both are modified in `update()` method
         self.task: Task | None = None
         self.text: str | None = None
-
-        self.textbox = QtWidgets.QLabel("")
         
+        
+        self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
+
+        
+        # self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Maximum)
+        
+        
+        
+        # self.show()
+        self.setObjectName('TableText')
+        self.task_update()
+        # self.setAutoFillBackground(True)
+        # self.setBaseSize(150, 50)
         self.update()
+        
+        
 
     def linkToLayout(self, layout : QtWidgets.QVBoxLayout):
-        layout.addWidget(self.textbox)
+        layout.addWidget(self)
     
-    def update(self) -> None:
+    def task_update(self) -> None:
         # This method should get called whenever a task get's updated by the user. 
         # Called in `__init__`, so doesn't need to be called by programmer on task creation,
         # And no point in calling after task deletion.
@@ -47,5 +62,5 @@ class Textbox:
         # Therefore, we convert to the empty string before stringification.
         self.text = str(self.task.get(self.attribute) or "") 
         
-        self.textbox.setText(self.text)
+        self.setText(self.text)
         

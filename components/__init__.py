@@ -26,6 +26,7 @@ class TaskRow:
         # TODO: Temporary, edit button and delete button should be declared separately, 
         # but the address book demo used this so I took a shortcut for proof-of-concept.
         self.buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Discard)
+
         self.edit_button = None
         self.delete_button = None
 
@@ -33,16 +34,19 @@ class TaskRow:
         # Row stretch of 0 means take up bare minimum amount of space?
         # TODO: Figure out how to make it so that if we have two tasks, they are pushed towards the top
         # Instead of being evenly distributed.
-        grid.setRowStretch(rowNum, 1)
+        grid.setRowStretch(rowNum, 0)
         
-        grid.addWidget(self.check.checkbox, rowNum, 0, ALIGN.CC)
-
-
+        grid.addWidget(self.check, rowNum, 0)
+        self.check.setProperty('row-even',f"{rowNum % 2}")
+        
         for i in range(len(self.cols)):
-            grid.addWidget(self.cols[i].textbox, rowNum, i + 1, ALIGN.CL)
+
+            self.cols[i].setProperty('row-even',f"{rowNum % 2}")
+            # self.cols[i].setObjectName('TableText')
+            grid.addWidget(self.cols[i], rowNum, i + 1)
 
         # TODO: Whenever we use the `self.edit_button` / `self.delete_button` vars,
         # this will need to be changed.
-        grid.addWidget(self.buttons, rowNum, len(self.cols) + 1, ALIGN.CL)
-        
-        
+        grid.addWidget(self.buttons, rowNum, len(self.cols) + 1)
+        # self.buttons.setProperty('row-even',f"rowNum % 2")
+        self.buttons.setObjectName(f'Button')

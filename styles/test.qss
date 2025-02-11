@@ -5,16 +5,24 @@
 }
 
 
-#TableText {
+TableCell {
     border: 2px solid red;
     width: 100%;
 }
 
-[row-even="0"] {
+[row-even="0"][row-active="False"] {
+  background-color:rgb(24, 24, 151)
+}
+
+[row-even="1"][row-active="False"] {
+  background-color:rgb(15, 15, 92)
+}
+
+[row-even="0"][row-active="True"] {
     background-color:rgb(233, 124, 124)
 }
 
-[row-even="1"] {
+[row-even="1"][row-active="True"] {
     background-color:rgb(134, 52, 52)
 }
 

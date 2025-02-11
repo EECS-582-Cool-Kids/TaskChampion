@@ -4,6 +4,7 @@ from PySide6 import QtCore, QtWidgets
 from utils import taskWarriorInstance
 from .checkbox import Checkbox
 from .textbox import Textbox
+from .buttonbox import Buttonbox
 from typing import Final
 
 # The names of the columns.
@@ -18,35 +19,93 @@ class ALIGN:
     CC = QtCore.Qt.AlignmentFlag.AlignCenter
     CL = QtCore.Qt.AlignmentFlag.AlignVCenter | QtCore.Qt.AlignmentFlag.AlignLeft
 
+class EditTaskDialog(QtWidgets.QDialog):
+    def __init__(self, description="", due="", priority=""):
+        super().__init__()
+        self.form = QtWidgets.QFormLayout()
+
+        self._description_text = QtWidgets.QLineEdit(description)
+        self._due_text = QtWidgets.QLineEdit(due)
+        self._priority_text = QtWidgets.QLineEdit(priority)
+
+        self.form.addRow("Description", self._description_text)
+        self.form.addRow("Due", self._due_text)
+        self.form.addRow("Priority", self._priority_text)
+
+
+        button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok
+                                      | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
+
+
+
+        layout = QtWidgets.QVBoxLayout()
+        layout.addLayout(self.form)
+        layout.addWidget(button_box)
+
+        self.setLayout(layout)
+
+        self.setWindowTitle("Edit Task")
+
+        button_box.accepted.connect(self.accept)
+        button_box.rejected.connect(self.reject)
+
+    # These properties make using this dialog a little cleaner. It's much
+    # nicer to type "addDialog.address" to retrieve the address as compared
+    # to "addDialog.addressText.toPlainText()"
+    @property
+    def description(self):
+        return self._description_text.text()
+
+    @property
+    def due(self):
+        return self._due_text.text()
+
+    @property
+    def priority(self):
+        return self._priority_text.text()
+
+
 class TaskRow:
-    def __init__(self, taskID: str):
+    def __init__(self, row_num: int, taskID: str):
+        self.task = Task(taskWarriorInstance.get_task(uuid=taskID)[1]) if taskID else None
+        self.check = Checkbox(row_num, self.get_task)
+        self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]
 
-        self.check = Checkbox(taskID)
-        self.cols = [Textbox(taskID, attr) for attr in COLS]
-        # TODO: Temporary, edit button and delete button should be declared separately, 
-        # but the address book demo used this so I took a shortcut for proof-of-concept.
-        self.buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Discard)
+        self.edit_button = Buttonbox(row_num, self.get_task, "edit", self._edit_task)
+        self.delete_button = Buttonbox(row_num, self.get_task, "delete")
 
-        self.edit_button = None
-        self.delete_button = None
+    def get_task(self): return self.task
 
     def insert(self, grid: QtWidgets.QGridLayout, rowNum: int):
         # Row stretch of 0 means take up bare minimum amount of space?
-        # TODO: Figure out how to make it so that if we have two tasks, they are pushed towards the top
-        # Instead of being evenly distributed.
         grid.setRowStretch(rowNum, 0)
-        
         grid.addWidget(self.check, rowNum, 0)
-        self.check.setProperty('row-even',f"{rowNum % 2}")
         
         for i in range(len(self.cols)):
-
-            self.cols[i].setProperty('row-even',f"{rowNum % 2}")
-            # self.cols[i].setObjectName('TableText')
             grid.addWidget(self.cols[i], rowNum, i + 1)
 
         # TODO: Whenever we use the `self.edit_button` / `self.delete_button` vars,
         # this will need to be changed.
-        grid.addWidget(self.buttons, rowNum, len(self.cols) + 1)
-        # self.buttons.setProperty('row-even',f"rowNum % 2")
-        self.buttons.setObjectName(f'Button')
+        grid.addWidget(self.edit_button, rowNum, len(self.cols) + 1)
+        grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)
+
+    def update_task(self, taskID: str= ""):
+        
+        self.task = Task(taskWarriorInstance.get_task(uuid=taskID)[1]) if taskID else None
+        
+        
+        self.check.update_task()
+        for i in range(len(self.cols)):
+            self.cols[i].update_task()
+        self.edit_button.update_task()
+        self.delete_button.update_task()
+    
+    def _edit_task(self):
+        assert self.task
+        edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""), str(self.task.get("due") or ""), str(self.task.get("priority") or ""))
+        if edit_task_dialog.exec():
+            self.task.set("description", edit_task_dialog.description or None)
+            self.task.set("due", edit_task_dialog.due or None)
+            self.task.set("priority", edit_task_dialog.priority or None)
+            taskWarriorInstance.task_update(self.task)
+            self.update_task(str(self.task.get_uuid()))

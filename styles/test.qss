@@ -30,6 +30,10 @@ QLabel {
     font-size: 10px;
 }
 
+QPushButton {
+    color: #000000;
+}
+
 QGridLayout {
     background-color: red;
 }

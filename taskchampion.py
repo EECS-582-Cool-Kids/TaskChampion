@@ -96,11 +96,24 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.setLayout(self.qtLayout)
         
         self.mainTab = QtWidgets.QTabWidget()
+        self.addButton = QtWidgets.QPushButton("Add Task")
+
+        self.addButton.setMaximumWidth(100)
+        self.addButton.connect(self.addButton, QtCore.SIGNAL("clicked()"), self.addTask)
+
+        self.qtLayout.addWidget(self.addButton)
         
         self.qtLayout.addWidget(self.mainTab)
         self.grids = [GridWidget(), GridWidget()]
         self.mainTab.addTab(self.grids[0].scrollArea, "Example Tab")
         self.mainTab.addTab(self.grids[1].scrollArea, "Example Empty Tab")
+
+        self.currentGrid = 0
+    
+    def addTask(self):
+        '''Add a task to the GUI list and link it to a new task in TaskWarrior.'''
+        newTask : Task = taskWarriorInstance.task_add("New Task")
+        self.grids[self.currentGrid].addTask(Task(newTask))
 
 class TaskChampionGUI:
     '''The main application class for Task Champion.'''

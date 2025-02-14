@@ -7,11 +7,8 @@ from typing import TypeAlias, Literal
 from utils.task import Task, status_t, priority_t
 # from components.checkbox import Checkbox
 # from components.textbox import Textbox
-from components import TaskRow, COLS, ALIGN
+from components import AddTaskDialog, TaskRow, COLS, ALIGN
 from utils import taskWarriorInstance
-
-
-
 
 class GridWidget(QtWidgets.QWidget):
     '''The widget that corresponds to a module'''
@@ -54,9 +51,8 @@ class GridWidget(QtWidgets.QWidget):
             # Note that this may be tricky when changing order of tasks w.r.t column sorting, 
             # as that logic will happen in this class.
             # but idk what method we will use for sorting, for all I know qt makes it very easy.    
-        else:
-            self.rowArr[self.rows-1].update_task(uuid)
         
+        self.rowArr[self.rows-1].update_task(uuid)
         self.rowArr[self.rows-1].insert(self.grid, self.rows)
 
         
@@ -109,11 +105,24 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.mainTab.addTab(self.grids[1].scrollArea, "Example Empty Tab")
 
         self.currentGrid = 0
+
+        self.addTaskDialog : AddTaskDialog = AddTaskDialog()
     
     def addTask(self):
         '''Add a task to the GUI list and link it to a new task in TaskWarrior.'''
-        newTask : Task = taskWarriorInstance.task_add("New Task")
-        self.grids[self.currentGrid].addTask(Task(newTask))
+
+        newTaskDetails : AddTaskDialog.TaskDetails | None = self.addTaskDialog.addTask()
+        
+        if newTaskDetails == None:
+            return
+
+        newTask : Task = Task(taskWarriorInstance.task_add(newTaskDetails.description, newTaskDetails.tag))
+
+        newTask.set_priority(newTaskDetails.priority)
+        newTask.set_project(newTaskDetails.priority)
+        newTask.set_recur(newTaskDetails.recurrence)
+
+        self.grids[self.currentGrid].addTask(newTask)
 
 class TaskChampionGUI:
     '''The main application class for Task Champion.'''

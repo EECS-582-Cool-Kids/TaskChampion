@@ -7,6 +7,7 @@ from .textbox import Textbox
 from .buttonbox import Buttonbox
 from typing import Final
 
+
 # The names of the columns.
 # TODO: in the image Richard posted, the second col was Age instead of 'start', but taskw_ng doesn't have an age.
 # Should we keep it as start? do something else? Idk what start even means.
@@ -18,6 +19,56 @@ class ALIGN:
     TC = QtCore.Qt.AlignmentFlag.AlignTop | QtCore.Qt.AlignmentFlag.AlignHCenter
     CC = QtCore.Qt.AlignmentFlag.AlignCenter
     CL = QtCore.Qt.AlignmentFlag.AlignVCenter | QtCore.Qt.AlignmentFlag.AlignLeft
+
+class AddTaskDialog(QtWidgets.QDialog):
+    class TaskDetails:
+        def __init__(self, description : str, tag : str, priority : str, project : str, recurrence : str):
+            self.description = description
+            self.tag = tag
+            self.priority = priority
+            self.project = project
+            self.recurrence = recurrence
+
+    def __init__(self):
+        super().__init__()
+
+        self.form = QtWidgets.QFormLayout()
+
+        self.description = QtWidgets.QLineEdit()
+        self.tag = QtWidgets.QLineEdit()
+        self.priorities = QtWidgets.QComboBox()
+        self.project = QtWidgets.QLineEdit()
+        self.recurrence = QtWidgets.QLineEdit()
+
+        self.priorities.addItem("H")
+        self.priorities.addItem("M")
+        self.priorities.addItem("L")
+
+        self.buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok
+                                      | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
+
+        self.form.addRow("Description*", self.description)
+        self.form.addRow("Tag", self.tag)
+        self.form.addRow("Priority", self.priorities)
+        self.form.addRow("Project", self.project)
+        self.form.addRow("Recurrence", self.recurrence)
+
+        self.layout : QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout()
+        self.layout.addLayout(self.form)
+        self.layout.addWidget(self.buttons)
+
+        self.setLayout(self.layout)
+        self.setWindowTitle("Add Task")
+
+        self.buttons.accepted.connect(self.accept)
+        self.buttons.rejected.connect(self.reject)
+
+    def addTask(self) -> TaskDetails | None:
+        if self.exec():
+            return AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(), 
+                                             self.project.text(), self.recurrence.text())
+        else:
+            return None
 
 class EditTaskDialog(QtWidgets.QDialog):
     def __init__(self, description="", due="", priority=""):

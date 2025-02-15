@@ -95,7 +95,8 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.addButton = QtWidgets.QPushButton("Add Task")
 
         self.addButton.setMaximumWidth(100)
-        self.addButton.connect(self.addButton, QtCore.SIGNAL("clicked()"), self.addTask)
+        self.addButton.clicked.connect(lambda: self.addTask())
+        # self.addButton.connect(self.addButton, QtCore.SIGNAL("clicked()"), self.addTask)
 
         self.qtLayout.addWidget(self.addButton)
         
@@ -117,11 +118,12 @@ class TaskChampionWidget(QtWidgets.QWidget):
             return
 
         newTask : Task = Task(taskWarriorInstance.task_add(newTaskDetails.description, newTaskDetails.tag))
-
+        
         newTask.set_priority(newTaskDetails.priority)
-        newTask.set_project(newTaskDetails.priority)
+        newTask.set_project(newTaskDetails.project)
         newTask.set_recur(newTaskDetails.recurrence)
 
+        taskWarriorInstance.task_update(newTask)
         self.grids[self.currentGrid].addTask(newTask)
 
 class TaskChampionGUI:

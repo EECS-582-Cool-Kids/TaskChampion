@@ -153,7 +153,11 @@ class TaskRow:
     
     def _edit_task(self):
         assert self.task
-        edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""), str(self.task.get("due") or ""), str(self.task.get("priority") or ""))
+
+        edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""), 
+          str(self.task.get("due") or ""), 
+          str(self.task.get("priority") or ""))
+        
         if edit_task_dialog.exec():
             self.task.set("description", edit_task_dialog.description or None)
             self.task.set("due", edit_task_dialog.due or None)

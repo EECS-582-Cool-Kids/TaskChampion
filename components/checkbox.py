@@ -1,6 +1,5 @@
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets
-# from taskw_ng import TaskWarrior
 from utils import taskWarriorInstance
 
 

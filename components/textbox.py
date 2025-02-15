@@ -1,6 +1,5 @@
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets
-# from taskw_ng import TaskWarrior
 from utils import taskWarriorInstance
 
 
@@ -10,8 +9,8 @@ class Textbox:
         self.attribute = attribute
         self.task_id = taskID 
 
-        self.task: Task | None = None
-        self.text: str | None = None
+        self.task: Task or None = None
+        self.text: str or None = None
 
         self.textbox = QtWidgets.QLabel("")
         

@@ -1,4 +1,19 @@
-"""Entry point for the TaskChampion Application."""
+"""
+ *  Module Name: taskchampion.py
+ *  Purpose: Entry point for the TaskChampion Application.
+ *  Inputs: None
+ *  Outputs: None
+ *  Additional code sources: None
+ *  Developers: Jacob Wilkus, Ethan Berkley, Mo Morgan
+ *  Date: 2/15/2025
+ *  Last Modified: 2/15/2025
+ *  Preconditions: None
+ *  Postconditions: None
+ *  Error/Exception conditions: None
+ *  Side effects: None
+ *  Invariants: None
+ *  Known Faults: None encountered
+"""
 
 import sys
 from PySide6 import QtCore, QtWidgets, QtGui
@@ -24,31 +39,13 @@ class TaskChampionWidget(QtWidgets.QWidget):
 
         
         self.set_menu_bar()     # set the window's menu bar
-
-
-        # self.grid.setColumnStretch()
-
-        # self.headers = QtWidgets.
-        # self.tabs = QtWidgets.QTabWidget()
-        # self.lesserLayout = QtWidgets.QVBoxLayout()
-        # self.tabs.addTab(self.lesserLayout, 'Tab Name')
-        # self.qtLayout.addChildWidget(self.tabs)
     
     def add_task(self, new_task: Task) -> None:
-        # layout = QtWidgets.QHBoxLayout()
-        # # task_name = QtWidgets.QTextEdit(str(newTask.get_description()))
         uuid = str(new_task.get_uuid())
-        # task_check = Checkbox(uuid)
-        # task_name = Textbox(uuid, 'description')
-
-        # layout.addWidget(task_check.checkbox)
-        # layout.addWidget(task_name.textbox)
 
         row = TaskRow(uuid)
         row.insert(self.grid, self.rows)
         self.rows += 1
-        
-        # self.qtLayout.addLayout(layout.row)
         
     def add_header(self):
         self.grid.setRowStretch(0, 0)
@@ -93,6 +90,5 @@ if __name__ == "__main__":
 
     for task in [*tasks['pending'], *tasks['completed']]:
         app.mainWidget.add_task(Task(task))
-        
 
     sys.exit(app.on_exit())

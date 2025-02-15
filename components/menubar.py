@@ -1,19 +1,36 @@
+"""
+ *  Module Name: menubar.py
+ *  Purpose: Module for the MenuBar class, which is a class for creating the menu bar in the application window.
+ *  Inputs: None
+ *  Outputs: None
+ *  Additional code sources: None
+ *  Developers: Mo Morgan
+ *  Date: 2/15/2025
+ *  Last Modified: 2/15/2025
+ *  Preconditions: None
+ *  Postconditions: None
+ *  Error/Exception conditions: None
+ *  Side effects: None
+ *  Invariants: None
+ *  Known Faults: None encountered
+"""
+
 from PySide6 import QtWidgets, QtGui
 
 class MenuBar(QtWidgets.QMenuBar):
     """Creates the window menu for the application."""
     def __init__(self, parent=None): # parent=None means that the parent is the main window. This might wrap the macOS's system-wide menu bar.
-        super().__init__(parent)
+        super().__init__(parent)    # Call the parent class's constructor
 
         self.file_menu = self.addMenu("File")  # Create the File menu
-        self.exit_action = QtGui.QAction("Exit", self)
-        self.exit_action.triggered.connect(QtWidgets.QApplication.quit)
-        self.file_menu.addAction(exit_action)
+        self.exit_action = QtGui.QAction("Exit", self)  # Create the Exit action
+        self.exit_action.triggered.connect(QtWidgets.QApplication.quit) # Connect the Exit action to the quit function
+        self.file_menu.addAction(exit_action)   # Add the Exit action to the File menu
 
         help_menu = self.addMenu("Help")  # Create the Help menu
-        about_action = QtGui.QAction("About", self)
-        about_action.triggered.connect(self.show_about_dialogue)
-        help_menu.addAction(about_action)
+        about_action = QtGui.QAction("About", self) # Create the About action
+        about_action.triggered.connect(self.show_about_dialogue) # Connect the About action to the show_about_dialogue function
+        help_menu.addAction(about_action)   # Add the About action to the Help menu
 
 
     def show_about_dialogue(self):

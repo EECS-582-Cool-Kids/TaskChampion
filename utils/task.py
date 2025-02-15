@@ -1,3 +1,19 @@
+"""
+ *  Module Name: task.py
+ *  Purpose: Module for the Task class, which is a class for creating a task object.
+ *  Inputs: None
+ *  Outputs: None
+ *  Additional code sources: None
+ *  Developers: Ethan Berkley
+ *  Date: 2/15/2025
+ *  Last Modified: 2/15/2025
+ *  Preconditions: None
+ *  Postconditions: None
+ *  Error/Exception conditions: None
+ *  Side effects: None
+ *  Invariants: None
+ *  Known Faults: None encountered
+"""
 from taskw_ng import task, fields
 from typing import TypeAlias, Literal, cast
 

@@ -18,7 +18,7 @@ from taskw_ng import task, fields
 from typing import TypeAlias, Literal, cast
 
 status_t: TypeAlias = Literal['pending', 'completed', 'deleted', 'waiting', 'recurring']
-priority_t: TypeAlias = Literal['H', 'M', 'L'] | None
+priority_t: TypeAlias = Literal['H', 'M', 'L'] or None
 
 class Task(task.Task):
     def get_annotations(self) -> fields.AnnotationArrayField:

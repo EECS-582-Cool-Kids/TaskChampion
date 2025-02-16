@@ -16,6 +16,9 @@ class Task(task.Task):
 
     def get_due(self) -> fields.DateField: 
         return self['due']
+    
+    def set_due(self, due : str) -> None:
+        self.set('due', due)
 
     def get_end(self) -> fields.DateField:
         return self['end']

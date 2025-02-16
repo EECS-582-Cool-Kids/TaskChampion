@@ -22,12 +22,13 @@ class ALIGN:
 
 class AddTaskDialog(QtWidgets.QDialog):
     class TaskDetails:
-        def __init__(self, description : str, tag : str, priority : str, project : str, recurrence : str):
+        def __init__(self, description : str, tag : str, priority : str, project : str, recurrence : str, due : str):
             self.description = description
             self.tag = tag
             self.priority = priority
             self.project = project
             self.recurrence = recurrence
+            self.due = due
 
     def __init__(self):
         super().__init__()
@@ -39,6 +40,7 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.priorities = QtWidgets.QComboBox()
         self.project = QtWidgets.QLineEdit()
         self.recurrence = QtWidgets.QLineEdit()
+        self.due_date = QtWidgets.QDateEdit()
 
         self.priorities.addItem("H")
         self.priorities.addItem("M")
@@ -52,6 +54,7 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.form.addRow("Priority", self.priorities)
         self.form.addRow("Project", self.project)
         self.form.addRow("Recurrence", self.recurrence)
+        self.form.addRow("Due Date", self.due_date)
 
         self.layout : QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout()
         self.layout.addLayout(self.form)
@@ -66,7 +69,7 @@ class AddTaskDialog(QtWidgets.QDialog):
     def addTask(self) -> TaskDetails | None:
         if self.exec():
             return AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(), 
-                                             self.project.text(), self.recurrence.text())
+                                             self.project.text(), self.recurrence.text(), self.due_date.date().toString())
         else:
             return None
 

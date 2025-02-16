@@ -161,7 +161,6 @@ if __name__ == "__main__":
 
     # Add both pending and completed tasks.
     for task in [*tasks['pending'], *tasks['completed']]:
-        print(task['description'])
         app.mainWidget.grids[0].addTask(Task(task))
     
     app.loadStyles()

@@ -22,7 +22,7 @@ class ALIGN:
 
 class AddTaskDialog(QtWidgets.QDialog):
     class TaskDetails:
-        def __init__(self, description : str, tag : str, priority : str, project : str, recurrence : str | None, due : str | None):
+        def __init__(self, description : str, tag : str, priority : str, project : str, recurrence : str | None, due : object | None):
             self.description = description
             self.tag = tag
             self.priority = priority
@@ -47,6 +47,7 @@ class AddTaskDialog(QtWidgets.QDialog):
 
         self.recurrence = QtWidgets.QComboBox()
         self.due_date = QtWidgets.QDateEdit()
+        self.due_date.setDateTime(self.due_date.dateTime().currentDateTime())
 
         self.priorities.addItem("H")
         self.priorities.addItem("M")
@@ -81,8 +82,10 @@ class AddTaskDialog(QtWidgets.QDialog):
     def addTask(self) -> TaskDetails | None:
         if self.exec():
             if self.is_recurring:
+                test = self.due_date.dateTime().toPython()
+
                 return AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(), 
-                                             self.project.text(), self.recurrence.currentText(), self.due_date.date().toString())
+                                             self.project.text(), self.recurrence.currentText(), self.due_date.dateTime().toPython())
             else:
                 return AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(), 
                                              self.project.text(), None, None)

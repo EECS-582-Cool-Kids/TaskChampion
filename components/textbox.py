@@ -19,15 +19,13 @@ from utils.task import Task
 from PySide6 import QtWidgets
 from utils import taskWarriorInstance
 
-
-
 class Textbox:
-    def __init__(self, taskID : str, attribute: str):
+    def __init__(self, task_id : str, attribute: str):
         self.attribute = attribute
-        self.task_id = taskID 
+        self.task_id = task_id
 
-        self.task: Task or None = None
-        self.text: str or None = None
+        self.task: Task | None = None
+        self.text: str | None = None
 
         self.textbox = QtWidgets.QLabel("")
         

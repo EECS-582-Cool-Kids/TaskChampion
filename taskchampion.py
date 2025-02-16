@@ -16,7 +16,7 @@
 """
 
 import sys
-from PySide6 import QtCore, QtWidgets, QtGui
+from PySide6 import QtWidgets
 from utils.task import Task
 from components import TaskRow, COLS, ALIGN, menubar
 from utils import taskWarriorInstance
@@ -36,8 +36,6 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.rows = 1
 
         self.menu_bar = None    # declare the window's menu bar
-
-        
         self.set_menu_bar()     # set the window's menu bar
     
     def add_task(self, new_task: Task) -> None:
@@ -62,22 +60,17 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.menu_bar = menubar.MenuBar()
         self.layout().setMenuBar(self.menu_bar)
 
-
-
 class TaskChampionGUI:
     """The main application class for Task Champion."""
     def __init__(self):
         # Initialize the Qt App and TaskWarrior objects
         self.qt_app = QtWidgets.QApplication([])
-        # self.warrior = TaskWarrior()
 
         # Initialize the main Qt Widget
         self.mainWidget = TaskChampionWidget()
         self.mainWidget.setWindowTitle("Task Champion")
         self.mainWidget.resize(800, 600) # set basic window size.
         self.mainWidget.show() # show the window
-
-
 
     def on_exit(self) -> int:
         """The behavior for exiting the application."""

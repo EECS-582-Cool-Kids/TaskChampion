@@ -123,7 +123,7 @@ class TaskRow:
         self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]
 
         self.edit_button = Buttonbox(row_num, self.get_task, "edit", self._edit_task)
-        self.delete_button = Buttonbox(row_num, self.get_task, "delete")
+        self.delete_button = Buttonbox(row_num, self.get_task, "delete", self._delete_task)
 
     def get_task(self): return self.task
 
@@ -164,3 +164,10 @@ class TaskRow:
             self.task.set("priority", edit_task_dialog.priority or None)
             taskWarriorInstance.task_update(self.task)
             self.update_task(str(self.task.get_uuid()))
+            
+    def _delete_task(self):
+        assert self.task
+        id = self.task.get_id()
+        print(f"Deleting task {id}")
+        taskWarriorInstance.task_delete(id=id)
+        self.update_task()

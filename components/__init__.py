@@ -22,7 +22,7 @@ class ALIGN:
 
 class AddTaskDialog(QtWidgets.QDialog):
     class TaskDetails:
-        def __init__(self, description : str, tag : str, priority : str, project : str, recurrence : str, due : str):
+        def __init__(self, description : str, tag : str, priority : str, project : str, recurrence : str | None, due : str | None):
             self.description = description
             self.tag = tag
             self.priority = priority
@@ -39,12 +39,23 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.tag = QtWidgets.QLineEdit()
         self.priorities = QtWidgets.QComboBox()
         self.project = QtWidgets.QLineEdit()
-        self.recurrence = QtWidgets.QLineEdit()
+        self.recurringBox = QtWidgets.QCheckBox()
+
+        self.is_recurring = False
+
+        self.recurringBox.stateChanged.connect(self.openRecurrence)
+
+        self.recurrence = QtWidgets.QComboBox()
         self.due_date = QtWidgets.QDateEdit()
 
         self.priorities.addItem("H")
         self.priorities.addItem("M")
         self.priorities.addItem("L")
+
+        self.recurrence.addItem("daily")
+        self.recurrence.addItem("weekly")
+        self.recurrence.addItem("monthly")
+        self.recurrence.addItem("yearly")
 
         self.buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok
                                       | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
@@ -53,6 +64,7 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.form.addRow("Tag", self.tag)
         self.form.addRow("Priority", self.priorities)
         self.form.addRow("Project", self.project)
+        self.form.addRow("Is Recurring?", self.recurringBox)
         self.form.addRow("Recurrence", self.recurrence)
         self.form.addRow("Due Date", self.due_date)
 
@@ -68,10 +80,17 @@ class AddTaskDialog(QtWidgets.QDialog):
 
     def addTask(self) -> TaskDetails | None:
         if self.exec():
-            return AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(), 
-                                             self.project.text(), self.recurrence.text(), self.due_date.date().toString())
+            if self.is_recurring:
+                return AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(), 
+                                             self.project.text(), self.recurrence.currentText(), self.due_date.date().toString())
+            else:
+                return AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(), 
+                                             self.project.text(), None, None)
         else:
             return None
+    
+    def openRecurrence(self) -> None:
+        self.is_recurring = self.recurringBox.isChecked()
 
 class EditTaskDialog(QtWidgets.QDialog):
     def __init__(self, description="", due="", priority=""):

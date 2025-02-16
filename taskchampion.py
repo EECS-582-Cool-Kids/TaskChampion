@@ -120,8 +120,11 @@ class TaskChampionWidget(QtWidgets.QWidget):
         
         newTask.set_priority(newTaskDetails.priority)
         newTask.set_project(newTaskDetails.project)
-        newTask.set_recur(newTaskDetails.recurrence)
-        newTask.set_due(newTaskDetails.due)
+
+        if newTaskDetails.recurrence != None:
+            newTask.set_recur(newTaskDetails.recurrence)
+        if newTaskDetails.due != None:
+            newTask.set_due(newTaskDetails.due)
 
         taskWarriorInstance.task_update(newTask)
         self.grids[self.currentGrid].addTask(newTask)

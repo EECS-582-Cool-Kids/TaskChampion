@@ -23,31 +23,31 @@ from typing import Callable, Optional
 class TableCell(QtWidgets.QLabel):
     '''Base class for all table cells.'''
     def __init__(self, row_num: int, get_task: Callable[[], Optional[Task]], attribute: str =""):
-        super().__init__()
-        self.active: bool
-        self.task: Task | None
-        self.attribute = attribute
-        self.get_task = get_task
+        super().__init__()  # Call the parent constructor.
+        self.active: bool  # Declare the active variable.
+        self.task: Task | None  # Declare the task variable.
+        self.attribute = attribute  # Set the attribute of the cell.
+        self.get_task = get_task  # Set the get task method.
         
-        self.layout = QtWidgets.QHBoxLayout(self)
+        self.layout = QtWidgets.QHBoxLayout(self)  # Create a horizontal layout.
 
         # Defined by subclass
-        self.getSubWidget: Optional[Callable[[], QtWidgets.QWidget]]
+        self.getSubWidget: Optional[Callable[[], QtWidgets.QWidget]]  # Declare the get sub widget method.
 
-        self.update_task()
+        self.update_task()  # Update the task.
 
-        self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)  # Set the size policy of the cell to expanding.
         
-        self.setProperty('row-even', f"{row_num % 2}")
+        self.setProperty('row-even', f"{row_num % 2}")  # Set the row even property of the cell.
 
     def _addSubWidget(self):
-        assert self.getSubWidget
-        self.layout.addWidget(self.getSubWidget())
+        assert self.getSubWidget  # Assert that the get sub widget method is not None.
+        self.layout.addWidget(self.getSubWidget())  # Add the sub widget to the layout.
 
     def update_task(self):
-        self.task = self.get_task()
-        self.active = self.task != None
+        self.task = self.get_task()  # Get the task from the get task method.
+        self.active = self.task != None  # Set the active variable to True if the task is not None.
 
-        self.setProperty('row-active', str(self.active))
+        self.setProperty('row-active', str(self.active))  # Set the row active property of the cell.
 
         

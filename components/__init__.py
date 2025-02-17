@@ -178,13 +178,12 @@ class TaskRow:
 
         # TODO: Whenever we use the `self.edit_button` / `self.delete_button` vars,
         # this will need to be changed.
-        grid.addWidget(self.edit_button, rowNum, len(self.cols) + 1)
-        grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)
+        grid.addWidget(self.edit_button, rowNum, len(self.cols) + 1)  # add the edit button to the grid
+        grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)  # add the delete button to the grid
 
     def update_task(self, taskID: str= ""):
         
         self.task = Task(taskWarriorInstance.get_task(uuid=taskID)[1]) if taskID else None
-        
         
         self.check.update_task()
         for i in range(len(self.cols)):
@@ -207,8 +206,21 @@ class TaskRow:
             self.update_task(str(self.task.get_uuid()))
             
     def _delete_task(self):
-        assert self.task
-        id = self.task.get_id()
-        print(f"Deleting task {id}")
-        taskWarriorInstance.task_delete(id=id)
-        self.update_task()
+        assert self.task  # throw error if called without a task
+        uuid = self.task.get_uuid()
+        taskWarriorInstance.task_delete(uuid=uuid)  # delete task with the corresponding id
+        self._remove_task_row()  # remove the task row from the UI
+
+    def _remove_task_row(self):
+        # Get the parent grid layout
+        grid = self.check.parentWidget().layout()
+        if not grid:
+            return
+    
+        # Loop through the widgets in the row and remove them
+        for widget in [self.check] + self.cols + [self.edit_button, self.delete_button]:
+            grid.removeWidget(widget)
+            widget.deleteLater()
+        # add an empty row to the grid to maintain the same number of rows
+        grid.addWidget(QtWidgets.QLabel(), grid.rowCount(), 0)
+        

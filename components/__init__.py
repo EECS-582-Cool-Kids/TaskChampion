@@ -207,12 +207,11 @@ class TaskRow:
             
     def _delete_task(self):
         assert self.task  # throw error if called without a task
-        id = self.task.get_id()
         uuid = self.task.get_uuid()
         taskWarriorInstance.task_delete(uuid=uuid)  # delete task with the corresponding id
-        self._remove_task_row(id)  # remove the task row from the UI
+        self._remove_task_row()  # remove the task row from the UI
 
-    def _remove_task_row(self, id1):
+    def _remove_task_row(self):
         # Get the parent grid layout
         grid = self.check.parentWidget().layout()
         if not grid:
@@ -222,7 +221,6 @@ class TaskRow:
         for widget in [self.check] + self.cols + [self.edit_button, self.delete_button]:
             grid.removeWidget(widget)
             widget.deleteLater()
-        
-        # call insert() to add a new row
-        grid.parent().addTask(Task(taskWarriorInstance.get_task(id=id1)[1]))
+        # add an empty row to the grid to maintain the same number of rows
+        grid.addWidget(QtWidgets.QLabel(), grid.rowCount(), 0)
         

@@ -178,13 +178,12 @@ class TaskRow:
 
         # TODO: Whenever we use the `self.edit_button` / `self.delete_button` vars,
         # this will need to be changed.
-        grid.addWidget(self.edit_button, rowNum, len(self.cols) + 1)
-        grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)
+        grid.addWidget(self.edit_button, rowNum, len(self.cols) + 1)  # add the edit button to the grid
+        grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)  # add the delete button to the grid
 
     def update_task(self, taskID: str= ""):
         
         self.task = Task(taskWarriorInstance.get_task(uuid=taskID)[1]) if taskID else None
-        
         
         self.check.update_task()
         for i in range(len(self.cols)):
@@ -208,11 +207,12 @@ class TaskRow:
             
     def _delete_task(self):
         assert self.task  # throw error if called without a task
+        id = self.task.get_id()
         uuid = self.task.get_uuid()
         taskWarriorInstance.task_delete(uuid=uuid)  # delete task with the corresponding id
-        self._remove_task_row()  # remove the task row from the UI
+        self._remove_task_row(id)  # remove the task row from the UI
 
-    def _remove_task_row(self):
+    def _remove_task_row(self, id1):
         # Get the parent grid layout
         grid = self.check.parentWidget().layout()
         if not grid:
@@ -222,3 +222,7 @@ class TaskRow:
         for widget in [self.check] + self.cols + [self.edit_button, self.delete_button]:
             grid.removeWidget(widget)
             widget.deleteLater()
+        
+        # call insert() to add a new row
+        grid.parent().addTask(Task(taskWarriorInstance.get_task(id=id1)[1]))
+        

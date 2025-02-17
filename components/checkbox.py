@@ -23,13 +23,22 @@ from typing import Callable, Optional
 
 class Checkbox(TableCell):
 
-    def __init__(self, row_num: int, get_task: Callable[[], Optional[Task]], attribute:str=""):
-        super().__init__(row_num, get_task, attribute)
+    # def __init__(self, row_num: int, get_task: Callable[[], Optional[Task]], attribute:str=""):
+    #     super().__init__(row_num, get_task, attribute)
+    # 
+    #     self.my_checkbox = QtWidgets.QCheckBox()
+    #     self.getSubWidget = lambda: self.my_checkbox
+    #     self.my_checkbox.stateChanged.connect(lambda: self.checkCheckbox())
+    #     
+    #     self._addSubWidget()
 
+    def __init__(self, row_num: int, get_task: Callable[[], Optional[Task]], attribute:str=""):
         self.my_checkbox = QtWidgets.QCheckBox()
         self.getSubWidget = lambda: self.my_checkbox
         self.my_checkbox.stateChanged.connect(lambda: self.checkCheckbox())
-        
+    
+        super().__init__(row_num, get_task, attribute)
+    
         self._addSubWidget()
 
     def update_task(self):

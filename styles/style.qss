@@ -1,3 +1,19 @@
+/*
+ *  Module Name: style.qss
+ *  Purpose: The styling of the application in CSS.
+ *  Inputs: None
+ *  Outputs: None
+ *  Additional code sources: None
+ *  Developers: Ethan Berkley
+ *  Date: 2/15/2025
+ *  Last Modified: 2/15/2025
+ *  Preconditions: None
+ *  Postconditions: None
+ *  Error/Exception conditions: None
+ *  Side effects: None
+ *  Invariants: None
+ *  Known Faults: None encountered
+*/
 
 #MainWidget {
     background-color: transparent;

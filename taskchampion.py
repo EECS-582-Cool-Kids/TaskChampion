@@ -4,7 +4,7 @@
  *  Inputs: None
  *  Outputs: None
  *  Additional code sources: None
- *  Developers: Jacob Wilkus, Ethan Berkley, Mo Morgan
+ *  Developers: Jacob Wilkus, Ethan Berkley, Mo Morgan, Richard Moser
  *  Date: 2/15/2025
  *  Last Modified: 2/15/2025
  *  Preconditions: None
@@ -20,8 +20,6 @@ from PySide6 import QtCore, QtWidgets
 from taskw_ng import TaskWarrior
 from typing import TypeAlias, Literal
 from utils.task import Task, status_t, priority_t
-# from components.checkbox import Checkbox
-# from components.textbox import Textbox
 from components import AddTaskDialog, TaskRow, COLS, ALIGN, menubar
 from utils import taskWarriorInstance
 
@@ -166,7 +164,7 @@ class TaskChampionGUI:
         self.mainWidget.resize(800, 400) # set basic window size.
         self.mainWidget.show() # show the window
         self._styleStr = ""
-        with open ('styles/test.qss', 'r')as f:
+        with open ('styles/style.qss', 'r')as f:
             self._styleStr = f.read()
 
         self.loadStyles()

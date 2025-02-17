@@ -1,6 +1,22 @@
+"""
+ *  Module Name: __init__.py
+ *  Purpose: Initialization of most internal objects related to the GUI.
+ *  Inputs: None
+ *  Outputs: None
+ *  Additional code sources: None
+ *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser
+ *  Date: 2/15/2025
+ *  Last Modified: 2/15/2025
+ *  Preconditions: None
+ *  Postconditions: None
+ *  Error/Exception conditions: None
+ *  Side effects: None
+ *  Invariants: None
+ *  Known Faults: None encountered
+"""
+
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets
-# from taskw_ng import TaskWarrior
 from utils import taskWarriorInstance
 from .checkbox import Checkbox
 from .textbox import Textbox

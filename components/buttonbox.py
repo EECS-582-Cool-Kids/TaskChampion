@@ -1,6 +1,5 @@
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets, QtGui
-# from taskw_ng import TaskWarrior
 from utils import taskWarriorInstance
 from typing import Final
 from .TableCell import TableCell

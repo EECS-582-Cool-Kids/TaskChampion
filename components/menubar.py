@@ -25,12 +25,12 @@ class MenuBar(QtWidgets.QMenuBar):
         self.file_menu = self.addMenu("File")  # Create the File menu
         self.exit_action = QtGui.QAction("Exit", self)  # Create the Exit action
         self.exit_action.triggered.connect(QtWidgets.QApplication.quit) # Connect the Exit action to the quit function
-        self.file_menu.addAction(exit_action)   # Add the Exit action to the File menu
+        self.file_menu.addAction(self.exit_action)   # Add the Exit action to the File menu
 
         help_menu = self.addMenu("Help")  # Create the Help menu
-        about_action = QtGui.QAction("About", self) # Create the About action
-        about_action.triggered.connect(self.show_about_dialogue) # Connect the About action to the show_about_dialogue function
-        help_menu.addAction(about_action)   # Add the About action to the Help menu
+        self.about_action = QtGui.QAction("About", self) # Create the About action
+        self.about_action.triggered.connect(self.show_about_dialogue) # Connect the About action to the show_about_dialogue function
+        help_menu.addAction(self.about_action)   # Add the About action to the Help menu
 
 
     def show_about_dialogue(self):

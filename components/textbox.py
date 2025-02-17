@@ -16,26 +16,28 @@
 """
 
 from utils.task import Task
-from PySide6 import QtWidgets
+from PySide6 import QtCore, QtWidgets, QtGui
 from utils import taskWarriorInstance
+from typing import Callable, Optional
+from .TableCell import TableCell
 
-class Textbox:
-    def __init__(self, task_id : str, attribute: str):
-        self.attribute = attribute
-        self.task_id = task_id
+class Textbox(TableCell):
+    def __init__(self, row_num:int, get_task: Callable[[], Optional[Task]], attribute: str=""):
 
-        self.task: Task | None = None
-        self.text: str | None = None
-
-        self.textbox = QtWidgets.QLabel("")
+        self.my_text = ""
+        self.my_label = QtWidgets.QLabel()
         
+        self.getSubWidget = lambda: self.my_label
+
+        super().__init__(row_num, get_task, attribute)
+
+        self._addSubWidget()
+
+    def update_task(self):
+        super().update_task()
+        if self.active:
+            assert self.task
+            assert self.attribute
+            self.my_text = str(self.task.get(self.attribute) or "") 
+            self.my_label.setText(self.my_text)
         self.update()
-
-    def link_to_layout(self, layout : QtWidgets.QVBoxLayout):
-        layout.addWidget(self.textbox)
-    
-    def update(self) -> None:
-        self.task = Task(taskWarriorInstance.get_task(uuid=self.task_id)[1])
-        self.text = str(self.task.get(self.attribute) or "") 
-        self.textbox.setText(self.text)
-        

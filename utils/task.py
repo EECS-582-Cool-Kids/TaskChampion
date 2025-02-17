@@ -34,6 +34,9 @@ class Task(task.Task):
 
     def get_due(self) -> fields.DateField:
         return self['due']
+    
+    def set_due(self, due : str) -> None:
+        self.set('due', due)
 
     def get_end(self) -> fields.DateField:
         return self['end']
@@ -58,12 +61,21 @@ class Task(task.Task):
 
     def get_priority(self) -> priority_t:
         return cast(priority_t, str(self['priority']))
+    
+    def set_priority(self, priority : str) -> None:
+        self.set("priority", priority)
 
     def get_project(self) -> fields.StringField:
         return self['project']
 
+    def set_project(self, project : str) -> None:
+        self.set("project", project)
+
     def get_recur(self) -> fields.StringField:
         return self['recur']
+
+    def set_recur(self, recur : str) -> None:
+        self.set("recur", recur)
 
     def get_scheduled(self) -> fields.DateField:
         return self['scheduled']

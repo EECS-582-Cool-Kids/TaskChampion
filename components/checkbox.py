@@ -18,25 +18,35 @@
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets
 from utils import taskWarriorInstance
+from .TableCell import TableCell
+from typing import Callable, Optional
 
+class Checkbox(TableCell):
 
+    def __init__(self, row_num: int, get_task: Callable[[], Optional[Task]], attribute:str=""):
+        super().__init__(row_num, get_task, attribute)
 
-class Checkbox:
-    def __init__(self, taskID : str):
-        self.task = Task(taskWarriorInstance.get_task(uuid=taskID)[1])
-
-        self.checkbox = QtWidgets.QCheckBox()
-        self.checkbox.setChecked(self.task.get_status() == 'completed')
-
-        self.checkbox.stateChanged.connect(lambda: self.checkCheckbox()) 
+        self.my_checkbox = QtWidgets.QCheckBox()
+        self.getSubWidget = lambda: self.my_checkbox
+        self.my_checkbox.stateChanged.connect(lambda: self.checkCheckbox())
         
+        self._addSubWidget()
+
+    def update_task(self):
+        super().update_task()
+        if self.active:
+            assert self.task
+            self.my_checkbox.setChecked(self.task.get_status() == 'completed')
+        self.update()
+
     @QtCore.Slot()
     def checkCheckbox(self):
-        if self.checkbox.isChecked():
+        # TODO: There are more statuses than `completed` and `pending`. Do we care?
+        assert self.task
+
+        if self.my_checkbox.isChecked():
             taskWarriorInstance.task_update({"uuid": self.task.get_uuid(), "status": 'completed'})
 
         else:
             taskWarriorInstance.task_update({"uuid": self.task.get_uuid(), "status": 'pending'})
 
-    def linkToLayout(self, layout : QtWidgets.QVBoxLayout):
-        layout.addWidget(self.checkbox)

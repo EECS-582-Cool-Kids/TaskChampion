@@ -207,8 +207,18 @@ class TaskRow:
             self.update_task(str(self.task.get_uuid()))
             
     def _delete_task(self):
-        assert self.task
-        id = self.task.get_id()
-        print(f"Deleting task {id}")
-        taskWarriorInstance.task_delete(id=id)
-        self.update_task()
+        assert self.task  # throw error if called without a task
+        uuid = self.task.get_uuid()
+        taskWarriorInstance.task_delete(uuid=uuid)  # delete task with the corresponding id
+        self._remove_task_row()  # remove the task row from the UI
+
+    def _remove_task_row(self):
+        # Get the parent grid layout
+        grid = self.check.parentWidget().layout()
+        if not grid:
+            return
+    
+        # Loop through the widgets in the row and remove them
+        for widget in [self.check] + self.cols + [self.edit_button, self.delete_button]:
+            grid.removeWidget(widget)
+            widget.deleteLater()

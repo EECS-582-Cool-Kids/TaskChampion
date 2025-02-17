@@ -1,4 +1,19 @@
-'''Entry point for the TaskChampion Application.'''
+"""
+ *  Module Name: taskchampion.py
+ *  Purpose: Entry point for the TaskChampion Application.
+ *  Inputs: None
+ *  Outputs: None
+ *  Additional code sources: None
+ *  Developers: Jacob Wilkus, Ethan Berkley, Mo Morgan
+ *  Date: 2/15/2025
+ *  Last Modified: 2/15/2025
+ *  Preconditions: None
+ *  Postconditions: None
+ *  Error/Exception conditions: None
+ *  Side effects: None
+ *  Invariants: None
+ *  Known Faults: None encountered
+"""
 
 import sys
 from PySide6 import QtCore, QtWidgets
@@ -7,7 +22,7 @@ from typing import TypeAlias, Literal
 from utils.task import Task, status_t, priority_t
 # from components.checkbox import Checkbox
 # from components.textbox import Textbox
-from components import AddTaskDialog, TaskRow, COLS, ALIGN
+from components import AddTaskDialog, TaskRow, COLS, ALIGN, menubar
 from utils import taskWarriorInstance
 
 class GridWidget(QtWidgets.QWidget):
@@ -36,6 +51,9 @@ class GridWidget(QtWidgets.QWidget):
 
         self.addHeader()
         self.fillGrid()
+
+        self.menu_bar = None    # declare the window's menu bar
+        self.set_menu_bar()     # set the window's menu bar
 
     def addTask(self, newTask: Task) -> None:
         
@@ -73,6 +91,10 @@ class GridWidget(QtWidgets.QWidget):
         for i in range(len(COLS)):
             self.grid.addWidget(QtWidgets.QLabel(COLS[i]), 0, i+1)
             self.grid.setColumnStretch(i+1, 0)
+
+    def set_menu_bar(self):
+        """Sets the menu bar for the application."""
+        self.menu_bar = menubar.MenuBar()
 
     def fillGrid(self):
         for i in range(self.DEFAULT_ROWS):
@@ -129,8 +151,10 @@ class TaskChampionWidget(QtWidgets.QWidget):
         taskWarriorInstance.task_update(newTask)
         self.grids[self.currentGrid].addTask(newTask)
 
+        self.layout().setMenuBar(self.menu_bar)
+
 class TaskChampionGUI:
-    '''The main application class for Task Champion.'''
+    """The main application class for Task Champion."""
     def __init__(self):
         # Initialize the Qt App and TaskWarrior objects
         self.qtapp = QtWidgets.QApplication([])
@@ -150,8 +174,8 @@ class TaskChampionGUI:
     def loadStyles(self):
         self.qtapp.setStyleSheet(self._styleStr)
 
-    def onExit(self) -> int:
-        '''The behavior for exiting the application.'''
+    def on_exit(self) -> int:
+        """The behavior for exiting the application."""
         return self.qtapp.exec()
 
 # Program entry point
@@ -165,4 +189,4 @@ if __name__ == "__main__":
     
     app.loadStyles()
 
-    sys.exit(app.onExit())
+    sys.exit(app.on_exit())

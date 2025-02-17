@@ -1,20 +1,38 @@
+"""
+ *  Module Name: task.py
+ *  Purpose: Module for the Task class, which is a class for creating a task object.
+ *  Inputs: None
+ *  Outputs: None
+ *  Additional code sources: None
+ *  Developers: Ethan Berkley, Mo Morgan
+ *  Date: 2/15/2025
+ *  Last Modified: 2/15/2025
+ *  Preconditions: None
+ *  Postconditions: None
+ *  Error/Exception conditions: None
+ *  Side effects: None
+ *  Invariants: None
+ *  Known Faults: None encountered
+"""
+
 from taskw_ng import task, fields
 from typing import TypeAlias, Literal, cast
 
-status_t: TypeAlias = Literal['pending', 'completed', 'deleted', 'waiting', 'recurring']
+# creating type aliases for the status and priority fields
+status_t: TypeAlias = Literal['pending', 'completed', 'deleted', 'waiting', 'recurring'] | None
 priority_t: TypeAlias = Literal['H', 'M', 'L'] | None
 
 class Task(task.Task):
     def get_annotations(self) -> fields.AnnotationArrayField:
         return self['annotations']
 
-    def get_depends(self) -> fields.CommaSeparatedUUIDField: 
+    def get_depends(self) -> fields.CommaSeparatedUUIDField:
         return self['depends']
 
     def get_description(self) -> fields.StringField:
         return self['description']
 
-    def get_due(self) -> fields.DateField: 
+    def get_due(self) -> fields.DateField:
         return self['due']
     
     def set_due(self, due : str) -> None:

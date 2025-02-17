@@ -1,6 +1,22 @@
+"""
+ *  Module Name: checkbox.py
+ *  Purpose: Module for the Checkbox class, which is a class for creating a checkbox in the GUI.
+ *  Inputs: None
+ *  Outputs: None
+ *  Additional code sources: None
+ *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan
+ *  Date: 2/15/2025
+ *  Last Modified: 2/15/2025
+ *  Preconditions: None
+ *  Postconditions: None
+ *  Error/Exception conditions: None
+ *  Side effects: None
+ *  Invariants: None
+ *  Known Faults: None encountered
+"""
+
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets
-# from taskw_ng import TaskWarrior
 from utils import taskWarriorInstance
 from .TableCell import TableCell
 from typing import Callable, Optional
@@ -8,9 +24,10 @@ from typing import Callable, Optional
 class Checkbox(TableCell):
 
     def __init__(self, row_num: int, get_task: Callable[[], Optional[Task]], attribute:str=""):
+        super().__init__(row_num, get_task, attribute)
+
         self.my_checkbox = QtWidgets.QCheckBox()
         self.getSubWidget = lambda: self.my_checkbox
-        super().__init__(row_num, get_task, attribute)
         self.my_checkbox.stateChanged.connect(lambda: self.checkCheckbox())
         
         self._addSubWidget()

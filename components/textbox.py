@@ -1,3 +1,20 @@
+"""
+ *  Module Name: textbox.py
+ *  Purpose: Module for the Textbox class, which is a class for creating a textbox in the GUI.
+ *  Inputs: None
+ *  Outputs: None
+ *  Additional code sources: None
+ *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan
+ *  Date: 2/15/2025
+ *  Last Modified: 2/15/2025
+ *  Preconditions: None
+ *  Postconditions: None
+ *  Error/Exception conditions: None
+ *  Side effects: None
+ *  Invariants: None
+ *  Known Faults: None encountered
+"""
+
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets, QtGui
 # from taskw_ng import TaskWarrior

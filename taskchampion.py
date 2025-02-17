@@ -127,6 +127,9 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.currentGrid = 0
 
         self.addTaskDialog : AddTaskDialog = AddTaskDialog()
+
+        self.menu_bar = None    # declare the window's menu bar
+        self.set_menu_bar()     # set the window's menu bar
     
     def addTask(self):
         '''Add a task to the GUI list and link it to a new task in TaskWarrior.'''
@@ -149,6 +152,9 @@ class TaskChampionWidget(QtWidgets.QWidget):
         taskWarriorInstance.task_update(newTask)
         self.grids[self.currentGrid].addTask(newTask)
 
+    def set_menu_bar(self):
+        """Sets the menu bar for the application."""
+        self.menu_bar = menubar.MenuBar()
         self.layout().setMenuBar(self.menu_bar)
 
 class TaskChampionGUI:

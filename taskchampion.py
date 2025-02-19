@@ -150,7 +150,6 @@ class TaskChampionGUI:
     def __init__(self): 
         # Initialize the Qt App and TaskWarrior objects  
         self.qtapp = QtWidgets.QApplication([])  # Create a new Qt Application.
-        
 
         # Initialize the main Qt Widget 
         self.mainWidget = TaskChampionWidget()  # Create a new TaskChampionWidget.

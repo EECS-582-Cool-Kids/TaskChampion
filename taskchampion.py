@@ -17,14 +17,12 @@
 
 import sys
 from PySide6 import QtCore, QtWidgets
-from taskw_ng import TaskWarrior
-from typing import TypeAlias, Literal
 from utils.task import Task, status_t, priority_t
 from components import AddTaskDialog, TaskRow, COLS, ALIGN, menubar
 from utils import taskWarriorInstance
 
 class GridWidget(QtWidgets.QWidget):
-    '''The widget that corresponds to a module'''
+    """The widget that corresponds to a module"""
     ROW_HEIGHT=50  # Height of each row in the grid.
     DEFAULT_ROWS=10  # Default number of rows to display.
 
@@ -49,9 +47,6 @@ class GridWidget(QtWidgets.QWidget):
 
         self.addHeader()  # Add the header to the grid.
         self.fillGrid()  # Fill the grid with the default number of rows.
-
-        self.menu_bar = None    # declare the window's menu bar
-        self.set_menu_bar()     # set the window's menu bar
 
     def addTask(self, newTask: Task) -> None:
         
@@ -88,10 +83,6 @@ class GridWidget(QtWidgets.QWidget):
             self.grid.addWidget(QtWidgets.QLabel(COLS[i]), 0, i+1)  # Add a label to the grid.
             self.grid.setColumnStretch(i+1, 0)  # Set the column stretch of the grid to 0.
 
-    def set_menu_bar(self):
-        """Sets the menu bar for the application."""
-        self.menu_bar = menubar.MenuBar()  # Create a new menu bar.
-
     def fillGrid(self):
         for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
             self.rowArr.append(TaskRow(i, ""))  # Append a new task row to the row array.
@@ -99,7 +90,7 @@ class GridWidget(QtWidgets.QWidget):
         self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.
 
 class TaskChampionWidget(QtWidgets.QWidget):
-    '''The main widget for the Task Champion application.'''
+    """The main widget for the Task Champion application."""
     def __init__(self):
         super().__init__()  # Call the parent constructor.
         self.setObjectName('MainWidget')  # Set the object name for styling.
@@ -130,11 +121,11 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.set_menu_bar()     # set the window's menu bar
     
     def addTask(self):
-        '''Add a task to the GUI list and link it to a new task in TaskWarrior.'''
+        """Add a task to the GUI list and link it to a new task in TaskWarrior."""
 
         newTaskDetails : AddTaskDialog.TaskDetails | None = self.addTaskDialog.addTask()  # Get the details of the new task from the add task dialog.
         
-        if newTaskDetails == None:  # If the new task details are None.
+        if newTaskDetails is None:  # If the new task details are None.
             return  # Return.
 
         newTask : Task = Task(taskWarriorInstance.task_add(newTaskDetails.description, newTaskDetails.tag))  # Create a new task with the details from the add task dialog.
@@ -142,18 +133,17 @@ class TaskChampionWidget(QtWidgets.QWidget):
         newTask.set_priority(newTaskDetails.priority)  # Set the priority of the new task.
         newTask.set_project(newTaskDetails.project)   # Set the project of the new task.
 
-        if newTaskDetails.recurrence != None:  # If the recurrence of the new task is not None.
+        if newTaskDetails.recurrence is not None:  # If the recurrence of the new task is not None.
             newTask.set_recur(newTaskDetails.recurrence)  # Set the recurrence of the new task.
-        if newTaskDetails.due != None:  # If the due date of the new task is not None.
-            newTask.set_due(newTaskDetails.due)  # Set the due date of the new task.
+        if newTaskDetails.due is not None:  # If the due date of the new task is not None.
+            newTask.set_due(newTaskDetails.due)  # Set the due date of the new task. TODO: fix typing issue. components.AddTaskDialog.TaskDetails.due is an object, utils.task.Task.set_due expects a string.
 
         taskWarriorInstance.task_update(newTask)  # Update the new task in TaskWarrior.
         self.grids[self.currentGrid].addTask(newTask)  # Add the new task to the current grid.
 
     def set_menu_bar(self):
-        """Sets the menu bar for the application."""  
+        """Sets the window menu bar for the application."""
         self.menu_bar = menubar.MenuBar()  # Create a new menu bar.
-        self.layout().setMenuBar(self.menu_bar)  # Set the menu bar of the layout to be the new menu bar.
 
 class TaskChampionGUI:
     """The main application class for Task Champion."""  

@@ -17,11 +17,11 @@
 
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets
-from utils import taskWarriorInstance
+from utils import api
 from .checkbox import Checkbox
 from .textbox import Textbox
 from .buttonbox import Buttonbox
-from typing import Final
+from typing import Final, Optional
 
 
 # The names of the columns.
@@ -38,7 +38,7 @@ class ALIGN:
 
 class AddTaskDialog(QtWidgets.QDialog):
     class TaskDetails:
-        def __init__(self, description : str, tag : str, priority : str, project : str, recurrence : str | None, due : object | None):
+        def __init__(self, description : str, tag : str, priority : str, project : str, recurrence : Optional[str], due : Optional[object]):
             self.description = description
             self.tag = tag
             self.priority = priority
@@ -48,7 +48,7 @@ class AddTaskDialog(QtWidgets.QDialog):
 
     def __init__(self):
         super().__init__()
-
+        
         self.form = QtWidgets.QFormLayout()
 
         self.description = QtWidgets.QLineEdit()
@@ -95,7 +95,7 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
 
-    def addTask(self) -> TaskDetails | None:
+    def addTask(self) -> Optional[TaskDetails]:
         if self.exec():
             if self.is_recurring:
                 test = self.due_date.dateTime().toPython()
@@ -158,8 +158,10 @@ class EditTaskDialog(QtWidgets.QDialog):
 
 
 class TaskRow:
-    def __init__(self, row_num: int, taskID: str):
-        self.task = Task(taskWarriorInstance.get_task(uuid=taskID)[1]) if taskID else None
+    def __init__(self, row_num: int):
+        self.idx = row_num
+
+        self.task = api.task_at(self.idx)
         self.check = Checkbox(row_num, self.get_task)
         self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]
 
@@ -176,15 +178,24 @@ class TaskRow:
         for i in range(len(self.cols)):
             grid.addWidget(self.cols[i], rowNum, i + 1)
 
-        # TODO: Whenever we use the `self.edit_button` / `self.delete_button` vars,
-        # this will need to be changed.
         grid.addWidget(self.edit_button, rowNum, len(self.cols) + 1)  # add the edit button to the grid
         grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)  # add the delete button to the grid
 
-    def update_task(self, taskID: str= ""):
+    def update_task(self):
+
+        # Uncomment the print lines for debugging, if necessary.
+        # if self.task:
+        #     print(f"taskID: {self.task.get_id()} => ", end="")
+        # else:
+        #     print("taskID: None => ", end="")
+
+        self.task = api.task_at(self.idx)
         
-        self.task = Task(taskWarriorInstance.get_task(uuid=taskID)[1]) if taskID else None
-        
+        # if self.task:
+        #     print(self.task.get_id())
+        # else:
+        #     print("None")
+
         self.check.update_task()
         for i in range(len(self.cols)):
             self.cols[i].update_task()
@@ -202,8 +213,8 @@ class TaskRow:
             self.task.set("description", edit_task_dialog.description or None)
             self.task.set("due", edit_task_dialog.due or None)
             self.task.set("priority", edit_task_dialog.priority or None)
-            taskWarriorInstance.task_update(self.task)
-            self.update_task(str(self.task.get_uuid()))
+            api.update_task(self.task)
+            self.update_task()
             
     def _delete_task(self):
         assert self.task  # throw error if called without a task

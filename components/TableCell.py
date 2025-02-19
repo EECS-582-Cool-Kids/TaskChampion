@@ -17,7 +17,6 @@
 
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets
-from utils import taskWarriorInstance
 from typing import Callable, Optional
 
 class TableCell(QtWidgets.QLabel):

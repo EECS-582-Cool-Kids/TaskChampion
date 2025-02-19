@@ -17,7 +17,6 @@
 
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets, QtGui
-from utils import taskWarriorInstance
 from typing import Callable, Optional
 from .TableCell import TableCell
 

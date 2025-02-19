@@ -17,7 +17,7 @@
 
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets
-from utils import taskWarriorInstance
+from utils import api
 from .TableCell import TableCell
 from typing import Callable, Optional
 
@@ -44,8 +44,10 @@ class Checkbox(TableCell):
         assert self.task  # Assert that the task is not None.
 
         if self.my_checkbox.isChecked():  # If the checkbox is checked.
-            taskWarriorInstance.task_update({"uuid": self.task.get_uuid(), "status": 'completed'})  # Update the task status to completed.
+            self.task.set('status', 'completed')
 
         else:  # If the checkbox is not checked.
-            taskWarriorInstance.task_update({"uuid": self.task.get_uuid(), "status": 'pending'})  # Update the task status to pending.
+            self.task.set('status', 'pending')
+            
+        api.update_task(self.task)  # Update the task status.
 

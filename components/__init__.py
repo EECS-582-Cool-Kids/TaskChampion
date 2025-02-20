@@ -156,7 +156,6 @@ class EditTaskDialog(QtWidgets.QDialog):
     def priority(self):
         return self._priority_text.text()
 
-
 class TaskRow:
     def __init__(self, row_num: int, edit_task: Callable[[int], None], delete_task: Callable[[int], None]):
         self.idx = row_num
@@ -201,27 +200,6 @@ class TaskRow:
             self.cols[i].update_task()
         self.edit_button.update_task()
         self.delete_button.update_task()
-        print(self.idx , self.task)
-    
-    # def _edit_task(self):
-    #     assert self.task
-
-    #     edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""), 
-    #       str(self.task.get("due") or ""), 
-    #       str(self.task.get("priority") or ""))
-        
-    #     if edit_task_dialog.exec():
-    #         self.task.set("description", edit_task_dialog.description or None)
-    #         self.task.set("due", edit_task_dialog.due or None)
-    #         self.task.set("priority", edit_task_dialog.priority or None)
-    #         api.update_task(self.task)
-    #         self.update_task()
-            
-    # def _delete_task(self):
-    #     assert self.task  # throw error if called without a task
-    #     uuid = self.task.get_uuid()
-    #     taskWarriorInstance.task_delete(uuid=uuid)  # delete task with the corresponding id
-    #     self._remove_task_row()  # remove the task row from the UI
 
     def annihilate(self):
         # Get the parent grid layout

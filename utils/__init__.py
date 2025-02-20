@@ -94,16 +94,17 @@ class TaskAPI:
 
     def __init__(self):
         self.warrior = TaskWarrior()
-        self.sort_metric: SortMetric = SortMetric.ID_ASCENDING
+        self.sort_metric: SortMetric = SortMetric.DESCRIPTION_ASCENDING
 
         self.task_list: list[Task] = []
-        '''The list that is sorted according to some criteria'''
+        "The list that is sorted according to some criteria"
 
         self._init_task_list()
 
     def _init_task_list(self) -> None:
         """Refreshes the task list. Private.
-        Done after any operation that would require re-sorting the list of tasks."""
+
+        Called after any operation that would require re-sorting the list of tasks."""
         self.task_list.clear()
 
         tasks = self.warrior.load_tasks()
@@ -120,18 +121,18 @@ class TaskAPI:
             return None
         
         return self.task_list[idx]
-
     
     def add_new_task(self, description: str, tags=None, **kw):
         self.warrior.task_add(description, tags, **kw)
         self._init_task_list()
 
     def add_task(self, t: Task) -> None:
+        # Unused at the moment.
+
         self.warrior.task_add(t)
         self._init_task_list()
 
     def del_at(self, idx: int) -> None:
-
         if len(self.task_list) <= idx:
             return
 
@@ -146,5 +147,3 @@ class TaskAPI:
         self._init_task_list()
 
 api = TaskAPI()
-
-# taskWarriorInstance = TaskWarrior()  # Create a TaskWarrior instance.

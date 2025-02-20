@@ -17,7 +17,6 @@
 
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets, QtGui
-from utils import taskWarriorInstance
 from typing import Callable, Optional
 from .TableCell import TableCell
 
@@ -40,4 +39,7 @@ class Textbox(TableCell):
             assert self.attribute  # Assert that the attribute is not None.
             self.my_text = str(self.task.get(self.attribute) or "")  # Set the text of the label to the attribute of the task.
             self.my_label.setText(self.my_text)  # Set the text of the label to the text.
+        else:
+            self.my_text = ""
+            self.my_label.setText("")
         self.update()  # Update the cell.

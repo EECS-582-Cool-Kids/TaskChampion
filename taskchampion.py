@@ -17,11 +17,11 @@
 
 import sys
 from PySide6 import QtCore, QtWidgets
-from taskw_ng import TaskWarrior
-from typing import TypeAlias, Literal
-from utils.task import Task, status_t, priority_t
-from components import AddTaskDialog, TaskRow, COLS, ALIGN, menubar
-from utils import taskWarriorInstance
+from typing import TypeAlias, Literal, Callable
+from components import AddTaskDialog, TaskRow, COLS, ALIGN, menubar, EditTaskDialog
+from utils import api
+
+refresh_styles: Callable[[], None]
 
 class GridWidget(QtWidgets.QWidget):
     '''The widget that corresponds to a module'''
@@ -41,35 +41,38 @@ class GridWidget(QtWidgets.QWidget):
 
         self.grid.rowMinimumHeight(self.ROW_HEIGHT)  # Set the minimum height of the rows in the grid.
 
-        # print(self.scrollArea.alignment())  
         self.setLayout(self.grid)  # Set the layout of the widget to be the grid layout.
 
-        self.rows = 0  # Initialize the number of rows to 0.
         self.rowArr: list[TaskRow] = []  # Initialize the row array to an empty list.
 
         self.addHeader()  # Add the header to the grid.
-        self.fillGrid()  # Fill the grid with the default number of rows.
 
         self.menu_bar = None    # declare the window's menu bar
         self.set_menu_bar()     # set the window's menu bar
 
-    def addTask(self, newTask: Task) -> None:
+    def addTask(self) -> None:
+        """Assumes that addTask has already been called in TaskChampionGUI. 
         
-        self.rows += 1  # Increment the number of rows.
+        Since that means TaskAPI has the updated list of tasks, 
+        all we need to do is:
+
+        1) See if we need to add a new `TaskRow`
+        2) broadcast to all `TaskRow`s to update their current task.
+        """
+        num_tasks = api.num_tasks()  # Increment the number of rows.
             
-        uuid = str(newTask.get_uuid())  # Get the UUID of the new task.
+        if self.grid.rowCount() == num_tasks:  # If the row count of the grid is equal to the number of rows.
+            self.setMinimumHeight(num_tasks * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the number of rows times the row height.
 
-        if self.grid.rowCount() == self.rows:  # If the row count of the grid is equal to the number of rows.
-            self.setMinimumHeight(self.rows * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the number of rows times the row height.
+            self.rowArr.append(TaskRow(num_tasks, self._edit_task, self._delete_task))  # Append a new task row to the row array.
+            self.rowArr[num_tasks-1].insert(self.grid, num_tasks)
 
-            self.rowArr.append(TaskRow(self.rows, uuid))  # Append a new task row to the row array.
             # Row inserts itself into the grid, insertion logic is handled in `TaskRow` obj.
-            # Note that this may be tricky when changing order of tasks w.r.t column sorting, 
-            # as that logic will happen in this class.
-            # but idk what method we will use for sorting, for all I know qt makes it very easy.    
-           
-        self.rowArr[self.rows-1].update_task(uuid)  # Update the task in the row array.
-        self.rowArr[self.rows-1].insert(self.grid, self.rows)  # Insert the row into the grid.
+            
+        for row in range(len(self.rowArr)):
+            self.rowArr[row].update_task()
+        
+        refresh_styles()
 
     def addHeader(self):
         # Make header row take up as little vertical space as it needs.
@@ -93,10 +96,46 @@ class GridWidget(QtWidgets.QWidget):
         self.menu_bar = menubar.MenuBar()  # Create a new menu bar.
 
     def fillGrid(self):
+        # Also adds tasks to the grid, which doesn't work for the "example" tab. So for now, it's empty.
+
         for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
-            self.rowArr.append(TaskRow(i, ""))  # Append a new task row to the row array.
+            self.rowArr.append(TaskRow(i, self._edit_task, self._delete_task))  # Append a new task row to the row array.
             self.rowArr[i].insert(self.grid, i+1)  # Insert the row into the grid.
         self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.
+
+    def _edit_task(self, idx: int):
+        """Passed to taskrows."""
+        cur_task = api.task_at(idx)
+        assert cur_task
+
+        edit_task_dialog = EditTaskDialog(str(cur_task.get("description") or ""), 
+            str(cur_task.get("due") or ""), 
+            str(cur_task.get("priority") or ""))
+        
+        if edit_task_dialog.exec():
+            cur_task.set("description", edit_task_dialog.description or None)
+            cur_task.set("due", edit_task_dialog.due or None)
+            cur_task.set("priority", edit_task_dialog.priority or None)
+            api.update_task(cur_task)
+
+            for i in range(api.num_tasks()):
+                self.rowArr[i].update_task()
+
+        refresh_styles()
+            
+    def _delete_task(self, idx: int):
+        """passed to taskrows."""
+        api.delete_at(idx)
+        
+        num_tasks = api.num_tasks()
+
+        if num_tasks > self.DEFAULT_ROWS:
+            self.rowArr.pop(-1).annihilate()
+        
+        for i in range(len(self.rowArr)):
+            self.rowArr[i].update_task()
+
+        refresh_styles()
 
 class TaskChampionWidget(QtWidgets.QWidget):
     '''The main widget for the Task Champion application.'''
@@ -137,18 +176,16 @@ class TaskChampionWidget(QtWidgets.QWidget):
         if newTaskDetails == None:  # If the new task details are None.
             return  # Return.
 
-        newTask : Task = Task(taskWarriorInstance.task_add(newTaskDetails.description, newTaskDetails.tag))  # Create a new task with the details from the add task dialog.
+        api.add_new_task(
+            description = newTaskDetails.description, 
+            tag         = newTaskDetails.tag,
+            priority    = newTaskDetails.priority,
+            project     = newTaskDetails.project,
+            recur       = newTaskDetails.recurrence,
+            due         = newTaskDetails.due,
+        )  # Create a new task with the details from the add task dialog.
         
-        newTask.set_priority(newTaskDetails.priority)  # Set the priority of the new task.
-        newTask.set_project(newTaskDetails.project)   # Set the project of the new task.
-
-        if newTaskDetails.recurrence != None:  # If the recurrence of the new task is not None.
-            newTask.set_recur(newTaskDetails.recurrence)  # Set the recurrence of the new task.
-        if newTaskDetails.due != None:  # If the due date of the new task is not None.
-            newTask.set_due(newTaskDetails.due)  # Set the due date of the new task.
-
-        taskWarriorInstance.task_update(newTask)  # Update the new task in TaskWarrior.
-        self.grids[self.currentGrid].addTask(newTask)  # Add the new task to the current grid.
+        self.grids[self.currentGrid].addTask()  # Add the new task to the current grid.
 
     def set_menu_bar(self):
         """Sets the menu bar for the application."""  
@@ -161,17 +198,22 @@ class TaskChampionGUI:
         # Initialize the Qt App and TaskWarrior objects  
         self.qtapp = QtWidgets.QApplication([])  # Create a new Qt Application.
         
-
         # Initialize the main Qt Widget 
         self.mainWidget = TaskChampionWidget()  # Create a new TaskChampionWidget.
         self.mainWidget.setWindowTitle("Task Champion")  # Set the window title.
         self.mainWidget.resize(800, 400) # set basic window size.
         self.mainWidget.show() # show the window
+
+        self.mainWidget.move(0, 0)
+
         self._styleStr = ""  # Initialize the style string.
         with open ('styles/style.qss', 'r')as f:  # Open the style file.
             self._styleStr = f.read()  # Read the style file.
 
         self.loadStyles()  # Load the styles.
+
+    def loadTasks(self):
+        self.mainWidget.grids[0].fillGrid()
 
     def loadStyles(self):
         self.qtapp.setStyleSheet(self._styleStr)  # Set the style sheet of the Qt Application to be the style string.
@@ -183,12 +225,7 @@ class TaskChampionGUI:
 # Program entry point
 if __name__ == "__main__":
     app = TaskChampionGUI()  # Create a new TaskChampionGUI object.
-    tasks = taskWarriorInstance.load_tasks()  # Load the tasks from TaskWarrior.
-
-    # Add both pending and completed tasks.
-    for task in [*tasks['pending'], *tasks['completed']]:  # Loop through the tasks.
-        app.mainWidget.grids[0].addTask(Task(task))  # Add the task to the first grid.
-    
-    app.loadStyles()  # Load the styles.
-  
+    app.loadTasks()
+    # TODO: Consider doing this in a better way.
+    refresh_styles = app.loadStyles
     sys.exit(app.on_exit())  # Exit the application.

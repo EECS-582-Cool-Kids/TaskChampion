@@ -190,4 +190,4 @@ class Logger:
             self.log_file.close()
 
 api = TaskAPI()
-logger = Logger()
+logger = Logger(is_debug=True) # remove flag when not debugging

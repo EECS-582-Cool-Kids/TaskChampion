@@ -94,8 +94,8 @@ class TaskAPI:
         self.warrior = TaskWarrior()
         self.sort_metric: SortMetric = SortMetric.DESCRIPTION_ASCENDING
 
+        # The list that is sorted according to some criteria.
         self.task_list: list[Task] = []
-        "The list that is sorted according to some criteria"
 
         self._init_task_list()
 
@@ -130,7 +130,7 @@ class TaskAPI:
         self.warrior.task_add(t)
         self._init_task_list()
 
-    def del_at(self, idx: int) -> None:
+    def delete_at(self, idx: int) -> None:
         if len(self.task_list) <= idx:
             return
 

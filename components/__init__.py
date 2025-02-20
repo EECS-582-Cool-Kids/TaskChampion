@@ -15,7 +15,6 @@
  *  Known Faults: None encountered
 """
 
-from utils.task import Task
 from PySide6 import QtCore, QtWidgets
 from utils import api
 from .checkbox import Checkbox
@@ -181,19 +180,7 @@ class TaskRow:
         grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)  # add the delete button to the grid
 
     def update_task(self):
-
-        # Uncomment the print lines for debugging, if necessary.
-        # if self.task:
-        #     print(f"taskID: {self.task.get_id()} => ", end="")
-        # else:
-        #     print("taskID: None => ", end="")
-
         self.task = api.task_at(self.idx)
-        
-        # if self.task:
-        #     print(self.task.get_id())
-        # else:
-        #     print("None")
 
         self.check.update_task()
         for i in range(len(self.cols)):

@@ -17,13 +17,11 @@
 
 import sys
 from PySide6 import QtCore, QtWidgets
-from taskw_ng import TaskWarrior
 from typing import TypeAlias, Literal, Callable
-from utils.task import Task, status_t, priority_t
 from components import AddTaskDialog, TaskRow, COLS, ALIGN, menubar, EditTaskDialog
 from utils import api
 
-refreshStyles: Callable[[], None]
+refresh_styles: Callable[[], None]
 
 class GridWidget(QtWidgets.QWidget):
     '''The widget that corresponds to a module'''
@@ -48,7 +46,6 @@ class GridWidget(QtWidgets.QWidget):
         self.rowArr: list[TaskRow] = []  # Initialize the row array to an empty list.
 
         self.addHeader()  # Add the header to the grid.
-        # self.fillGrid()  # Fill the grid with the default number of rows.
 
         self.menu_bar = None    # declare the window's menu bar
         self.set_menu_bar()     # set the window's menu bar
@@ -75,8 +72,7 @@ class GridWidget(QtWidgets.QWidget):
         for row in range(len(self.rowArr)):
             self.rowArr[row].update_task()
         
-        refreshStyles()
-
+        refresh_styles()
 
     def addHeader(self):
         # Make header row take up as little vertical space as it needs.
@@ -100,7 +96,7 @@ class GridWidget(QtWidgets.QWidget):
         self.menu_bar = menubar.MenuBar()  # Create a new menu bar.
 
     def fillGrid(self):
-        # TODO: Currently this also adds tasks to the grid, which may not be ideal? Evaluate.
+        # Also adds tasks to the grid, which doesn't work for the "example" tab. So for now, it's empty.
 
         for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
             self.rowArr.append(TaskRow(i, self._edit_task, self._delete_task))  # Append a new task row to the row array.
@@ -125,11 +121,11 @@ class GridWidget(QtWidgets.QWidget):
             for i in range(api.num_tasks()):
                 self.rowArr[i].update_task()
 
-        refreshStyles()
+        refresh_styles()
             
     def _delete_task(self, idx: int):
         """passed to taskrows."""
-        api.del_at(idx)
+        api.delete_at(idx)
         
         num_tasks = api.num_tasks()
 
@@ -139,7 +135,7 @@ class GridWidget(QtWidgets.QWidget):
         for i in range(len(self.rowArr)):
             self.rowArr[i].update_task()
 
-        refreshStyles()
+        refresh_styles()
 
 class TaskChampionWidget(QtWidgets.QWidget):
     '''The main widget for the Task Champion application.'''
@@ -218,7 +214,6 @@ class TaskChampionGUI:
 
     def loadTasks(self):
         self.mainWidget.grids[0].fillGrid()
-        self.loadStyles()
 
     def loadStyles(self):
         self.qtapp.setStyleSheet(self._styleStr)  # Set the style sheet of the Qt Application to be the style string.
@@ -230,12 +225,7 @@ class TaskChampionGUI:
 # Program entry point
 if __name__ == "__main__":
     app = TaskChampionGUI()  # Create a new TaskChampionGUI object.
-    
-
-    # # Add both pending and completed tasks.
-    # for task in [*tasks['pending'], *tasks['completed']]:  # Loop through the tasks.
-    #     app.mainWidget.grids[0].addTask(Task(task))  # Add the task to the first grid.
     app.loadTasks()
-    refreshStyles = app.loadStyles
-  
+    # TODO: Consider doing this in a better way.
+    refresh_styles = app.loadStyles
     sys.exit(app.on_exit())  # Exit the application.

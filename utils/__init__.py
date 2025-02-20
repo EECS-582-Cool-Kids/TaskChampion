@@ -41,8 +41,6 @@ class SortMetric(Enum):
 
 @singleton
 class TaskAPI:
-    
-   
 
     @staticmethod
     def _get_sort_params(metric: SortMetric) -> tuple[Callable[[Task], str | int], bool]:

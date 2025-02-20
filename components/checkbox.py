@@ -35,7 +35,11 @@ class Checkbox(TableCell):
         super().update_task()  # Call the parent update task method.
         if self.active:  # If the cell is active.
             assert self.task  # Assert that the task is not None.
+            self.my_checkbox.setEnabled(True)
             self.my_checkbox.setChecked(self.task.get_status() == 'completed')  # Set the checked state of the checkbox to the status of the task.
+        else:
+            self.my_checkbox.setChecked(False)
+            self.my_checkbox.setEnabled(False)
         self.update()  # Update the cell.
 
     @QtCore.Slot()

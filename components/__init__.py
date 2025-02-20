@@ -21,7 +21,7 @@ from utils import api
 from .checkbox import Checkbox
 from .textbox import Textbox
 from .buttonbox import Buttonbox
-from typing import Final, Optional
+from typing import Final, Optional, Callable
 
 
 # The names of the columns.
@@ -158,15 +158,15 @@ class EditTaskDialog(QtWidgets.QDialog):
 
 
 class TaskRow:
-    def __init__(self, row_num: int):
+    def __init__(self, row_num: int, edit_task: Callable[[int], None], delete_task: Callable[[int], None]):
         self.idx = row_num
 
         self.task = api.task_at(self.idx)
         self.check = Checkbox(row_num, self.get_task)
         self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]
 
-        self.edit_button = Buttonbox(row_num, self.get_task, "edit", self._edit_task)
-        self.delete_button = Buttonbox(row_num, self.get_task, "delete", self._delete_task)
+        self.edit_button = Buttonbox(row_num, self.get_task, "edit", lambda: edit_task(row_num))
+        self.delete_button = Buttonbox(row_num, self.get_task, "delete", lambda: delete_task(row_num))
 
     def get_task(self): return self.task
 
@@ -201,28 +201,29 @@ class TaskRow:
             self.cols[i].update_task()
         self.edit_button.update_task()
         self.delete_button.update_task()
+        print(self.idx , self.task)
     
-    def _edit_task(self):
-        assert self.task
+    # def _edit_task(self):
+    #     assert self.task
 
-        edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""), 
-          str(self.task.get("due") or ""), 
-          str(self.task.get("priority") or ""))
+    #     edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""), 
+    #       str(self.task.get("due") or ""), 
+    #       str(self.task.get("priority") or ""))
         
-        if edit_task_dialog.exec():
-            self.task.set("description", edit_task_dialog.description or None)
-            self.task.set("due", edit_task_dialog.due or None)
-            self.task.set("priority", edit_task_dialog.priority or None)
-            api.update_task(self.task)
-            self.update_task()
+    #     if edit_task_dialog.exec():
+    #         self.task.set("description", edit_task_dialog.description or None)
+    #         self.task.set("due", edit_task_dialog.due or None)
+    #         self.task.set("priority", edit_task_dialog.priority or None)
+    #         api.update_task(self.task)
+    #         self.update_task()
             
-    def _delete_task(self):
-        assert self.task  # throw error if called without a task
-        uuid = self.task.get_uuid()
-        taskWarriorInstance.task_delete(uuid=uuid)  # delete task with the corresponding id
-        self._remove_task_row()  # remove the task row from the UI
+    # def _delete_task(self):
+    #     assert self.task  # throw error if called without a task
+    #     uuid = self.task.get_uuid()
+    #     taskWarriorInstance.task_delete(uuid=uuid)  # delete task with the corresponding id
+    #     self._remove_task_row()  # remove the task row from the UI
 
-    def _remove_task_row(self):
+    def annihilate(self):
         # Get the parent grid layout
         grid = self.check.parentWidget().layout()
         if not grid:

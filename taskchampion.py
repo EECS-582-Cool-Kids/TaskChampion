@@ -46,7 +46,7 @@ class GridWidget(QtWidgets.QWidget):
         self.rowArr: list[TaskRow] = []  # Initialize the row array to an empty list.
 
         self.addHeader()  # Add the header to the grid.
-        self.fillGrid()  # Fill the grid with the default number of rows.
+        # self.fillGrid()  # Fill the grid with the default number of rows.
 
         self.menu_bar = None    # declare the window's menu bar
         self.set_menu_bar()     # set the window's menu bar
@@ -65,12 +65,12 @@ class GridWidget(QtWidgets.QWidget):
         if self.grid.rowCount() == num_tasks:  # If the row count of the grid is equal to the number of rows.
             self.setMinimumHeight(num_tasks * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the number of rows times the row height.
 
-            self.rowArr.append(TaskRow(num_tasks))  # Append a new task row to the row array.
+            self.rowArr.append(TaskRow(num_tasks, self._edit_task, self._delete_task))  # Append a new task row to the row array.
             self.rowArr[num_tasks-1].insert(self.grid, num_tasks)
 
             # Row inserts itself into the grid, insertion logic is handled in `TaskRow` obj.
             
-        for row in range(num_tasks):
+        for row in range(len(self.rowArr)):
             self.rowArr[row].update_task()
         
 
@@ -97,9 +97,10 @@ class GridWidget(QtWidgets.QWidget):
 
     def fillGrid(self):
         for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
-            self.rowArr.append(TaskRow(i))  # Append a new task row to the row array.
+            self.rowArr.append(TaskRow(i, self._edit_task, self._delete_task))  # Append a new task row to the row array.
             self.rowArr[i].insert(self.grid, i+1)  # Insert the row into the grid.
         self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.
+
 
     def _edit_task(self, idx: int):
         """Passed to taskrows."""
@@ -116,8 +117,26 @@ class GridWidget(QtWidgets.QWidget):
             cur_task.set("priority", edit_task_dialog.priority or None)
             api.update_task(cur_task)
 
+            for i in range(api.num_tasks()):
+                self.rowArr[i].update_task()
+            
+
     def _delete_task(self, idx: int):
         """passed to taskrows."""
+        api.del_at(idx)
+        
+        num_tasks = api.num_tasks()
+
+        if num_tasks > self.DEFAULT_ROWS:
+            self.rowArr.pop(-1).annihilate()
+        
+            
+        for i in range(len(self.rowArr)):
+            self.rowArr[i].update_task()
+            
+
+        
+
         
 
 class TaskChampionWidget(QtWidgets.QWidget):

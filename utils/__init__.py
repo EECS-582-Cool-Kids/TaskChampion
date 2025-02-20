@@ -31,11 +31,11 @@ def singleton(cls):
 
 class SortMetric(Enum):
     ID_ASCENDING          = 0
-    ID_DECENDING          = 1
+    ID_DESCENDING          = 1
     PRIORITY_ASCENDING    = 2
-    PRIORITY_DECENDING    = 3
+    PRIORITY_DESCENDING    = 3
     DESCRIPTION_ASCENDING = 4
-    DESCRIPTION_DECENDING = 5
+    DESCRIPTION_DESCENDING = 5
     # TODO: Add wayy more
 
 
@@ -81,15 +81,15 @@ class TaskAPI:
         match metric:
             case SortMetric.ID_ASCENDING:
                 return alpha_sorting('id'), False
-            case SortMetric.ID_DECENDING:
+            case SortMetric.ID_DESCENDING:
                 return alpha_sorting('id'), True
             case SortMetric.PRIORITY_ASCENDING:
                 return priority_sorting, False
-            case SortMetric.PRIORITY_DECENDING:
+            case SortMetric.PRIORITY_DESCENDING:
                 return priority_sorting, True
             case SortMetric.DESCRIPTION_ASCENDING:
                 return alpha_sorting('description'), False
-            case SortMetric.DESCRIPTION_DECENDING:
+            case SortMetric.DESCRIPTION_DESCENDING:
                 return alpha_sorting('description'), True
 
     def __init__(self):
@@ -141,6 +141,7 @@ class TaskAPI:
 
     def update_task(self, newTask: Task) -> None:
         self.warrior.task_update(newTask)
+        self._init_task_list()
 
     def set_sort_metric(self, metric: SortMetric):
         self.sort_metric = metric

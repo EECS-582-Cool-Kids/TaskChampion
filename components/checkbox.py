@@ -17,19 +17,19 @@
 
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets
-from utils import taskWarriorInstance
+from utils import TaskWarriorInstance
 from .TableCell import TableCell
 from typing import Callable, Optional
 
 class Checkbox(TableCell):
     def __init__(self, row_num: int, get_task: Callable[[], Optional[Task]], attribute:str=""):
         self.my_checkbox = QtWidgets.QCheckBox()  # Create a checkbox.
-        self.getSubWidget = lambda: self.my_checkbox  # Create a lambda function that returns the checkbox.
-        self.my_checkbox.stateChanged.connect(lambda: self.checkCheckbox())  # Connect the state changed signal of the checkbox to the check checkbox method.
+        self.get_sub_widget = lambda: self.my_checkbox  # Create a lambda function that returns the checkbox.
+        self.my_checkbox.stateChanged.connect(lambda: self.check_checkbox())  # Connect the state changed signal of the checkbox to the check checkbox method.
     
         super().__init__(row_num, get_task, attribute)  # Call the parent constructor.
     
-        self._addSubWidget()  # Add the checkbox to the sub widgets list.
+        self.add_sub_widget()  # Add the checkbox to the sub widgets list.
 
     def update_task(self):
         super().update_task()  # Call the parent update task method.
@@ -39,13 +39,13 @@ class Checkbox(TableCell):
         self.update()  # Update the cell.
 
     @QtCore.Slot()
-    def checkCheckbox(self):  # Check the checkbox.
+    def check_checkbox(self):  # Check the checkbox.
         # TODO: There are more statuses than `completed` and `pending`. Do we care?
         assert self.task  # Assert that the task is not None.
 
         if self.my_checkbox.isChecked():  # If the checkbox is checked.
-            taskWarriorInstance.task_update({"uuid": self.task.get_uuid(), "status": 'completed'})  # Update the task status to completed.
+            TaskWarriorInstance.task_update({"uuid": self.task.get_uuid(), "status": 'completed'})  # Update the task status to completed.
 
         else:  # If the checkbox is not checked.
-            taskWarriorInstance.task_update({"uuid": self.task.get_uuid(), "status": 'pending'})  # Update the task status to pending.
+            TaskWarriorInstance.task_update({"uuid": self.task.get_uuid(), "status": 'pending'})  # Update the task status to pending.
 

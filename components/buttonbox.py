@@ -1,3 +1,20 @@
+"""
+ *  Module Name: buttonbox.py
+ *  Purpose: Initialization of buttons within GUI.
+ *  Inputs: None
+ *  Outputs: None
+ *  Additional code sources: None
+ *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
+ *  Date: 2/15/2025
+ *  Last Modified: 2/15/2025
+ *  Preconditions: None
+ *  Postconditions: None
+ *  Error/Exception conditions: None
+ *  Side effects: None
+ *  Invariants: None
+ *  Known Faults: None encountered
+"""
+
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets, QtGui
 from utils import TaskWarriorInstance
@@ -16,7 +33,7 @@ class Buttonbox(TableCell):
 
         super().__init__(row_num, get_task, attribute)  # Call the parent constructor.
 
-        self.add_sub_widget()  # Add the button to the sub widgets list.
+        self.addSubWidget()  # Add the button to the sub widgets list.
         if action:  # If an action is provided.
             self.my_button.clicked.connect(action)  # Connect the clicked signal of the button to the action.
 

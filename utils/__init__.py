@@ -16,12 +16,11 @@
 """
 
 import os
+import datetime
 from taskw_ng.warrior import TaskWarrior
 from .task import Task
 from enum import Enum
 from typing import Callable, Optional
-
-import datetime
 
 def singleton(cls):
     instances = {}

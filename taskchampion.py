@@ -24,7 +24,7 @@ from utils import api
 refresh_styles: Callable[[], None]
 
 class GridWidget(QtWidgets.QWidget):
-    '''The widget that corresponds to a module'''
+    """The widget that corresponds to a module"""
     ROW_HEIGHT=50  # Height of each row in the grid.
     DEFAULT_ROWS=10  # Default number of rows to display.
 
@@ -46,9 +46,6 @@ class GridWidget(QtWidgets.QWidget):
         self.rowArr: list[TaskRow] = []  # Initialize the row array to an empty list.
 
         self.addHeader()  # Add the header to the grid.
-
-        self.menu_bar = None    # declare the window's menu bar
-        self.set_menu_bar()     # set the window's menu bar
 
     def addTask(self) -> None:
         """Assumes that addTask has already been called in TaskChampionGUI. 
@@ -90,10 +87,6 @@ class GridWidget(QtWidgets.QWidget):
         for i in range(len(COLS)):  # Loop through the columns.
             self.grid.addWidget(QtWidgets.QLabel(COLS[i]), 0, i+1)  # Add a label to the grid.
             self.grid.setColumnStretch(i+1, 0)  # Set the column stretch of the grid to 0.
-
-    def set_menu_bar(self):
-        """Sets the menu bar for the application."""
-        self.menu_bar = menubar.MenuBar()  # Create a new menu bar.
 
     def fillGrid(self):
         # Also adds tasks to the grid, which doesn't work for the "example" tab. So for now, it's empty.
@@ -138,7 +131,7 @@ class GridWidget(QtWidgets.QWidget):
         refresh_styles()
 
 class TaskChampionWidget(QtWidgets.QWidget):
-    '''The main widget for the Task Champion application.'''
+    """The main widget for the Task Champion application."""
     def __init__(self):
         super().__init__()  # Call the parent constructor.
         self.setObjectName('MainWidget')  # Set the object name for styling.
@@ -169,11 +162,11 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.set_menu_bar()     # set the window's menu bar
     
     def addTask(self):
-        '''Add a task to the GUI list and link it to a new task in TaskWarrior.'''
+        """Add a task to the GUI list and link it to a new task in TaskWarrior."""
 
         newTaskDetails : AddTaskDialog.TaskDetails | None = self.addTaskDialog.addTask()  # Get the details of the new task from the add task dialog.
         
-        if newTaskDetails == None:  # If the new task details are None.
+        if newTaskDetails is None:  # If the new task details are None.
             return  # Return.
 
         api.add_new_task(
@@ -188,9 +181,8 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.grids[self.currentGrid].addTask()  # Add the new task to the current grid.
 
     def set_menu_bar(self):
-        """Sets the menu bar for the application."""  
+        """Sets the window menu bar for the application."""
         self.menu_bar = menubar.MenuBar()  # Create a new menu bar.
-        self.layout().setMenuBar(self.menu_bar)  # Set the menu bar of the layout to be the new menu bar.
 
 class TaskChampionGUI:
     """The main application class for Task Champion."""  

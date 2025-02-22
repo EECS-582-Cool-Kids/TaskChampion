@@ -15,6 +15,7 @@
  *  Known Faults: None encountered
 """
 
+import os
 from taskw_ng.warrior import TaskWarrior
 from .task import Task
 from enum import Enum
@@ -151,6 +152,7 @@ class Logger:
     '''Handles all logging functionality for the application'''
     def __init__(self, is_debug : bool = False):
         # Create and open the log with the datetime the app was started.
+        os.makedirs('logs/', exist_ok = True)
         self.log_file = open(f"logs/taskchampion-log-{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}.log", "w")
         self.is_debug : bool = is_debug
 

@@ -19,7 +19,7 @@ import sys
 from PySide6 import QtCore, QtWidgets
 from typing import TypeAlias, Literal, Callable
 from components import AddTaskDialog, TaskRow, COLS, ALIGN, menubar, EditTaskDialog
-from utils import api
+from utils import api, logger
 
 refresh_styles: Callable[[], None]
 
@@ -61,8 +61,12 @@ class GridWidget(QtWidgets.QWidget):
         if self.grid.rowCount() == num_tasks:  # If the row count of the grid is equal to the number of rows.
             self.setMinimumHeight(num_tasks * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the number of rows times the row height.
 
-            self.rowArr.append(TaskRow(num_tasks, self._edit_task, self._delete_task))  # Append a new task row to the row array.
-            self.rowArr[num_tasks-1].insert(self.grid, num_tasks)
+            # Append a new task row to the row array.
+            try:
+                self.rowArr.append(TaskRow(num_tasks, self._edit_task, self._delete_task))
+                self.rowArr[num_tasks-1].insert(self.grid, num_tasks)
+            except ValueError as err:
+                logger.log_error(str(err))
 
             # Row inserts itself into the grid, insertion logic is handled in `TaskRow` obj.
             
@@ -92,14 +96,21 @@ class GridWidget(QtWidgets.QWidget):
         # Also adds tasks to the grid, which doesn't work for the "example" tab. So for now, it's empty.
 
         for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
-            self.rowArr.append(TaskRow(i, self._edit_task, self._delete_task))  # Append a new task row to the row array.
-            self.rowArr[i].insert(self.grid, i+1)  # Insert the row into the grid.
+            # Append a new task row to the row array.
+            try:
+                self.rowArr.append(TaskRow(i, self._edit_task, self._delete_task))
+                self.rowArr[i].insert(self.grid, i+1)  # Insert the row into the grid.
+            except ValueError as err:
+                logger.log_error(str(err))
+
         self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.
 
     def _edit_task(self, idx: int):
         """Passed to taskrows."""
         cur_task = api.task_at(idx)
-        assert cur_task
+        
+        if cur_task is None:
+            raise TypeError(f"Failed to fetch task at {idx}")
 
         edit_task_dialog = EditTaskDialog(str(cur_task.get("description") or ""), 
             str(cur_task.get("due") or ""), 
@@ -221,3 +232,4 @@ if __name__ == "__main__":
     # TODO: Consider doing this in a better way.
     refresh_styles = app.loadStyles
     sys.exit(app.on_exit())  # Exit the application.
+    logger.exit()

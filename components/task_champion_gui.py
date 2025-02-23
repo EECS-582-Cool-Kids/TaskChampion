@@ -39,7 +39,7 @@ class TaskChampionGUI:
         self.load_styles()  # Load the styles.
     
     def load_tasks(self):
-        self.main_widget.grids[0].fillGrid()
+        self.main_widget.grids[0].fill_grid()
         self.load_styles()
 
     def load_styles(self):

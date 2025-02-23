@@ -16,7 +16,8 @@
 """
 
 from PySide6 import QtCore, QtWidgets
-from .task_row import TaskRow
+from .task_row import TaskRow, COLS
+from .menubar import MenuBar
 
 class GridWidget(QtWidgets.QWidget):
     '''The widget that corresponds to a module'''
@@ -60,13 +61,13 @@ class GridWidget(QtWidgets.QWidget):
             
         if self.grid.rowCount() == num_tasks:  # If the row count of the grid is equal to the number of rows.
             self.setMinimumHeight(num_tasks * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the number of rows times the row height.
-            self.rowArr.append(TaskRow(num_tasks))  # Append a new task row to the row array.
-            self.rowArr[num_tasks-1].insert(self.grid, num_tasks)
+            self.row_arr.append(TaskRow(num_tasks))  # Append a new task row to the row array.
+            self.row_arr[num_tasks-1].insert(self.grid, num_tasks)
 
             # Row inserts itself into the grid, insertion logic is handled in `TaskRow` obj.
 
         for row in range(num_tasks):
-            self.rowArr[row].update_task()
+            self.row_arr[row].update_task()
 
     def add_header(self):
         # Make header row take up as little vertical space as it needs.
@@ -87,11 +88,11 @@ class GridWidget(QtWidgets.QWidget):
 
     def set_menu_bar(self):
         """Sets the menu bar for the application."""
-        self.menu_bar = menubar.MenuBar()  # Create a new menu bar.
+        self.menu_bar = MenuBar()  # Create a new menu bar.
 
     def fill_grid(self):
         for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
-            self.rowArr.append(TaskRow(i))  # Append a new task row to the row array.
+            self.row_arr.append(TaskRow(i))  # Append a new task row to the row array.
             self.row_arr[i].insert(self.grid, i+1)  # Insert the row into the grid.
         self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.
 

@@ -18,6 +18,7 @@
 from PySide6 import QtWidgets
 from components.add_task_dialog import AddTaskDialog
 from components.grid_widget import GridWidget
+from .menubar import MenuBar
 from utils import api
 
 class TaskChampionWidget(QtWidgets.QWidget):
@@ -82,5 +83,5 @@ class TaskChampionWidget(QtWidgets.QWidget):
 
     def set_menu_bar(self):
         """Sets the menu bar for the application."""  
-        self.menu_bar = menubar.MenuBar()  # Create a new menu bar.
+        self.menu_bar = MenuBar()  # Create a new menu bar.
         self.layout().setMenuBar(self.menu_bar)  # Set the menu bar of the layout to be the new menu bar.

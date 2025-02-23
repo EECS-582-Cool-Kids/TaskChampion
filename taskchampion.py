@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # # Add both pending and completed tasks.
     # for task in [*tasks['pending'], *tasks['completed']]:  # Loop through the tasks.
     #     app.mainWidget.grids[0].addTask(Task(task))  # Add the task to the first grid.
-    app.loadTasks()
+    app.load_tasks()
     # app.loadStyles()  # Load the styles.
   
     sys.exit(app.on_exit())  # Exit the application.

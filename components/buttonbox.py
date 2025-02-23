@@ -32,7 +32,7 @@ class Buttonbox(TableCell):
 
         super().__init__(row_num, get_task, attribute)  # Call the parent constructor.
 
-        self.addSubWidget()  # Add the button to the sub widgets list.
+        self.add_sub_widget()  # Add the button to the sub widgets list.
         if action:  # If an action is provided.
             self.my_button.clicked.connect(action)  # Connect the clicked signal of the button to the action.
 

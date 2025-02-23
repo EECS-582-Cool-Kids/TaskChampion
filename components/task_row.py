@@ -17,16 +17,23 @@
 
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets
-from utils import TaskWarriorInstance
 from .checkbox import Checkbox
 from .textbox import Textbox
 from .buttonbox import Buttonbox
 from .edit_task_dialog import EditTaskDialog
-from typing import Final
+from typing import Final, Optional
+from utils import api
+
+# The names of the columns.
+# TODO: in the image Richard posted, the second col was Age instead of 'start', but taskw_ng doesn't have an age.
+# Should we keep it as start? do something else? Idk what start even means.
+COLS: Final = ('id', 'start', 'priority', 'project', 'recur', 'due', 'until', 'description', 'urgency')
 
 class TaskRow:
-    def __init__(self, row_num: int, taskID: str):
-        self.task = Task(TaskWarriorInstance.get_task(uuid=taskID)[1]) if taskID else None
+    def __init__(self, row_num: int):
+        self.idx = row_num
+
+        self.task = api.task_at(self.idx)
         self.check = Checkbox(row_num, self.get_task)
         self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]
 
@@ -43,15 +50,23 @@ class TaskRow:
         for i in range(len(self.cols)):
             grid.addWidget(self.cols[i], rowNum, i + 1)
 
-        # TODO: Whenever we use the `self.edit_button` / `self.delete_button` vars,
-        # this will need to be changed.
         grid.addWidget(self.edit_button, rowNum, len(self.cols) + 1)  # add the edit button to the grid
         grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)  # add the delete button to the grid
 
-    def update_task(self, taskID: str= ""):
-        
-        self.task = Task(TaskWarriorInstance.get_task(uuid=taskID)[1]) if taskID else None
-        
+     def update_task(self):
+
+        # Uncomment the print lines for debugging, if necessary.
+        # if self.task:
+        #     print(f"taskID: {self.task.get_id()} => ", end="")
+        # else:
+        #     print("taskID: None => ", end="")
+
+        self.task = api.task_at(self.idx)
+
+        # if self.task:
+        #     print(self.task.get_id())
+        # else:
+        #     print("None")
         self.check.update_task()
         for i in range(len(self.cols)):
             self.cols[i].update_task()
@@ -69,14 +84,14 @@ class TaskRow:
             self.task.set("description", edit_task_dialog.description or None)
             self.task.set("due", edit_task_dialog.due or None)
             self.task.set("priority", edit_task_dialog.priority or None)
-            TaskWarriorInstance.task_update(self.task)
-            self.update_task(str(self.task.get_uuid()))
+            api.update_task(self.task)
+            self.update_task()
             
     def delete_task(self):
         assert self.task  # throw error if called without a task
         uuid = self.task.get_uuid()
         TaskWarriorInstance.task_delete(uuid=uuid)  # delete task with the corresponding id
-        self._remove_task_row()  # remove the task row from the UI
+        self.remove_task_row()  # remove the task row from the UI
 
     def remove_task_row(self):
         # Get the parent grid layout

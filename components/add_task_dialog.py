@@ -19,10 +19,11 @@ from PySide6 import QtWidgets
 from utils.task import Task
 from .TableCell import TableCell
 from .checkbox import Checkbox
+from typing import Final, Optional
 
 class AddTaskDialog(QtWidgets.QDialog):
     class TaskDetails:
-        def __init__(self, description : str, tag : str, priority : str, project : str, recurrence : str | None, due : object | None):
+        def __init__(self, description : str, tag : str, priority : str, project : str, recurrence : Optional[str], due : Optional[object]):
             self.description = description
             self.tag = tag
             self.priority = priority
@@ -79,7 +80,7 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
 
-    def add_task(self) -> TaskDetails | None:
+    def add_task(self) -> Optional[TaskDetails]:
         if self.exec():
             if self.is_recurring:
                 test = self.due_date.dateTime().toPython()

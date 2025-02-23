@@ -19,6 +19,7 @@ from PySide6 import QtWidgets
 from components.add_task_dialog import AddTaskDialog
 from components.grid_widget import GridWidget
 from utils import TaskWarriorInstance
+from utils import api
 
 class TaskChampionWidget(QtWidgets.QWidget):
     '''The main widget for the Task Champion application.'''
@@ -59,18 +60,26 @@ class TaskChampionWidget(QtWidgets.QWidget):
         if newTaskDetails == None:  # If the new task details are None.
             return  # Return.
 
-        newTask : Task = Task(TaskWarriorInstance.task_add(newTaskDetails.description, newTaskDetails.tag))  # Create a new task with the details from the add task dialog.
+        api.add_new_task(
+            description = newTaskDetails.description, 
+            tag         = newTaskDetails.tag,
+            priority    = newTaskDetails.priority,
+            project     = newTaskDetails.project,
+            recur       = newTaskDetails.recurrence,
+            due         = newTaskDetails.due,
+        )  # Create a new task with the details from the add task dialog.
         
-        newTask.set_priority(newTaskDetails.priority)  # Set the priority of the new task.
-        newTask.set_project(newTaskDetails.project)   # Set the project of the new task.
+        #newTask.set_priority(newTaskDetails.priority)  # Set the priority of the new task.
+        #newTask.set_project(newTaskDetails.project)   # Set the project of the new task.
 
-        if newTaskDetails.recurrence != None:  # If the recurrence of the new task is not None.
-            newTask.set_recur(newTaskDetails.recurrence)  # Set the recurrence of the new task.
-        if newTaskDetails.due != None:  # If the due date of the new task is not None.
-            newTask.set_due(newTaskDetails.due)  # Set the due date of the new task.
+        #if newTaskDetails.recurrence != None:  # If the recurrence of the new task is not None.
+        #    newTask.set_recur(newTaskDetails.recurrence)  # Set the recurrence of the new task.
+        #if newTaskDetails.due != None:  # If the due date of the new task is not None.
+        #    newTask.set_due(newTaskDetails.due)  # Set the due date of the new task.
 
-        TaskWarriorInstance.task_update(newTask)  # Update the new task in TaskWarrior.
-        self.grids[self.current_grid].add_task(newTask)  # Add the new task to the current grid.
+        # TaskAPI().update(newTask)  # Update the new task in TaskWarrior.
+
+        self.grids[self.currentGrid].addTask()  # Add the new task to the current grid.
 
     def set_menu_bar(self):
         """Sets the menu bar for the application."""  

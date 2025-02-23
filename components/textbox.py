@@ -19,6 +19,7 @@ from utils.task import Task
 from PySide6 import QtCore, QtWidgets, QtGui
 from typing import Callable, Optional
 from .TableCell import TableCell
+from utils import api
 
 class Textbox(TableCell):
     def __init__(self, row_num:int, get_task: Callable[[], Optional[Task]], attribute: str=""): 

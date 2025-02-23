@@ -36,11 +36,9 @@ class GridWidget(QtWidgets.QWidget):
         self.grid = QtWidgets.QGridLayout()  # Create a grid layout.
 
         self.grid.rowMinimumHeight(self.ROW_HEIGHT)  # Set the minimum height of the rows in the grid.
-
-        # print(self.scrollArea.alignment())  
+ 
         self.setLayout(self.grid)  # Set the layout of the widget to be the grid layout.
 
-        self.rows = 0  # Initialize the number of rows to 0.
         self.row_arr: list[TaskRow] = []  # Initialize the row array to an empty list.
 
         self.add_header()  # Add the header to the grid.
@@ -49,23 +47,27 @@ class GridWidget(QtWidgets.QWidget):
         self.menu_bar = None    # declare the window's menu bar
         self.set_menu_bar()     # set the window's menu bar
 
-    def add_task(self, newTask: Task) -> None:
-        
-        self.rows += 1  # Increment the number of rows.
+    def add_task(self) -> None:
+        """Assumes that addTask has already been called in TaskChampionGUI. 
+        .
+        Since that means TaskAPI has the updated list of tasks, 
+        all we need to do is:
+
+        1) See if we need to add a new `TaskRow`
+        2) broadcast to all `TaskRow`s to update their current task.
+        """
+        num_tasks = api.num_tasks()  # Increment the number of rows.
+
             
-        uuid = str(newTask.get_uuid())  # Get the UUID of the new task.
+        if self.grid.rowCount() == num_tasks:  # If the row count of the grid is equal to the number of rows.
+            self.setMinimumHeight(num_tasks * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the number of rows times the row height.
+            self.rowArr.append(TaskRow(num_tasks))  # Append a new task row to the row array.
+            self.rowArr[num_tasks-1].insert(self.grid, num_tasks)
 
-        if self.grid.rowCount() == self.rows:  # If the row count of the grid is equal to the number of rows.
-            self.setMinimumHeight(self.rows * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the number of rows times the row height.
-
-            self.row_arr.append(TaskRow(self.rows, uuid))  # Append a new task row to the row array.
             # Row inserts itself into the grid, insertion logic is handled in `TaskRow` obj.
-            # Note that this may be tricky when changing order of tasks w.r.t column sorting, 
-            # as that logic will happen in this class.
-            # but idk what method we will use for sorting, for all I know qt makes it very easy.    
-           
-        self.row_arr[self.rows-1].update_task(uuid)  # Update the task in the row array.
-        self.row_arr[self.rows-1].insert(self.grid, self.rows)  # Insert the row into the grid.
+
+        for row in range(num_tasks):
+            self.rowArr[row].update_task()
 
     def add_header(self):
         # Make header row take up as little vertical space as it needs.
@@ -90,6 +92,24 @@ class GridWidget(QtWidgets.QWidget):
 
     def fill_grid(self):
         for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
-            self.row_arr.append(TaskRow(i, ""))  # Append a new task row to the row array.
+            self.rowArr.append(TaskRow(i))  # Append a new task row to the row array.
             self.row_arr[i].insert(self.grid, i+1)  # Insert the row into the grid.
         self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.
+
+    def _edit_task(self, idx: int):
+        """Passed to taskrows."""
+        cur_task = api.task_at(idx)
+        assert cur_task
+
+        edit_task_dialog = EditTaskDialog(str(cur_task.get("description") or ""), 
+            str(cur_task.get("due") or ""), 
+            str(cur_task.get("priority") or ""))
+        
+        if edit_task_dialog.exec():
+            cur_task.set("description", edit_task_dialog.description or None)
+            cur_task.set("due", edit_task_dialog.due or None)
+            cur_task.set("priority", edit_task_dialog.priority or None)
+            api.update_task(cur_task)
+
+    def _delete_task(self, idx: int):
+        """passed to taskrows."""

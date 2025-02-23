@@ -15,16 +15,18 @@
  *  Known Faults: None encountered
 """
 
+import sys
 from PySide6 import QtCore, QtWidgets
 from taskw_ng import TaskWarrior
 from typing import TypeAlias, Literal
 from utils.task import Task, status_t, priority_t
-from components import AddTaskDialog, TaskRow, COLS, ALIGN, menubar, EditTaskDialog
+from components.add_task_dialog import AddTaskDialog
+from components.task_row import TaskRow, COLS
+from components.align import ALIGN
+from components.menubar import MenuBar 
+from components.edit_task_dialog import EditTaskDialog
 from utils import api
-
-import sys
 from components.task_champion_gui import TaskChampionGUI  # Import the GUI class
-from utils import TaskWarriorInstance
 
 # Program entry point
 if __name__ == "__main__":

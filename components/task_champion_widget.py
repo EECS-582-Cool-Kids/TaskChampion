@@ -18,7 +18,6 @@
 from PySide6 import QtWidgets
 from components.add_task_dialog import AddTaskDialog
 from components.grid_widget import GridWidget
-from utils import TaskWarriorInstance
 from utils import api
 
 class TaskChampionWidget(QtWidgets.QWidget):

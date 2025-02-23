@@ -53,7 +53,7 @@ class TaskRow:
         grid.addWidget(self.edit_button, rowNum, len(self.cols) + 1)  # add the edit button to the grid
         grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)  # add the delete button to the grid
 
-     def update_task(self):
+    def update_task(self):
 
         # Uncomment the print lines for debugging, if necessary.
         # if self.task:

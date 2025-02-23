@@ -17,7 +17,6 @@
 
 from PySide6 import QtWidgets
 from .task_champion_widget import TaskChampionWidget
-from utils import TaskWarriorInstance
 
 class TaskChampionGUI:
     """The main application class for Task Champion."""  

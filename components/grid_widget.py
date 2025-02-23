@@ -17,7 +17,6 @@
 
 from PySide6 import QtCore, QtWidgets
 from .task_row import TaskRow
-from utils import TaskWarriorInstance
 
 class GridWidget(QtWidgets.QWidget):
     '''The widget that corresponds to a module'''

@@ -60,6 +60,39 @@ class TaskRow:
         self.edit_button.update_task()
         self.delete_button.update_task()
     
+    def edit_task(self):
+        assert self.task
+
+        edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""), 
+          str(self.task.get("due") or ""), 
+          str(self.task.get("priority") or ""))
+        
+        if edit_task_dialog.exec():
+            self.task.set("description", edit_task_dialog.description or None)
+            self.task.set("due", edit_task_dialog.due or None)
+            self.task.set("priority", edit_task_dialog.priority or None)
+            api.update_task(self.task)
+            self.update_task()
+            
+    def delete_task(self):
+        assert self.task  # throw error if called without a task
+        uuid = self.task.get_uuid()
+        TaskWarriorInstance.task_delete(uuid=uuid)  # delete task with the corresponding id
+        self.remove_task_row()  # remove the task row from the UI
+
+    def remove_task_row(self):
+        # Get the parent grid layout
+        grid = self.check.parentWidget().layout()
+        if not grid:
+            return
+    
+        # Loop through the widgets in the row and remove them
+        for widget in [self.check] + self.cols + [self.edit_button, self.delete_button]:
+            grid.removeWidget(widget)
+            widget.deleteLater()
+        # add an empty row to the grid to maintain the same number of rows
+        grid.addWidget(QtWidgets.QLabel(), grid.rowCount(), 0)
+
     def annihilate(self):
         # Get the parent grid layout
         grid = self.check.parentWidget().layout()
@@ -72,4 +105,3 @@ class TaskRow:
             widget.deleteLater()
         # add an empty row to the grid to maintain the same number of rows
         grid.addWidget(QtWidgets.QLabel(), grid.rowCount(), 0)
-        

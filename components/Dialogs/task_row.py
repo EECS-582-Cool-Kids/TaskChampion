@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/15/2025
+ *  Last Modified: 2/23/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -15,14 +15,12 @@
  *  Known Faults: None encountered
 """
 
-from utils.task import Task
 from PySide6 import QtCore, QtWidgets
-from .checkbox import Checkbox
-from .textbox import Textbox
-from .buttonbox import Buttonbox
-from .edit_task_dialog import EditTaskDialog
-from typing import Final, Optional
 from utils.task_api import api
+from components.GUI.checkbox import Checkbox
+from components.GUI.textbox import Textbox
+from components.GUI.buttonbox import Buttonbox
+from typing import Final, Callable
 
 # The names of the columns.
 # TODO: in the image Richard posted, the second col was Age instead of 'start', but taskw_ng doesn't have an age.
@@ -30,7 +28,7 @@ from utils.task_api import api
 COLS: Final = ('id', 'start', 'priority', 'project', 'recur', 'due', 'until', 'description', 'urgency')
 
 class TaskRow:
-    def __init__(self, row_num: int):
+    def __init__(self, row_num: int, edit_task: Callable[[int], None], delete_task: Callable[[int], None]):
         self.idx = row_num
 
         self.task = api.task_at(self.idx)
@@ -54,46 +52,15 @@ class TaskRow:
         grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)  # add the delete button to the grid
 
     def update_task(self):
-
-        # Uncomment the print lines for debugging, if necessary.
-        # if self.task:
-        #     print(f"taskID: {self.task.get_id()} => ", end="")
-        # else:
-        #     print("taskID: None => ", end="")
-
         self.task = api.task_at(self.idx)
 
-        # if self.task:
-        #     print(self.task.get_id())
-        # else:
-        #     print("None")
         self.check.update_task()
         for i in range(len(self.cols)):
             self.cols[i].update_task()
         self.edit_button.update_task()
         self.delete_button.update_task()
     
-    def edit_task(self):
-        assert self.task
-
-        edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""), 
-          str(self.task.get("due") or ""), 
-          str(self.task.get("priority") or ""))
-        
-        if edit_task_dialog.exec():
-            self.task.set("description", edit_task_dialog.description or None)
-            self.task.set("due", edit_task_dialog.due or None)
-            self.task.set("priority", edit_task_dialog.priority or None)
-            api.update_task(self.task)
-            self.update_task()
-            
-    def delete_task(self):
-        assert self.task  # throw error if called without a task
-        uuid = self.task.get_uuid()
-        TaskWarriorInstance.task_delete(uuid=uuid)  # delete task with the corresponding id
-        self.remove_task_row()  # remove the task row from the UI
-
-    def remove_task_row(self):
+    def annihilate(self):
         # Get the parent grid layout
         grid = self.check.parentWidget().layout()
         if not grid:
@@ -105,3 +72,4 @@ class TaskRow:
             widget.deleteLater()
         # add an empty row to the grid to maintain the same number of rows
         grid.addWidget(QtWidgets.QLabel(), grid.rowCount(), 0)
+        

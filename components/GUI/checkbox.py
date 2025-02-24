@@ -4,9 +4,9 @@
  *  Inputs: None
  *  Outputs: None
  *  Additional code sources: None
- *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan
+ *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/15/2025
+ *  Last Modified: 2/23/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -15,11 +15,11 @@
  *  Known Faults: None encountered
 """
 
-from utils.task import Task
 from PySide6 import QtCore, QtWidgets
-from utils import api
-from .TableCell import TableCell
+from utils.task_api import api
+from components.GUI.tablecell import TableCell
 from typing import Callable, Optional
+from utils.task import Task
 
 class Checkbox(TableCell):
     def __init__(self, row_num: int, get_task: Callable[[], Optional[Task]], attribute:str=""):
@@ -36,6 +36,9 @@ class Checkbox(TableCell):
         if self.active:  # If the cell is active.
             assert self.task  # Assert that the task is not None.
             self.my_checkbox.setChecked(self.task.get_status() == 'completed')  # Set the checked state of the checkbox to the status of the task.
+        else:
+            self.my_checkbox.setChecked(False)
+            self.my_checkbox.setEnabled(False)
         self.update()  # Update the cell.
 
     @QtCore.Slot()

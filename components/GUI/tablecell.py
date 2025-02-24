@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley
  *  Date: 2/15/2025
- *  Last Modified: 2/15/2025
+ *  Last Modified: 2/23/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -17,7 +17,7 @@
 
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets
-from utils import api
+from utils.task_api import api
 from typing import Callable, Optional
 
 class TableCell(QtWidgets.QLabel):

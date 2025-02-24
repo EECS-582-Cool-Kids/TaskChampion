@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/15/2025
+ *  Last Modified: 2/23/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -21,7 +21,7 @@ from .checkbox import Checkbox
 from .textbox import Textbox
 from .buttonbox import Buttonbox
 from .edit_task_dialog import EditTaskDialog
-from typing import Final, Optional
+from typing import Final, Optional, Callable
 from utils import api
 
 # The names of the columns.
@@ -30,7 +30,7 @@ from utils import api
 COLS: Final = ('id', 'start', 'priority', 'project', 'recur', 'due', 'until', 'description', 'urgency')
 
 class TaskRow:
-    def __init__(self, row_num: int):
+    def __init__(self, row_num: int, edit_task: Callable[[int], None], delete_task: Callable[[int], None]):
         self.idx = row_num
 
         self.task = api.task_at(self.idx)

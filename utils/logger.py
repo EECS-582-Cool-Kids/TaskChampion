@@ -1,5 +1,5 @@
 """
- *  Module Name: __init__.py
+ *  Module Name: logger.py
  *  Purpose: Initialization of the singleton TaskWarrior Logger object
  *  Inputs: None
  *  Outputs: None
@@ -14,6 +14,11 @@
  *  Invariants: None
  *  Known Faults: None encountered
 """
+import os
+import datetime
+from enum import Enum
+from .singleton import singleton
+from .sortmetric import SortMetric
 
 @singleton
 class Logger:

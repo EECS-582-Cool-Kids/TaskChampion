@@ -1,5 +1,5 @@
 """
- *  Module Name: __init__.py
+ *  Module Name: task_api.py
  *  Purpose: Initialization of the singleton TaskWarrior API object
  *  Inputs: None
  *  Outputs: None
@@ -14,6 +14,31 @@
  *  Invariants: None
  *  Known Faults: None encountered
 """
+import os
+import datetime
+from taskw_ng.warrior import TaskWarrior
+from .singleton import singleton
+from .sortmetric import SortMetric 
+from .task import Task
+from enum import Enum
+from typing import Callable, Optional
+
+def singleton(cls):
+    instances = {}
+    def getinstance(*args, **kwargs):
+        if cls not in instances:
+            instances[cls] = cls(*args, **kwargs)
+        return instances[cls]
+    return getinstance
+
+class SortMetric(Enum):
+    ID_ASCENDING           = 0
+    ID_DESCENDING          = 1
+    PRIORITY_ASCENDING     = 2
+    PRIORITY_DESCENDING    = 3
+    DESCRIPTION_ASCENDING  = 4
+    DESCRIPTION_DESCENDING = 5
+    # TODO: Add wayy more
 
 @singleton
 class TaskAPI:

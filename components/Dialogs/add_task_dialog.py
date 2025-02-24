@@ -16,10 +16,8 @@
 """
 
 from PySide6 import QtWidgets
-from utils.task import Task
-from .table_cell import TableCell
-from .checkbox import Checkbox
-from typing import Final, Optional
+from typing import Optional
+
 
 class AddTaskDialog(QtWidgets.QDialog):
     class TaskDetails:

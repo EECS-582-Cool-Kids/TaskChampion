@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/15/2025
+ *  Last Modified: 2/23/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -39,7 +39,7 @@ class TaskChampionGUI:
         self.load_styles()  # Load the styles.
     
     def load_tasks(self):
-        self.main_widget.grids[0].fill_grid()
+        self.main_widget.grids[0].fillGrid()
         self.load_styles()
 
     def load_styles(self):

@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/15/2025
+ *  Last Modified: 2/23/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -15,12 +15,10 @@
  *  Known Faults: None encountered
 """
 
-from utils.task import Task
-from PySide6 import QtCore, QtWidgets, QtGui
-from typing import Final
-from .TableCell import TableCell
+from PySide6 import QtWidgets
 from typing import Callable, Optional
-
+from .tablecell import TableCell
+from utils.task import Task
 
 class Buttonbox(TableCell):
     def __init__(self, row_num:int, get_task: Callable[[], Optional[Task]], attribute: str="", action: Optional[Callable[[], None]] = None):

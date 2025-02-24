@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/15/2025
+ *  Last Modified: 2/23/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -16,7 +16,7 @@
 """
 
 from PySide6 import QtCore, QtWidgets
-from .task_row import TaskRow, COLS
+from components.Dialogs.task_row import TaskRow, COLS
 from .menubar import MenuBar
 
 class GridWidget(QtWidgets.QWidget):
@@ -42,10 +42,6 @@ class GridWidget(QtWidgets.QWidget):
         self.row_arr: list[TaskRow] = []  # Initialize the row array to an empty list.
 
         self.add_header()  # Add the header to the grid.
-        self.fill_grid()  # Fill the grid with the default number of rows.
-
-        self.menu_bar = None    # declare the window's menu bar
-        self.set_menu_bar()     # set the window's menu bar
 
     def add_task(self) -> None:
         """Assumes that addTask has already been called in TaskChampionGUI. 
@@ -61,13 +57,21 @@ class GridWidget(QtWidgets.QWidget):
             
         if self.grid.rowCount() == num_tasks:  # If the row count of the grid is equal to the number of rows.
             self.setMinimumHeight(num_tasks * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the number of rows times the row height.
-            self.row_arr.append(TaskRow(num_tasks))  # Append a new task row to the row array.
-            self.row_arr[num_tasks-1].insert(self.grid, num_tasks)
+
+            # Append a new task row to the row array.
+            try:
+                self.row_arr.append(TaskRow(num_tasks, self._edit_task, self._delete_task))
+                self.row_arr[num_tasks-1].insert(self.grid, num_tasks)
+            except ValueError as err:
+                logger.log_error(str(err))
 
             # Row inserts itself into the grid, insertion logic is handled in `TaskRow` obj.
-
-        for row in range(num_tasks):
+            
+        for row in range(len(self.row_arr)):
             self.row_arr[row].update_task()
+        
+        refresh_styles()
+
 
     def add_header(self):
         # Make header row take up as little vertical space as it needs.
@@ -90,10 +94,17 @@ class GridWidget(QtWidgets.QWidget):
         """Sets the menu bar for the application."""
         self.menu_bar = MenuBar()  # Create a new menu bar.
 
-    def fill_grid(self):
+    def fillGrid(self):
+        # Also adds tasks to the grid, which doesn't work for the "example" tab. So for now, it's empty.
+
         for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
-            self.row_arr.append(TaskRow(i))  # Append a new task row to the row array.
-            self.row_arr[i].insert(self.grid, i+1)  # Insert the row into the grid.
+            # Append a new task row to the row array.
+            try:
+                self.row_arr.append(TaskRow(i, self._edit_task, self._delete_task))
+                self.row_arr[i].insert(self.grid, i+1)  # Insert the row into the grid.
+            except ValueError as err:
+                logger.log_error(str(err))
+
         self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.
 
     def _edit_task(self, idx: int):
@@ -111,5 +122,21 @@ class GridWidget(QtWidgets.QWidget):
             cur_task.set("priority", edit_task_dialog.priority or None)
             api.update_task(cur_task)
 
+            for i in range(api.num_tasks()):
+                self.rowArr[i].update_task()
+
+        refresh_styles()
+
     def _delete_task(self, idx: int):
         """passed to taskrows."""
+        api.delete_at(idx)
+        
+        num_tasks = api.num_tasks()
+
+        if num_tasks > self.DEFAULT_ROWS:
+            self.rowArr.pop(-1).annihilate()
+        
+        for i in range(len(self.rowArr)):
+            self.rowArr[i].update_task()
+
+        refresh_styles()

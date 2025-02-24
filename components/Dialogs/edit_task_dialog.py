@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/15/2025
+ *  Last Modified: 2/23/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -16,8 +16,6 @@
 """
 
 from PySide6 import QtCore, QtWidgets
-from .buttonbox import Buttonbox
-from .textbox import Textbox
 
 class EditTaskDialog(QtWidgets.QDialog):
     def __init__(self, description="", due="", priority=""):

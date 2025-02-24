@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan
  *  Date: 2/15/2025
- *  Last Modified: 2/15/2025
+ *  Last Modified: 2/23/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -16,10 +16,10 @@
 """
 
 from utils.task import Task
-from PySide6 import QtCore, QtWidgets, QtGui
+from PySide6 import QtWidgets
 from typing import Callable, Optional
-from .TableCell import TableCell
-from utils import api
+from .tablecell import TableCell
+from utils.task_api import api
 
 class Textbox(TableCell):
     def __init__(self, row_num:int, get_task: Callable[[], Optional[Task]], attribute: str=""): 
@@ -40,4 +40,7 @@ class Textbox(TableCell):
             assert self.attribute  # Assert that the attribute is not None.
             self.my_text = str(self.task.get(self.attribute) or "")  # Set the text of the label to the attribute of the task.
             self.my_label.setText(self.my_text)  # Set the text of the label to the text.
+         else:
+            self.my_text = ""
+            self.my_label.setText("")
         self.update()  # Update the cell.

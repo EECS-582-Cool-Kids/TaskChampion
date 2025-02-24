@@ -1,6 +1,6 @@
 """
- *  Module Name: sort_metric.py
- *  Purpose: Initialization of the singleton TaskWarrior SortMetric object
+ *  Module Name: sortmetric.py
+ *  Purpose: Initialization of the SortMetric TaskWarrior API enum
  *  Inputs: None
  *  Outputs: None
  *  Additional code sources: None
@@ -14,6 +14,9 @@
  *  Invariants: None
  *  Known Faults: None encountered
 """
+import os
+import datetime
+from enum import Enum
 
 class SortMetric(Enum):
     ID_ASCENDING           = 0

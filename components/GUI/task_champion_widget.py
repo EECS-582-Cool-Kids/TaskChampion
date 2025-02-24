@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/15/2025
+ *  Last Modified: 2/23/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -16,10 +16,9 @@
 """
 
 from PySide6 import QtWidgets
-from components.add_task_dialog import AddTaskDialog
-from components.grid_widget import GridWidget
+from components.Dialogs.add_task_dialog import AddTaskDialog
+from components.GUI.grid_widget import GridWidget
 from .menubar import MenuBar
-from utils import api
 
 class TaskChampionWidget(QtWidgets.QWidget):
     '''The main widget for the Task Champion application.'''
@@ -68,20 +67,9 @@ class TaskChampionWidget(QtWidgets.QWidget):
             recur       = newTaskDetails.recurrence,
             due         = newTaskDetails.due,
         )  # Create a new task with the details from the add task dialog.
-        
-        #newTask.set_priority(newTaskDetails.priority)  # Set the priority of the new task.
-        #newTask.set_project(newTaskDetails.project)   # Set the project of the new task.
-
-        #if newTaskDetails.recurrence != None:  # If the recurrence of the new task is not None.
-        #    newTask.set_recur(newTaskDetails.recurrence)  # Set the recurrence of the new task.
-        #if newTaskDetails.due != None:  # If the due date of the new task is not None.
-        #    newTask.set_due(newTaskDetails.due)  # Set the due date of the new task.
-
-        # TaskAPI().update(newTask)  # Update the new task in TaskWarrior.
 
         self.grids[self.currentGrid].addTask()  # Add the new task to the current grid.
 
     def set_menu_bar(self):
         """Sets the menu bar for the application."""  
         self.menu_bar = MenuBar()  # Create a new menu bar.
-        self.layout().setMenuBar(self.menu_bar)  # Set the menu bar of the layout to be the new menu bar.

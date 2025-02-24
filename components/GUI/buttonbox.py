@@ -20,7 +20,7 @@ from typing import Callable, Optional
 from .tablecell import TableCell
 from utils.task import Task
 
-class Buttonbox(TableCell):
+class ButtonBox(TableCell):
     def __init__(self, row_num:int, get_task: Callable[[], Optional[Task]], attribute: str="", action: Optional[Callable[[], None]] = None):
         
         self.my_button = QtWidgets.QPushButton(attribute)  # Create a push button with the attribute as the text.

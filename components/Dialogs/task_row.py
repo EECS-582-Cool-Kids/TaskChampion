@@ -19,7 +19,7 @@ from PySide6 import QtCore, QtWidgets
 from utils.task_api import api
 from components.GUI.checkbox import Checkbox
 from components.GUI.textbox import Textbox
-from components.GUI.buttonbox import Buttonbox
+from components.GUI.buttonbox import ButtonBox
 from typing import Final, Callable
 
 # The names of the columns.
@@ -35,8 +35,8 @@ class TaskRow:
         self.check = Checkbox(row_num, self.get_task)
         self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]
 
-        self.edit_button = Buttonbox(row_num, self.get_task, "edit", self.edit_task)
-        self.delete_button = Buttonbox(row_num, self.get_task, "delete", self.delete_task)
+        self.edit_button = ButtonBox(row_num, self.get_task, "edit", self.edit_task)
+        self.delete_button = ButtonBox(row_num, self.get_task, "delete", self.delete_task)
 
     def get_task(self): return self.task
 

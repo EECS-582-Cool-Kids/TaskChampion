@@ -20,6 +20,7 @@ from utils.task_api import api
 from components.GUI.checkbox import Checkbox
 from components.GUI.textbox import Textbox
 from components.GUI.buttonbox import ButtonBox
+from components.Dialogs.edit_task_dialog import EditTaskDialog
 from typing import Final, Callable
 
 # The names of the columns.
@@ -77,7 +78,7 @@ class TaskRow:
     def delete_task(self):
         assert self.task  # throw error if called without a task
         uuid = self.task.get_uuid()
-        TaskWarriorInstance.task_delete(uuid=uuid)  # delete task with the corresponding id
+        api.task_delete(uuid=uuid)  # delete task with the corresponding id
         self.remove_task_row()  # remove the task row from the UI
 
     def remove_task_row(self):

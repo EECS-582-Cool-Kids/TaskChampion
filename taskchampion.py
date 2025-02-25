@@ -25,6 +25,5 @@ if __name__ == "__main__":
     app = TaskChampionGUI()  # Create a new TaskChampionGUI object.
     app.load_tasks()
     # TODO: Consider doing this in a better way.
-    refresh_styles = app.load_styles
     sys.exit(app.on_exit())  # Exit the application.
     logger.exit()

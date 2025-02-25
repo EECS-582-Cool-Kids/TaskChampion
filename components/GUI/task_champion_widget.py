@@ -63,7 +63,7 @@ class TaskChampionWidget(QtWidgets.QWidget):
 
         api.add_new_task(
             description = newTaskDetails.description, 
-            tag         = newTaskDetails.tag,
+            tags        = newTaskDetails.tag,
             priority    = newTaskDetails.priority,
             project     = newTaskDetails.project,
             recur       = newTaskDetails.recurrence,

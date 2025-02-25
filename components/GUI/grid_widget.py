@@ -128,7 +128,7 @@ class GridWidget(QtWidgets.QWidget):
             api.update_task(cur_task)
 
             for i in range(api.num_tasks()):
-                self.rowArr[i].update_task()
+                self.row_arr[i].update_task()
 
         self.refresh_styles()
 
@@ -139,9 +139,9 @@ class GridWidget(QtWidgets.QWidget):
         num_tasks = api.num_tasks()
 
         if num_tasks > self.DEFAULT_ROWS:
-            self.rowArr.pop(-1).annihilate()
+            self.row_arr.pop(-1).annihilate()
         
-        for i in range(len(self.rowArr)):
-            self.rowArr[i].update_task()
+        for i in range(len(self.row_arr)):
+            self.row_arr[i].update_task()
 
         self.refresh_styles()

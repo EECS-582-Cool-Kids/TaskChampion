@@ -1,13 +1,17 @@
+from utils.task_api import register_api, FakeTaskAPI
+register_api(FakeTaskAPI) # Order matters.
+
 from utils.task_api import api
 
 class Tests:
     '''Taskwarrior API tests'''
     def test_api_add_task(self):
         '''Test Adding a basic task to the API'''
+        api.clear_tasks()
 
         task : dict = api.add_new_task(
             description = "Test Description", 
-            tag         = "A",
+            tags        = "A",
             priority    = "H",
             project     = "Test Project",
         ) 
@@ -20,19 +24,26 @@ class Tests:
     def test_api_update_task(self):
         '''Test updating a task in the API'''
 
+        api.clear_tasks()
+        api.add_new_task(description="description")
+
         task_idx = api.num_tasks() - 1
-        assert task_idx != -1 # test that a task exists. If not, then the test method failed.
+        assert task_idx == 0 # test that a task exists. If not, then the test method failed.
 
         task = api.task_at(task_idx)
         assert task != None
 
         task.set("description", "New Description")
         api.update_task(task)
-
-        assert api.task_at(task_idx).get_description() == "New Description"
+        
+        t = api.task_at(task_idx)
+        assert t != None
+        assert t.get_description() == "New Description"
     
     def test_api_delete_task(self):
         '''Test deleting a task in the API'''
+        api.clear_tasks()
+        api.add_new_task(description="description")
 
         task_idx = api.num_tasks() - 1
         assert task_idx != -1 # test that a task exists. If not, then the test method failed.

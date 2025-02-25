@@ -21,10 +21,41 @@
 }
 
 
+XpBar {
+    background-color: white;
+    text-align: center;
+    padding: 2px;
+
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 2px;    
+}
+
+
+/* Chunk refers to the actual 'bar' part of the xpbar'
+XpBar::chunk {
+    border-style: solid;
+    border-width: 1px;
+    border-radius:2px;
+    
+    text-align: center;
+}
+
+
+/* Example color styling. */
+XpBar#XpBarMain {
+    border-color: rgb(255, 127, 53);
+}
+
+XpBar#XpBarMain::chunk {
+    background-color: orange;
+}
+
 TableCell {
     border: 2px solid red;
     width: 100%;
 }
+
 
 [row-even="0"][row-active="False"] {
   background-color:rgb(24, 24, 151)

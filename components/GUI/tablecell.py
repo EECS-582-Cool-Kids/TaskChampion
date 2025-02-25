@@ -29,7 +29,7 @@ class TableCell(QtWidgets.QLabel):
         self.attribute = attribute  # Set the attribute of the cell.
         self.get_task = get_task  # Set the get task method.
         
-        self.layout = QtWidgets.QHBoxLayout(self)  # Create a horizontal layout.
+        self.my_layout = QtWidgets.QHBoxLayout(self)  # Create a horizontal layout.
 
         # Defined by subclass
         self.get_sub_widget: Optional[Callable[[], QtWidgets.QWidget]]  # Declare the get sub widget method.
@@ -42,7 +42,7 @@ class TableCell(QtWidgets.QLabel):
 
     def add_sub_widget(self):
         assert self.get_sub_widget  # Assert that the get sub widget method is not None.
-        self.layout.addWidget(self.get_sub_widget())  # Add the sub widget to the layout.
+        self.my_layout.addWidget(self.get_sub_widget())  # Add the sub widget to the layout.
 
     def update_task(self):
         self.task = self.get_task()  # Get the task from the get task method.

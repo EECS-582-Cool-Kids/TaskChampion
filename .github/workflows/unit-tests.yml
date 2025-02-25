@@ -30,7 +30,7 @@ jobs:
         sudo apt-get install taskwarrior
     - name: Initialize Taskwarrior
       run: |
-        task config confirmation off
+        echo "data.location=~/.task" > ~/.taskrc
     - name: Test with pytest
       run: |
         pytest taskchampion-tests.py

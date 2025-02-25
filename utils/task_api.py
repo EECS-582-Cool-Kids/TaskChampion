@@ -34,8 +34,19 @@ def singleton(cls):
     return getinstance
 
 class TaskAPI:
-    def __init__(self): ...
-    def _init_task_list(self) -> None: ...
+    def __init__(self):
+        self.sort_metric: SortMetric = SortMetric.DESCRIPTION_ASCENDING
+
+        # The list that is sorted according to some criteria.
+        self.task_list: list[Task] = []
+
+        # increments every time a new task is created.
+        self.cur_id = 0
+
+        self._init_task_list()
+    def _init_task_list(self) -> None:
+        k, r = self._get_sort_params(self.sort_metric)
+        self.task_list.sort(key=k, reverse=r)
     
     @staticmethod
     def _get_sort_params(metric: SortMetric) -> tuple[Callable[[Task], str | int], bool]:
@@ -87,9 +98,15 @@ class TaskAPI:
             case SortMetric.DESCRIPTION_DESCENDING:
                 return alpha_sorting('description'), True
 
-
-    def num_tasks(self) -> int: ...
-    def task_at(self, idx: int) -> Optional[Task]: ...
+    def num_tasks(self) -> int:
+        return len(self.task_list)
+        
+    def task_at(self, idx: int) -> Optional[Task]:
+        if len(self.task_list) <= idx:
+            return None
+        
+        return self.task_list[idx]
+    
     def add_new_task(self, description: str, tags=None, **kw) -> dict: ...
     def add_task(self, t: Task) -> None: ...
     def delete_at(self, idx: int) -> None: ...
@@ -101,12 +118,7 @@ class TaskAPI:
 class TaskAPIImpl(TaskAPI):
     def __init__(self):
         self.warrior = TaskWarrior()
-        self.sort_metric: SortMetric = SortMetric.DESCRIPTION_ASCENDING
-
-        # The list that is sorted according to some criteria.
-        self.task_list: list[Task] = []
-
-        self._init_task_list()
+        super().__init__()
 
     def _init_task_list(self) -> None:
         """Refreshes the task list. Private.
@@ -117,17 +129,7 @@ class TaskAPIImpl(TaskAPI):
         tasks = self.warrior.load_tasks()
         self.task_list = [Task(x) for x in tasks['pending'] + tasks['completed']]
         
-        k, r = self._get_sort_params(self.sort_metric)
-        self.task_list.sort(key=k, reverse=r)
-    
-    def num_tasks(self) -> int:
-        return len(self.task_list)
-        
-    def task_at(self, idx: int) -> Optional[Task]:
-        if len(self.task_list) <= idx:
-            return None
-        
-        return self.task_list[idx]
+        super()._init_task_list()
     
     def add_new_task(self, description: str, tags=None, **kw) -> dict:
         task : dict = self.warrior.task_add(description, tags, **kw)
@@ -162,19 +164,7 @@ class TaskAPIImpl(TaskAPI):
 @singleton
 class FakeTaskAPI(TaskAPI):
     def __init__(self):
-        self.sort_metric: SortMetric = SortMetric.DESCRIPTION_ASCENDING
-
-        # The list that is sorted according to some criteria.
-        self.task_list: list[Task] = []
-
-        # increments every time a new task is created.
-        self.cur_id = 0
-
-        self._init_task_list()
-
-    def _init_task_list(self) -> None:
-        k, r = self._get_sort_params(self.sort_metric)
-        self.task_list.sort(key=k, reverse=r)
+        super().__init__()
     
     def num_tasks(self) -> int:
         return len(self.task_list)
@@ -206,7 +196,7 @@ class FakeTaskAPI(TaskAPI):
         if len(self.task_list) <= idx:
             return
 
-        t = self.task_list.pop(idx)
+        self.task_list.pop(idx)
 
     def update_task(self, newTask: Task) -> None:
         found = False

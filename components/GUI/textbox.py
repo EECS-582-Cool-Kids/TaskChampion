@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan
  *  Date: 2/15/2025
- *  Last Modified: 2/15/2025
+ *  Last Modified: 2/23/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -16,9 +16,10 @@
 """
 
 from utils.task import Task
-from PySide6 import QtCore, QtWidgets, QtGui
+from PySide6 import QtWidgets
 from typing import Callable, Optional
-from .TableCell import TableCell
+from .tablecell import TableCell
+from utils.task_api import api
 
 class Textbox(TableCell):
     def __init__(self, row_num:int, get_task: Callable[[], Optional[Task]], attribute: str=""): 
@@ -26,11 +27,11 @@ class Textbox(TableCell):
         self.my_text = ""  # Initialize the text of the textbox
         self.my_label = QtWidgets.QLabel()  # Create a label.
         
-        self.getSubWidget = lambda: self.my_label  # Create a lambda function that returns the label.
+        self.get_sub_widget = lambda: self.my_label  # Create a lambda function that returns the label.
 
         super().__init__(row_num, get_task, attribute)  # Call the parent constructor.
 
-        self._addSubWidget()  # Add the label to the sub widgets list.
+        self.add_sub_widget()  # Add the label to the sub widgets list.
 
     def update_task(self):
         super().update_task()  # Call the parent update task method.

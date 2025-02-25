@@ -15,6 +15,7 @@
  *  Known Faults: None encountered
 """
 
+from typing import Callable
 from PySide6 import QtCore, QtWidgets
 from components.Dialogs.task_row import TaskRow, COLS
 from .menubar import MenuBar
@@ -31,7 +32,7 @@ class GridWidget(QtWidgets.QWidget):
     DEFAULT_ROWS=10  # Default number of rows to display.
     DEFAULT_WIDTH=800 # Default width, scrollable.
 
-    def __init__(self):
+    def __init__(self, load_styles : Callable[[], None]):
         super().__init__()  # Call the parent constructor.
         self.setObjectName('GridWidget')  # Set the object name for styling.
         self.setFixedWidth(self.DEFAULT_WIDTH)
@@ -49,6 +50,8 @@ class GridWidget(QtWidgets.QWidget):
         self.row_arr: list[TaskRow] = []  # Initialize the row array to an empty list.
 
         self.add_header()  # Add the header to the grid.
+
+        self.refresh_styles = load_styles
 
     def add_task(self) -> None:
         """Assumes that addTask has already been called in TaskChampionGUI. 

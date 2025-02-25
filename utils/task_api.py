@@ -31,15 +31,6 @@ def singleton(cls):
         return instances[cls]
     return getinstance
 
-class SortMetric(Enum):
-    ID_ASCENDING           = 0
-    ID_DESCENDING          = 1
-    PRIORITY_ASCENDING     = 2
-    PRIORITY_DESCENDING    = 3
-    DESCRIPTION_ASCENDING  = 4
-    DESCRIPTION_DESCENDING = 5
-    # TODO: Add wayy more
-
 @singleton
 class TaskAPI:
     def __init__(self):

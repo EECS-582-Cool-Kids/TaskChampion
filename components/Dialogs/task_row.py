@@ -76,9 +76,7 @@ class TaskRow:
             self.update_task()
             
     def delete_task(self):
-        assert self.task  # throw error if called without a task
-        uuid = self.task.get_uuid()
-        api.task_delete(uuid=uuid)  # delete task with the corresponding id
+        api.delete_at(self.idx)
         self.remove_task_row()  # remove the task row from the UI
 
     def remove_task_row(self):

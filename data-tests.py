@@ -83,3 +83,7 @@ class TestClass:
 
         test_warn = logger.log_warn("Test")
         assert "Test" in test_warn and "WARN" in test_warn
+    
+    def test_xp(self):
+        '''Test the internal XP system. TO-DO'''
+        pass

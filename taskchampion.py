@@ -18,13 +18,12 @@ from utils.task_api import TaskAPIImpl, register_api
 register_api(TaskAPIImpl) # Order matters.
 
 import sys
-from PySide6 import QtCore
 from utils.logger import logger
-from components.GUI.task_champion_gui import TaskChampionGUI  # Import the GUI class
+from components.GUI.task_champion_gui import TaskChampionGUIImpl  # Import the GUI class
 
 # Program entry point
 if __name__ == "__main__":
-    app = TaskChampionGUI()  # Create a new TaskChampionGUI object.
+    app = TaskChampionGUIImpl()  # Create a new TaskChampionGUI object.
     app.load_tasks()
     # TODO: Consider doing this in a better way.
     sys.exit(app.on_exit())  # Exit the application.

@@ -14,7 +14,18 @@
  *  Invariants: None
  *  Known Faults: None encountered
 """
+from utils.task_api import register_api, FakeTaskAPI
+register_api(FakeTaskAPI) # Order matters.
+
+import pytest
+from components.GUI.task_champion_gui import TaskChampionGUITest
+from components.GUI.task_champion_widget import TaskChampionWidget
 
 class TestClass:
-    def test_placeholder(self):
-        pass
+    @pytest.fixture(scope="session")
+    def gui(self):
+        gui = TaskChampionGUITest()
+        yield gui
+
+    def test_placeholder(self, gui : TaskChampionGUITest):
+        ''''''

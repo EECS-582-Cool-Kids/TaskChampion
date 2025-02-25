@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley
  *  Date: 2/15/2025
- *  Last Modified: 2/15/2025
+ *  Last Modified: 2/23/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -17,7 +17,7 @@
 
 from utils.task import Task
 from PySide6 import QtCore, QtWidgets
-from utils import taskWarriorInstance
+from utils.task_api import api
 from typing import Callable, Optional
 
 class TableCell(QtWidgets.QLabel):
@@ -32,7 +32,7 @@ class TableCell(QtWidgets.QLabel):
         self.layout = QtWidgets.QHBoxLayout(self)  # Create a horizontal layout.
 
         # Defined by subclass
-        self.getSubWidget: Optional[Callable[[], QtWidgets.QWidget]]  # Declare the get sub widget method.
+        self.get_sub_widget: Optional[Callable[[], QtWidgets.QWidget]]  # Declare the get sub widget method.
 
         self.update_task()  # Update the task.
 
@@ -40,9 +40,9 @@ class TableCell(QtWidgets.QLabel):
         
         self.setProperty('row-even', f"{row_num % 2}")  # Set the row even property of the cell.
 
-    def _addSubWidget(self):
-        assert self.getSubWidget  # Assert that the get sub widget method is not None.
-        self.layout.addWidget(self.getSubWidget())  # Add the sub widget to the layout.
+    def add_sub_widget(self):
+        assert self.get_sub_widget  # Assert that the get sub widget method is not None.
+        self.layout.addWidget(self.get_sub_widget())  # Add the sub widget to the layout.
 
     def update_task(self):
         self.task = self.get_task()  # Get the task from the get task method.

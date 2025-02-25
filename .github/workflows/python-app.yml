@@ -27,6 +27,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pytest taskw-ng
+        task
         sudo apt-get install taskwarrior
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test with pytest

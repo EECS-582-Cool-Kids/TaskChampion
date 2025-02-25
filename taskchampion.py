@@ -17,14 +17,12 @@
 
 import sys
 from PySide6 import QtCore
-from utils.logger import Logger
+from utils.logger import logger
 from components.GUI.task_champion_gui import TaskChampionGUI  # Import the GUI class
 
 # Program entry point
 if __name__ == "__main__":
     app = TaskChampionGUI()  # Create a new TaskChampionGUI object.
     app.load_tasks()
-    # TODO: Consider doing this in a better way.
-    refresh_styles = app.load_styles
     sys.exit(app.on_exit())  # Exit the application.
     logger.exit()

@@ -18,8 +18,8 @@
 from PySide6 import QtWidgets
 from components.Dialogs.add_task_dialog import AddTaskDialog
 from components.GUI.grid_widget import GridWidget
+from components.GUI.xp_controller_widget import XpControllerWidget
 from .menubar import MenuBar
-from components.GUI.xpbar import XpBar
 from utils.task_api import api
 from typing import Callable
 
@@ -34,7 +34,6 @@ class TaskChampionWidget(QtWidgets.QWidget):
         
         # Create a vertical layout. Currently, contains grid + Add Task button.
         self.task_layout = QtWidgets.QVBoxLayout()
-
         
         self.main_layout.addLayout(self.task_layout)  # Set the layout of the widget to be the vertical layout.
         # TODO: put another layout in the 'gamefication' part of the screen, and do something with it.
@@ -43,16 +42,14 @@ class TaskChampionWidget(QtWidgets.QWidget):
 
         self.main_tab = QtWidgets.QTabWidget()  # Create a tab widget.
         self.add_button = QtWidgets.QPushButton("Add Task")  # Create a push button.
-
-        self.xp_bar = XpBar(self)
-        self.xp_bar.set_max_xp(5) # TODO: Replace this with a meaningful value.
-        self.main_layout.addWidget(self.xp_bar)
+        self.xp_bars = XpControllerWidget() # Create XP Controller Widget
 
         self.add_button.setMaximumWidth(100)  # Set the maximum width of the push button.
         self.add_button.clicked.connect(lambda: self.add_task())  # Connect the clicked signal of the push button to the addTask method.
  
         self.task_layout.addWidget(self.add_button)  # Add the push button to the layout.
         self.task_layout.addWidget(self.main_tab)  # Add the tab widget to the layout.
+        self.main_layout.addWidget(self.xp_bars) # Add the xp bar widget to the layout.
 
         self.grids = [GridWidget(load_styles), GridWidget(load_styles)]  # Create a list of grid widgets.
         self.main_tab.addTab(self.grids[0].scroll_area, "Example Tab")  # Add the first grid widget to the tab widget.
@@ -72,8 +69,6 @@ class TaskChampionWidget(QtWidgets.QWidget):
     def add_task(self):
         '''Add a task to the GUI list and link it to a new task in TaskWarrior.'''
         # TODO: Do something meaningful with this, remove it from this function!
-        print(self.xp_bar.add_xp(1))
-
         newTaskDetails : AddTaskDialog.TaskDetails | None = self.add_task_dialog.add_task()  # Get the details of the new task from the add task dialog.
         
         if newTaskDetails == None:  # If the new task details are None.

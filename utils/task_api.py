@@ -122,9 +122,11 @@ class TaskAPI:
         
         return self.task_list[idx]
     
-    def add_new_task(self, description: str, tags=None, **kw):
-        self.warrior.task_add(description, tags, **kw)
+    def add_new_task(self, description: str, tags=None, **kw) -> dict:
+        task : dict = self.warrior.task_add(description, tags, **kw)
         self._init_task_list()
+
+        return task
 
     def add_task(self, t: Task) -> None:
         # Unused at the moment.

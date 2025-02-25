@@ -14,6 +14,9 @@
  *  Invariants: None
  *  Known Faults: None encountered
 """
+import os
+os.environ['QT_OPENGL'] = 'software'
+
 from utils.task_api import register_api, FakeTaskAPI
 register_api(FakeTaskAPI) # Order matters.
 

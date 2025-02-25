@@ -81,5 +81,5 @@ class TestClass:
         test_info = logger.log_info("Test")
         assert "Test" in test_info and "INFO" in test_info
 
-        test_warn = logger.log_info("Test")
+        test_warn = logger.log_warn("Test")
         assert "Test" in test_warn and "WARN" in test_warn

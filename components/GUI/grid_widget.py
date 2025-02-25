@@ -15,16 +15,20 @@
  *  Known Faults: None encountered
 """
 
+from typing import Callable
 from PySide6 import QtCore, QtWidgets
 from components.Dialogs.task_row import TaskRow, COLS
 from .menubar import MenuBar
+from components.Dialogs.edit_task_dialog import EditTaskDialog
+from utils.logger import logger
+from utils.task_api import api
 
 class GridWidget(QtWidgets.QWidget):
     '''The widget that corresponds to a module'''
     ROW_HEIGHT=50  # Height of each row in the grid.
     DEFAULT_ROWS=10  # Default number of rows to display.
 
-    def __init__(self):
+    def __init__(self, load_styles : Callable[[], None]):
         super().__init__()  # Call the parent constructor.
         self.setObjectName('GridWidget')  # Set the object name for styling.
         self.setFixedHeight(200)  # Set the fixed height of the widget. 
@@ -42,6 +46,8 @@ class GridWidget(QtWidgets.QWidget):
         self.row_arr: list[TaskRow] = []  # Initialize the row array to an empty list.
 
         self.add_header()  # Add the header to the grid.
+
+        self.refresh_styles = load_styles
 
     def add_task(self) -> None:
         """Assumes that addTask has already been called in TaskChampionGUI. 
@@ -70,8 +76,7 @@ class GridWidget(QtWidgets.QWidget):
         for row in range(len(self.row_arr)):
             self.row_arr[row].update_task()
         
-        refresh_styles()
-
+        self.refresh_styles()
 
     def add_header(self):
         # Make header row take up as little vertical space as it needs.
@@ -125,7 +130,7 @@ class GridWidget(QtWidgets.QWidget):
             for i in range(api.num_tasks()):
                 self.rowArr[i].update_task()
 
-        refresh_styles()
+        self.refresh_styles()
 
     def _delete_task(self, idx: int):
         """passed to taskrows."""
@@ -139,4 +144,4 @@ class GridWidget(QtWidgets.QWidget):
         for i in range(len(self.rowArr)):
             self.rowArr[i].update_task()
 
-        refresh_styles()
+        self.refresh_styles()

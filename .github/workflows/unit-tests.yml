@@ -1,7 +1,19 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+# *  Module Name: unit-tests.yml
+# *  Purpose: GitHub Workflow object that runs unit tests on the project when a PR is made to the develop branch.
+# *  Inputs: None
+# *  Outputs: None
+# *  Additional code sources: None
+# *  Developers: Jacob Wilkus
+# *  Date: 2/25/2025
+# *  Last Modified: 2/25/2025
+# *  Preconditions: None
+# *  Postconditions: None
+# *  Error/Exception conditions: None
+# *  Side effects: None
+# *  Invariants: None
+# *  Known Faults: None encountered
 
-name: Python application
+name: Unit Tests
 
 on:
   push:
@@ -31,6 +43,12 @@ jobs:
     - name: Initialize Taskwarrior
       run: |
         echo "data.location=~/.task" > ~/.taskrc
-    - name: Test with pytest
+    - name: API Tests
       run: |
-        pytest taskchampion-tests.py
+        pytest api-tests.py
+    - name: Data Tests
+      run: |
+        pytest data-tests.py
+    - name: GUI Tests
+      run: |
+        pytest gui-tests.py

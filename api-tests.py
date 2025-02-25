@@ -1,14 +1,29 @@
-from utils.task_api import register_api, FakeTaskAPI
-register_api(FakeTaskAPI) # Order matters.
+"""
+ *  Module Name: api-tests.py
+ *  Purpose: Unit Tests for the Taskwarrior API.
+ *  Inputs: None
+ *  Outputs: None
+ *  Additional code sources: None
+ *  Developers: Ethan Berkley, Jacob Wilkus
+ *  Date: 2/25/2025
+ *  Last Modified: 2/25/2025
+ *  Preconditions: None
+ *  Postconditions: None
+ *  Error/Exception conditions: None
+ *  Side effects: None
+ *  Invariants: None
+ *  Known Faults: None encountered
+"""
+
+from utils.task_api import register_api, TaskAPIImpl
+register_api(TaskAPIImpl) # Order matters.
 
 from utils.task_api import api
 
-class Tests:
+class TestClass:
     '''Taskwarrior API tests'''
     def test_api_add_task(self):
         '''Test Adding a basic task to the API'''
-        api.clear_tasks()
-
         task : dict = api.add_new_task(
             description = "Test Description", 
             tags        = "A",
@@ -24,11 +39,8 @@ class Tests:
     def test_api_update_task(self):
         '''Test updating a task in the API'''
 
-        api.clear_tasks()
-        api.add_new_task(description="description")
-
         task_idx = api.num_tasks() - 1
-        assert task_idx == 0 # test that a task exists. If not, then the test method failed.
+        assert task_idx != -1 # test that a task exists. If not, then the test method failed.
 
         task = api.task_at(task_idx)
         assert task != None
@@ -42,9 +54,6 @@ class Tests:
     
     def test_api_delete_task(self):
         '''Test deleting a task in the API'''
-        api.clear_tasks()
-        api.add_new_task(description="description")
-
         task_idx = api.num_tasks() - 1
         assert task_idx != -1 # test that a task exists. If not, then the test method failed.
 

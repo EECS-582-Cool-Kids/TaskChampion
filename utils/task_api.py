@@ -40,9 +40,6 @@ class TaskAPI:
         # The list that is sorted according to some criteria.
         self.task_list: list[Task] = []
 
-        # increments every time a new task is created.
-        self.cur_id = 0
-
         self._init_task_list()
     def _init_task_list(self) -> None:
         k, r = self._get_sort_params(self.sort_metric)
@@ -165,6 +162,9 @@ class TaskAPIImpl(TaskAPI):
 class FakeTaskAPI(TaskAPI):
     def __init__(self):
         super().__init__()
+
+        # increments every time a new task is created.
+        self.cur_id = 0
     
     def num_tasks(self) -> int:
         return len(self.task_list)

@@ -17,7 +17,7 @@
 
 from typing import Callable
 from PySide6 import QtWidgets
-from components.Dialogs.task_row import TaskRow, TaskRowImpl, TaskRowTest, COLS
+from components.Dialogs.task_row import TaskRow, COLS
 from .menubar import MenuBar
 from utils.logger import logger
 from utils.task_api import api
@@ -96,32 +96,15 @@ class GridWidget(QtWidgets.QWidget):
         """Sets the menu bar for the application."""
         self.menu_bar = MenuBar()  # Create a new menu bar.
 
-    def fillGrid(self, task_row_type : type[TaskRow]):
+    def fillGrid(self):
         # Also adds tasks to the grid, which doesn't work for the "example" tab. So for now, it's empty.
 
         for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
             # Append a new task row to the row array.
             try:
-                self.row_arr.append(task_row_type(i))
+                self.row_arr.append(TaskRow(i))
                 self.row_arr[i].insert(self.grid, i+1)  # Insert the row into the grid.
             except ValueError as err:
                 logger.log_error(str(err))
 
         self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.
-
-    def row_count(self) -> int:
-        return self.row_arr.count()
-
-class GridWidgetImpl(GridWidget):
-    def __init__(self, load_styles : Callable[[], None]):
-        super().__init__(load_styles)
-    
-    def fillGrid(self):
-        super().fillGrid(TaskRowImpl)
-
-class GridWidgetTest(GridWidget):
-    def __init__(self, load_styles : Callable[[], None]):
-        super().__init__(load_styles)
-    
-    def fillGrid(self):
-        super().fillGrid(TaskRowTest)

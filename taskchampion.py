@@ -19,11 +19,11 @@ register_api(TaskAPIImpl) # Order matters.
 
 import sys
 from utils.logger import logger
-from components.GUI.task_champion_gui import TaskChampionGUIImpl  # Import the GUI class
+from components.GUI.task_champion_gui import TaskChampionGUI  # Import the GUI class
 
 # Program entry point
 if __name__ == "__main__":
-    app = TaskChampionGUIImpl()  # Create a new TaskChampionGUI object.
+    app = TaskChampionGUI()  # Create a new TaskChampionGUI object.
     app.load_tasks()
     # TODO: Consider doing this in a better way.
     sys.exit(app.on_exit())  # Exit the application.

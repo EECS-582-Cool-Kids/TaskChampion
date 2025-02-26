@@ -53,7 +53,8 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.menu_bar = None    # declare the window's menu bar
         self.set_menu_bar()     # set the window's menu bar
     
-    def add_task(self):
+    def add_task(self) -> None:
+
         '''Add a task to the GUI list and link it to a new task in TaskWarrior.'''
 
         newTaskDetails : AddTaskDialog.TaskDetails | None = self.add_task_dialog.add_task()  # Get the details of the new task from the add task dialog.
@@ -63,7 +64,7 @@ class TaskChampionWidget(QtWidgets.QWidget):
 
         api.add_new_task(
             description = newTaskDetails.description, 
-            tag         = newTaskDetails.tag,
+            tags        = newTaskDetails.tag,
             priority    = newTaskDetails.priority,
             project     = newTaskDetails.project,
             recur       = newTaskDetails.recurrence,

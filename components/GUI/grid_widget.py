@@ -16,10 +16,9 @@
 """
 
 from typing import Callable
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtWidgets
 from components.Dialogs.task_row import TaskRow, COLS
 from .menubar import MenuBar
-from components.Dialogs.edit_task_dialog import EditTaskDialog
 from utils.logger import logger
 from utils.task_api import api
 
@@ -66,7 +65,7 @@ class GridWidget(QtWidgets.QWidget):
 
             # Append a new task row to the row array.
             try:
-                self.row_arr.append(TaskRow(num_tasks, self._edit_task, self._delete_task))
+                self.row_arr.append(TaskRow(num_tasks))
                 self.row_arr[num_tasks-1].insert(self.grid, num_tasks)
             except ValueError as err:
                 logger.log_error(str(err))
@@ -81,8 +80,6 @@ class GridWidget(QtWidgets.QWidget):
     def add_header(self):
         # Make header row take up as little vertical space as it needs.
         self.grid.setRowStretch(0, 0)  # Set the row stretch of the grid to 0.
-        # self.grid.setContentsMargins(0, 0, 0, 0)
-        # self.grid.setHorizontalSpacing(0)
         self.grid.setSpacing(0)  # Set the spacing of the grid to 0.
         
         # QLabel is just simple text.
@@ -105,43 +102,9 @@ class GridWidget(QtWidgets.QWidget):
         for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
             # Append a new task row to the row array.
             try:
-                self.row_arr.append(TaskRow(i, self._edit_task, self._delete_task))
+                self.row_arr.append(TaskRow(i))
                 self.row_arr[i].insert(self.grid, i+1)  # Insert the row into the grid.
             except ValueError as err:
                 logger.log_error(str(err))
 
         self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.
-
-    def _edit_task(self, idx: int):
-        """Passed to taskrows."""
-        cur_task = api.task_at(idx)
-        assert cur_task
-
-        edit_task_dialog = EditTaskDialog(str(cur_task.get("description") or ""), 
-            str(cur_task.get("due") or ""), 
-            str(cur_task.get("priority") or ""))
-        
-        if edit_task_dialog.exec():
-            cur_task.set("description", edit_task_dialog.description or None)
-            cur_task.set("due", edit_task_dialog.due or None)
-            cur_task.set("priority", edit_task_dialog.priority or None)
-            api.update_task(cur_task)
-
-            for i in range(api.num_tasks()):
-                self.rowArr[i].update_task()
-
-        self.refresh_styles()
-
-    def _delete_task(self, idx: int):
-        """passed to taskrows."""
-        api.delete_at(idx)
-        
-        num_tasks = api.num_tasks()
-
-        if num_tasks > self.DEFAULT_ROWS:
-            self.rowArr.pop(-1).annihilate()
-        
-        for i in range(len(self.rowArr)):
-            self.rowArr[i].update_task()
-
-        self.refresh_styles()

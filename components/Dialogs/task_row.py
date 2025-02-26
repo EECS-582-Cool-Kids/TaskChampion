@@ -21,7 +21,7 @@ from components.GUI.checkbox import Checkbox
 from components.GUI.textbox import Textbox
 from components.GUI.buttonbox import ButtonBox
 from components.Dialogs.edit_task_dialog import EditTaskDialog
-from typing import Final, Callable
+from typing import Final
 
 # The names of the columns.
 # TODO: in the image Richard posted, the second col was Age instead of 'start', but taskw_ng doesn't have an age.
@@ -29,7 +29,7 @@ from typing import Final, Callable
 COLS: Final = ('id', 'start', 'priority', 'project', 'recur', 'due', 'until', 'description', 'urgency')
 
 class TaskRow:
-    def __init__(self, row_num: int, edit_task: Callable[[int], None], delete_task: Callable[[int], None]):
+    def __init__(self, row_num: int):
         self.idx = row_num
 
         self.task = api.task_at(self.idx)
@@ -62,7 +62,8 @@ class TaskRow:
         self.delete_button.update_task()
     
     def edit_task(self):
-        assert self.task
+        if not self.task:
+            return
 
         edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""), 
           str(self.task.get("due") or ""), 
@@ -90,7 +91,7 @@ class TaskRow:
             grid.removeWidget(widget)
             widget.deleteLater()
         # add an empty row to the grid to maintain the same number of rows
-        grid.addWidget(QtWidgets.QLabel(), grid.rowCount(), 0)
+        grid.addWidget(QtWidgets.QLabel(), grid.count(), 0)
 
     def annihilate(self):
         # Get the parent grid layout
@@ -103,4 +104,4 @@ class TaskRow:
             grid.removeWidget(widget)
             widget.deleteLater()
         # add an empty row to the grid to maintain the same number of rows
-        grid.addWidget(QtWidgets.QLabel(), grid.rowCount(), 0)
+        grid.addWidget(QtWidgets.QLabel(), grid.row_count(), 0)

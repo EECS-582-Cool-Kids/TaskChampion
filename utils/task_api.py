@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/23/2025
+ *  Last Modified: 2/25/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -22,6 +22,8 @@ from .sortmetric import SortMetric
 from .task import Task
 from enum import Enum
 from typing import Callable, Optional
+import uuid
+
 
 def singleton(cls):
     instances = {}
@@ -31,35 +33,15 @@ def singleton(cls):
         return instances[cls]
     return getinstance
 
-class SortMetric(Enum):
-    ID_ASCENDING           = 0
-    ID_DESCENDING          = 1
-    PRIORITY_ASCENDING     = 2
-    PRIORITY_DESCENDING    = 3
-    DESCRIPTION_ASCENDING  = 4
-    DESCRIPTION_DESCENDING = 5
-    # TODO: Add wayy more
-
-@singleton
 class TaskAPI:
     def __init__(self):
-        self.warrior = TaskWarrior()
         self.sort_metric: SortMetric = SortMetric.DESCRIPTION_ASCENDING
 
         # The list that is sorted according to some criteria.
         self.task_list: list[Task] = []
 
         self._init_task_list()
-
     def _init_task_list(self) -> None:
-        """Refreshes the task list. Private.
-
-        Called after any operation that would require re-sorting the list of tasks."""
-        self.task_list.clear()
-
-        tasks = self.warrior.load_tasks()
-        self.task_list = [Task(x) for x in tasks['pending'] + tasks['completed']]
-        
         k, r = self._get_sort_params(self.sort_metric)
         self.task_list.sort(key=k, reverse=r)
     
@@ -122,6 +104,30 @@ class TaskAPI:
         
         return self.task_list[idx]
     
+    def add_new_task(self, description: str, tags=None, **kw) -> dict: ...
+    def add_task(self, t: Task) -> None: ...
+    def delete_at(self, idx: int) -> None: ...
+    def update_task(self, newTask: Task) -> None: ...
+    def set_sort_metric(self, metric: SortMetric): ...    
+    def clear_tasks(self): ...
+
+@singleton
+class TaskAPIImpl(TaskAPI):
+    def __init__(self):
+        self.warrior = TaskWarrior()
+        super().__init__()
+
+    def _init_task_list(self) -> None:
+        """Refreshes the task list. Private.
+
+        Called after any operation that would require re-sorting the list of tasks."""
+        self.task_list.clear()
+
+        tasks = self.warrior.load_tasks()
+        self.task_list = [Task(x) for x in tasks['pending'] + tasks['completed']]
+        
+        super()._init_task_list()
+    
     def add_new_task(self, description: str, tags=None, **kw) -> dict:
         task : dict = self.warrior.task_add(description, tags, **kw)
         self._init_task_list()
@@ -149,4 +155,72 @@ class TaskAPI:
         self.sort_metric = metric
         self._init_task_list()
 
-api = TaskAPI()
+    def clear_tasks(self):
+        raise RuntimeError("clear_tasks should only be called in a test environment.")
+
+@singleton
+class FakeTaskAPI(TaskAPI):
+    def __init__(self):
+        super().__init__()
+
+        # increments every time a new task is created.
+        self.cur_id = 0
+    
+    def num_tasks(self) -> int:
+        return len(self.task_list)
+        
+    def task_at(self, idx: int) -> Optional[Task]:
+        if len(self.task_list) <= idx:
+            return None
+        
+        return self.task_list[idx]
+    
+    def add_new_task(self, description: str = "", tags=None, priority="", project="", recur="", due="") -> dict:
+        d = dict({'uuid': str(uuid.uuid1()), 'id': str(self.cur_id), 'description': description, 'tags': [tags], 'priority': priority, 'project': project, 'recur': recur, 'due': due})
+        self.cur_id += 1
+        
+        task = Task(d)
+
+        self.task_list.append(task)
+        self._init_task_list()
+
+        return task
+
+    def add_task(self, t: Task) -> None:
+        # Unused at the moment.
+
+        self.task_list.append(t)
+        self._init_task_list()
+
+    def delete_at(self, idx: int) -> None:
+        if len(self.task_list) <= idx:
+            return
+
+        self.task_list.pop(idx)
+
+    def update_task(self, newTask: Task) -> None:
+        found = False
+        for idx in range(self.num_tasks()):
+            if self.task_list[idx].get_uuid() == newTask.get_uuid():
+                self.task_list[idx] = newTask
+                found = True
+                break
+        
+        if not found:
+            raise ValueError(f"task {newTask} not found.")
+        
+        self._init_task_list()
+
+    def set_sort_metric(self, metric: SortMetric):
+        self.sort_metric = metric
+        self._init_task_list()
+
+    def clear_tasks(self):
+        self.task_list.clear()
+
+api: TaskAPI
+
+def register_api(cls: type[TaskAPI]):
+    global api
+    api = cls()
+

@@ -69,7 +69,8 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.menu_bar = None    # declare the window's menu bar
         self.set_menu_bar()     # set the window's menu bar
     
-    def add_task(self):
+    def add_task(self) -> None:
+
         '''Add a task to the GUI list and link it to a new task in TaskWarrior.'''
         # TODO: Do something meaningful with this, remove it from this function!
         print(self.xp_bar.add_xp(1))
@@ -81,7 +82,7 @@ class TaskChampionWidget(QtWidgets.QWidget):
 
         api.add_new_task(
             description = newTaskDetails.description, 
-            tag         = newTaskDetails.tag,
+            tags        = newTaskDetails.tag,
             priority    = newTaskDetails.priority,
             project     = newTaskDetails.project,
             recur       = newTaskDetails.recurrence,

@@ -14,9 +14,10 @@
  *  Invariants: None
  *  Known Faults: None encountered
 """
+from utils.task_api import TaskAPIImpl, register_api
+register_api(TaskAPIImpl) # Order matters.
 
 import sys
-from PySide6 import QtCore
 from utils.logger import logger
 from components.GUI.task_champion_gui import TaskChampionGUI  # Import the GUI class
 

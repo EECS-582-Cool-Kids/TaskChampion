@@ -79,11 +79,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest taskw-ng pyside6 qtpy
           sudo apt-get install taskwarrior
-          python -m venv env
-          source env/bin/activate
       - name: Initialize Taskwarrior
         run: |
           echo "data.location=~/.task" > ~/.taskrc
       - name: GUI Tests
         run: |
+          python -m venv env
+          source env/bin/activate
+          export QT_GRAPHICS_RENDERER=raster
           pytest gui-tests.py

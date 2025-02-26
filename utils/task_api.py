@@ -33,7 +33,6 @@ def singleton(cls):
         return instances[cls]
     return getinstance
 
-@singleton
 class TaskAPI:
     def __init__(self):
         self.sort_metric: SortMetric = SortMetric.DESCRIPTION_ASCENDING

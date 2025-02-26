@@ -17,7 +17,7 @@
 
 from typing import Callable
 from PySide6 import QtWidgets
-from components.Dialogs.task_row import TaskRow, COLS
+from components.GUI.task_row import TaskRow, COLS
 from .menubar import MenuBar
 from utils.logger import logger
 from utils.task_api import api

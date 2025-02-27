@@ -20,8 +20,11 @@
     background-color: white;
 }
 
-
 XpBar {
+    max-height: 75px;
+}
+
+XpBarChild {
     background-color: white;
     text-align: center;
     padding: 2px;
@@ -33,7 +36,7 @@ XpBar {
 
 
 /* Chunk refers to the actual 'bar' part of the xpbar'
-XpBar::chunk {
+XpBarChild::chunk {
     border-style: solid;
     border-width: 1px;
     border-radius:2px;
@@ -43,11 +46,11 @@ XpBar::chunk {
 
 
 /* Example color styling. */
-XpBar#XpBarMain {
+XpBarChild#XpBarMain {
     border-color: rgb(255, 127, 53);
 }
 
-XpBar#XpBarMain::chunk {
+XpBarChild#XpBarMain::chunk {
     background-color: orange;
 }
 

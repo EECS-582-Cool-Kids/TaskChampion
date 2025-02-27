@@ -19,11 +19,9 @@ from typing import Callable
 from PySide6 import QtWidgets
 from components.GUI.task_row import TaskRow, COLS
 from .menubar import MenuBar
-from components.Dialogs.add_task_dialog import AddTaskDialog
 
 from utils.task_api import api
 from utils.logger import logger
-
 
 class GridWidget(QtWidgets.QWidget):
     '''The widget that corresponds to a module'''

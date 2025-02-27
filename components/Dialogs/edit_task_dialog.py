@@ -1,4 +1,4 @@
-"""
+""" Prologue:
  *  Module Name: edit_task_dialog.py
  *  Purpose: Allows users to edit tasks when selected.
  *  Inputs: None
@@ -30,11 +30,10 @@ class EditTaskDialog(QtWidgets.QDialog):
         self.form.addRow("Due", self.due_text)
         self.form.addRow("Priority", self.priority_text)
 
+        self.setProperty('dialog', 'edit-task')
 
         button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok
                                       | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
-
-
 
         layout = QtWidgets.QVBoxLayout()
         layout.addLayout(self.form)

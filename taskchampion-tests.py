@@ -1,3 +1,20 @@
+""" Prologue:
+ *  Module Name: taskchampion-tests.py
+ *  Purpose: automated tests for program functionality
+ *  Inputs: None
+ *  Outputs: None
+ *  Additional code sources: None
+ *  Developers: Jacob Wilkus, Ethan Berkley, Mo Morgan, Richard Moser, Derek Norton
+ *  Date: 2/23/2025
+ *  Last Modified: 2/23/2025
+ *  Preconditions: None
+ *  Postconditions: None
+ *  Error/Exception conditions: None
+ *  Side effects: None
+ *  Invariants: None
+ *  Known Faults: None encountered
+"""
+
 from utils.task_api import api
 
 class Tests:

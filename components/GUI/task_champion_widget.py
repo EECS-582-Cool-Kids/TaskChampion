@@ -1,4 +1,4 @@
-"""
+""" Prologue:
  *  Module Name: task_champion_widget.py
  *  Purpose: Initialization of GUI widgets.
  *  Inputs: None

@@ -1,4 +1,4 @@
-"""
+""" Prologue:
  *  Module Name: textbox.py
  *  Purpose: Module for the Textbox class, which is a class for creating a textbox in the GUI.
  *  Inputs: None

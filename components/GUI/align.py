@@ -1,4 +1,4 @@
-"""
+""" Prologue:
  *  Module Name: align.py
  *  Purpose: Class to declare where at in a layout an item aligns itself to.
  *  Inputs: None

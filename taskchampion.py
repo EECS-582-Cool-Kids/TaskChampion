@@ -1,4 +1,4 @@
-"""
+""" Prologue:
  *  Module Name: taskchampion.py
  *  Purpose: Entry point for the TaskChampion Application.
  *  Inputs: None

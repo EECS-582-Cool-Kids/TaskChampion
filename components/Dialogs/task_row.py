@@ -1,4 +1,4 @@
-"""
+""" Prologue:
  *  Module Name: task_row.py
  *  Purpose: Defines the details within each row of the task manager app.
  *  Inputs: None

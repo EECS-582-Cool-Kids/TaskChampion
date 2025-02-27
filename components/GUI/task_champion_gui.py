@@ -1,4 +1,4 @@
-"""
+""" Prologue:
  *  Module Name: task_champion_gui.py
  *  Purpose: Initialization of the GUI.
  *  Inputs: None

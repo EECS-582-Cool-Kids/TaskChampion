@@ -1,4 +1,4 @@
-"""
+""" Prologue:
  *  Module Name: buttonbox.py
  *  Purpose: Initialization of buttons within GUI.
  *  Inputs: None

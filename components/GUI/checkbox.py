@@ -1,4 +1,4 @@
-"""
+""" Prologue:
  *  Module Name: checkbox.py
  *  Purpose: Module for the Checkbox class, which is a class for creating a checkbox in the GUI.
  *  Inputs: None

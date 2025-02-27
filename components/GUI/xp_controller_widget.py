@@ -26,21 +26,19 @@ class XpControllerWidget(QtWidgets.QWidget):
 
         self.setLayout(self.main_layout)
     
-    def add_xp_bar(self, priority : priority_t, max_xp : int) -> None:
+    def add_xp_bar(self, priority : priority_t, max_xp : int, title : str) -> None:
         new_xp_bar = XpBar(self)
         new_xp_bar.set_max_xp(max_xp)
 
         match priority:
             case 'H':
-                new_xp_bar.title_label = "High Priority Tasks"
                 new_xp_bar.set_multiplier(HIGH_PRIORITY_MULT)
             case 'M':
-                new_xp_bar.title_label = "Medium Priority Tasks"
                 new_xp_bar.set_multiplier(MED_PRIORITY_MULT)
             case 'L':
-                new_xp_bar.title_label = "Low Priority Tasks"
                 new_xp_bar.set_multiplier(LOW_PRIORITY_MULT)
 
+        new_xp_bar.title_label = title
         new_xp_bar.update_text()
 
         self.xp_bar_map[priority].append(new_xp_bar)

@@ -71,6 +71,7 @@ class XpBar(QtWidgets.QWidget):
     
     def reset_xp(self) -> None:
         self.xp_bar._sub_xp(self.cur_xp)
+        self.xp_bar.setValue(0)
         self.cur_xp = 0
 
     def update_xp(self) -> None:

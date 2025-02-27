@@ -35,16 +35,16 @@ class TaskRow:
     def __init__(self, row_num: int, fetch_xp_brs : Callable[[Task], list[XpBar]]):
         self.idx = row_num
 
+        self.xp_add_calls : list[Callable[[int], int]] = [] # list of function calls to call when a task is checked
+        self.xp_sub_calls : list[Callable[[int], int]] = [] # list of function calls to call when a task is unchecked
+        self.fetch_xp_brs : Callable[[Task], list[XpBar]] = fetch_xp_brs # call to fetch relevant xp functions
+
         self.task = api.task_at(self.idx)
         self.check = Checkbox(row_num, self.get_task, self._update_xp_bars)
         self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]
 
         self.edit_button = ButtonBox(row_num, self.get_task, "edit", self.edit_task)
         self.delete_button = ButtonBox(row_num, self.get_task, "delete", self.delete_task)
-
-        self.xp_add_calls : list[Callable[[int], int]] = [] # list of function calls to call when a task is checked
-        self.xp_sub_calls : list[Callable[[int], int]] = [] # list of function calls to call when a task is unchecked
-        self.fetch_xp_brs : Callable[[Task], list[XpBar]] = fetch_xp_brs # call to fetch relevant xp functions
 
         # Initial fetch of function calls
         if self.task != None:

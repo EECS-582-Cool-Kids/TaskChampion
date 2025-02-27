@@ -3,9 +3,22 @@ from PySide6 import QtWidgets
 from utils.task import priority_t, Task
 from utils.task_api import api
 
-HIGH_PRIORITY_MULT = 3
-MED_PRIORITY_MULT = 2
-LOW_PRIORITY_MULT = 1
+PRIORITY_MULT_MAP : dict[priority_t, int] = { 'H':3, 'M':2, 'L':1 }
+PROJECT_MULT_MAP : dict[str, int] = {}
+TAG_MULT_MAP : dict[str, int] = {}
+
+def get_completion_value(priority : priority_t, project : str | None, tags : list[str] | None) -> int:
+    completion_value : int = PRIORITY_MULT_MAP[priority]
+
+    if project in PROJECT_MULT_MAP:
+        completion_value *= PROJECT_MULT_MAP[project]
+
+    if tags != None:
+        for tag in tags:
+            if tag in TAG_MULT_MAP:
+                completion_value *= TAG_MULT_MAP[tag]
+    
+    return completion_value
 
 class XpControllerWidget(QtWidgets.QWidget):
 
@@ -13,92 +26,66 @@ class XpControllerWidget(QtWidgets.QWidget):
         super().__init__()
 
         self.total_xp = 0
-        self.xp_bar_map : dict[priority_t, list[XpBar]] = {}
+        self.xp_bars : list[XpBar] = []
         self.main_layout = QtWidgets.QVBoxLayout()
-
-        self.xp_bar_map['H'] = []
-        self.xp_bar_map['M'] = []
-        self.xp_bar_map['L'] = []
 
         self.main_xp_bar = XpBar(self)
         self.main_xp_bar.set_max_xp(5)
         self.main_layout.addWidget(self.main_xp_bar)
+        self.xp_bars.append(self.main_xp_bar)
 
         self.setLayout(self.main_layout)
     
-    def add_xp_bar(self, priority : priority_t, max_xp : int, title : str) -> None:
-        new_xp_bar = XpBar(self)
-        new_xp_bar.set_max_xp(max_xp)
+    def add_xp_bar(self, task : Task, max_xp : int, title : str) -> None:
+        completion_value : int = get_completion_value(task.get_priority(), task.get_project(), task.get_tags())
 
-        match priority:
-            case 'H':
-                new_xp_bar.set_multiplier(HIGH_PRIORITY_MULT)
-            case 'M':
-                new_xp_bar.set_multiplier(MED_PRIORITY_MULT)
-            case 'L':
-                new_xp_bar.set_multiplier(LOW_PRIORITY_MULT)
+        new_xp_bar = XpBar(self, completion_value)
+        new_xp_bar.set_max_xp(max_xp)
+        new_xp_bar.set_attributes(task.get_priority(), task.get_project(), task.get_tags())
 
         new_xp_bar.title_label = title
         new_xp_bar.update_text()
 
-        self.xp_bar_map[priority].append(new_xp_bar)
+        self.xp_bars.append(new_xp_bar)
         self.main_layout.addWidget(new_xp_bar)
     
     def get_relevant_xp_bars(self, task : Task) -> list[XpBar]:
-        return self.xp_bar_map[task.get_priority()] + [self.main_xp_bar] # TO-DO, fetch bars based on different attributes like project!
-    
-    def update_bars(self) -> None:
-        self.main_xp_bar.reset_xp()
-        
-        for priority in ['H', 'M', 'L']:
-            for bar in self.xp_bar_map[priority]:
-                bar.reset_xp()
-        
-        total_xp_possible : int = 0
-        total_hi_pri_poss : int = 0
-        total_md_pri_poss : int = 0
-        total_lw_pri_poss : int = 0
+        bars_to_return = []
 
-        xp_earned : int = 0
-        hi_earned : int = 0
-        md_earned : int = 0
-        lw_earned : int = 0
+        for bar in self.xp_bars:
+            if bar.attributes == None:
+                continue
+            
+            if bar.attributes.priority == task.get_priority():
+                bars_to_return.append(bar)
+            elif bar.attributes.project == task.get_project().deserialize():
+                bars_to_return.append(bar)
+            elif bar.attributes.tags == task.get_tags().deserialize():
+                bars_to_return.append(bar)
+        
+        return bars_to_return + [self.main_xp_bar]
+        
+    def update_bars(self) -> None:
+        for bar in self.xp_bars:
+            bar.reset_xp()
+
+            # update the xp of all bars but the main xp bar
+            if bar != self.main_xp_bar:
+                bar.update_xp()
+
+        xp_poss : int = 0
+        xp_gain : int = 0
 
         for i in range(0, api.num_tasks()):
             task : Task = api.task_at(i)
 
             if task == None:
                 continue
+            
+            completion_value : int = get_completion_value(task.get_priority(), task.get_project(), task.get_tags())
 
-            match task.get_priority():
-                case 'H':
-                    total_xp_possible += 3
-                    total_hi_pri_poss += 3
-                    xp_earned += 3 if task.get_status() == "completed" else 0
-                    hi_earned += 3 if task.get_status() == "completed" else 0
-                case 'M':
-                    total_xp_possible += 2
-                    total_md_pri_poss += 2
-                    xp_earned += 2 if task.get_status() == "completed" else 0
-                    md_earned += 2 if task.get_status() == "completed" else 0
-                case 'L':
-                    total_xp_possible += 1
-                    total_lw_pri_poss += 1
-                    xp_earned += 1 if task.get_status() == "completed" else 0
-                    lw_earned += 1 if task.get_status() == "completed" else 0
-
-        self.main_xp_bar.set_max_xp(total_xp_possible)
-        self.main_xp_bar.add_xp(xp_earned)
-
-        for bar in self.xp_bar_map['H']:
-            bar.set_max_xp(total_hi_pri_poss)
-            bar.set_multiplier(HIGH_PRIORITY_MULT)
-            bar.add_xp(hi_earned)
-        for bar in self.xp_bar_map['M']:
-            bar.set_max_xp(total_md_pri_poss)
-            bar.set_multiplier(MED_PRIORITY_MULT)
-            bar.add_xp(md_earned)
-        for bar in self.xp_bar_map['L']:
-            bar.set_max_xp(total_lw_pri_poss)
-            bar.set_multiplier(LOW_PRIORITY_MULT)
-            bar.add_xp(lw_earned)
+            xp_poss += completion_value
+            xp_gain += completion_value if task.get_status() == "completed" else 0
+        
+        self.main_xp_bar.set_max_xp(xp_poss)
+        self.main_xp_bar.add_xp(xp_gain)

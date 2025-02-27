@@ -16,13 +16,13 @@
 """
 
 from PySide6 import QtWidgets
+from components.GUI.xp_controller_widget import get_completion_value
 from utils.task import Task
 from utils.task_api import api
 from components.GUI.checkbox import Checkbox
 from components.GUI.textbox import Textbox
 from components.GUI.buttonbox import ButtonBox
 from components.GUI.xpbar import XpBar
-from components.GUI.xp_controller_widget import HIGH_PRIORITY_MULT, MED_PRIORITY_MULT, LOW_PRIORITY_MULT
 from components.Dialogs.edit_task_dialog import EditTaskDialog
 from typing import Callable, Final
 
@@ -130,11 +130,14 @@ class TaskRow:
             self.xp_sub_calls.append(xp_bar.sub_xp)
     
     def _update_xp_bars(self, checkbox_state : bool) -> None:
-        val : int = HIGH_PRIORITY_MULT if self.task.get_priority() == 'H' else MED_PRIORITY_MULT if self.task.get_priority() == 'M' else LOW_PRIORITY_MULT
+        if self.task == None:
+            return
+
+        completion_value : int = get_completion_value(self.task.get_priority(), self.task.get_project(), self.task.get_tags())
 
         if checkbox_state:
             for add_fn in self.xp_add_calls:
-                add_fn(val)
+                add_fn(completion_value)
         else:
             for sub_fn in self.xp_sub_calls:
-                sub_fn(val)
+                sub_fn(completion_value)

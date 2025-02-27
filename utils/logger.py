@@ -16,7 +16,6 @@
 """
 import os
 import datetime
-from enum import Enum
 from .singleton import singleton
 
 @singleton

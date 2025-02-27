@@ -14,8 +14,7 @@
  *  Invariants: None
  *  Known Faults: None encountered
 """
-import os
-import datetime
+
 from taskw_ng.warrior import TaskWarrior
 from .singleton import singleton
 from .sortmetric import SortMetric 
@@ -23,15 +22,6 @@ from .task import Task
 from enum import Enum
 from typing import Callable, Optional
 import uuid
-
-
-def singleton(cls):
-    instances = {}
-    def getinstance(*args, **kwargs):
-        if cls not in instances:
-            instances[cls] = cls(*args, **kwargs)
-        return instances[cls]
-    return getinstance
 
 class TaskAPI:
     def __init__(self):

@@ -4,13 +4,11 @@ class XpBar(QtWidgets.QWidget):
     """Wrapper around an XP Bar.
     
     Just the XP bar + label."""
-    
-    # MAX_HEIGHT = 100
 
     def __init__(self, parent=None, bar_type="Main", bar_name="Main XP Bar"):
         super().__init__(parent)
         self.cur_xp = 0
-        # self.setMaximumHeight(self.MAX_HEIGHT)
+        self.bar_type = bar_type
 
         self.xp_bar = XpBarChild(self, bar_type)
         self.lay = QtWidgets.QGridLayout()
@@ -31,11 +29,25 @@ class XpBar(QtWidgets.QWidget):
     def set_max_xp(self, val: int):
         self.xp_bar.set_max_xp(val)
         self.update_text()
+    
+    def set_multiplier(self, mult: int):
+        self.xp_bar.multiplier *= mult
         
-    def add_xp(self, val:int) -> int:
-        self.cur_xp = (self.cur_xp + val) % self.xp_bar.max_xp    
+    def add_xp(self, val : int) -> int:
+        self.cur_xp = (self.cur_xp + val) % self.xp_bar.max_xp if self.xp_bar.max_xp != 0 else 1    
         self.update_text()
         return self.xp_bar.add_xp(val)
+    
+    def sub_xp(self, val : int) -> int:
+        self.cur_xp = (self.cur_xp - val) % self.xp_bar.max_xp
+        self.update_text()
+        return self.xp_bar.sub_xp(val)
+    
+    def reset_xp(self) -> None:
+        self.cur_xp = 0
+        self.lay.removeWidget(self.xp_bar)
+        self.xp_bar = XpBarChild(self, self.bar_type)
+        self.lay.addWidget(self.xp_bar, 1, 0, 1, 3)
 
 class XpBarChild(QtWidgets.QProgressBar):
     """Class representing an XP Bar. 
@@ -66,7 +78,7 @@ class XpBarChild(QtWidgets.QProgressBar):
 
     def set_max_xp(self, val: int):
         self.max_xp = val
-        self.multiplier = self.MAX_VAL / val
+        self.multiplier = self.MAX_VAL / (1 if val == 0 else val)
 
     
     def add_xp(self, val: int) -> int:
@@ -76,6 +88,23 @@ class XpBarChild(QtWidgets.QProgressBar):
         self.animation.setStartValue(self.adjusted_value)
 
         self.adjusted_value += adjusted
+        
+        levels = self.adjusted_value // self.MAX_VAL
+        
+        self.adjusted_value %= self.MAX_VAL
+
+        self.animation.setEndValue(self.adjusted_value)
+        self.animation.start()
+        
+        return int(levels)
+
+    def sub_xp(self, val : int) -> int:
+        '''Returns how many levels we just lost.'''
+
+        adjusted = val * self.multiplier
+        self.animation.setStartValue(self.adjusted_value)
+
+        self.adjusted_value -= adjusted
         
         levels = self.adjusted_value // self.MAX_VAL
         

@@ -22,11 +22,12 @@ from typing import Callable, Optional
 from utils.task import Task
 
 class Checkbox(TableCell):
-    def __init__(self, row_num: int, get_task: Callable[[], Optional[Task]], attribute:str=""):
+    def __init__(self, row_num: int, get_task: Callable[[], Optional[Task]], on_update : Callable[[bool], None], attribute:str=""):
         self.my_checkbox = QtWidgets.QCheckBox()  # Create a checkbox.
         self.get_sub_widget = lambda: self.my_checkbox  # Create a lambda function that returns the checkbox.
         self.my_checkbox.stateChanged.connect(lambda: self.check_checkbox())  # Connect the state changed signal of the checkbox to the check checkbox method.
-    
+        self.on_update = on_update
+
         super().__init__(row_num, get_task, attribute)  # Call the parent constructor.
     
         self.add_sub_widget()  # Add the checkbox to the sub widgets list.
@@ -54,4 +55,4 @@ class Checkbox(TableCell):
             self.task.set('status', 'pending')
             
         api.update_task(self.task)  # Update the task status.
-
+        self.on_update(self.my_checkbox.isChecked()) # handle the xp updates

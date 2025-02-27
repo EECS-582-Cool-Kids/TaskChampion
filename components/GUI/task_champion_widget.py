@@ -51,7 +51,7 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.task_layout.addWidget(self.main_tab)  # Add the tab widget to the layout.
         self.main_layout.addWidget(self.xp_bars) # Add the xp bar widget to the layout.
 
-        self.grids = [GridWidget(load_styles), GridWidget(load_styles)]  # Create a list of grid widgets.
+        self.grids = [GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars), GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars)]  # Create a list of grid widgets.
         self.main_tab.addTab(self.grids[0].scroll_area, "Example Tab")  # Add the first grid widget to the tab widget.
         self.main_tab.addTab(self.grids[1].scroll_area, "Example Empty Tab")  # Add the second grid widget to the tab widget.
 
@@ -85,6 +85,7 @@ class TaskChampionWidget(QtWidgets.QWidget):
         )  # Create a new task with the details from the add task dialog.
 
         self.grids[self.current_grid].add_task()  # Add the new task to the current grid.
+        self.xp_bars.update_bars()
 
     def set_menu_bar(self):
         """Sets the menu bar for the application."""  

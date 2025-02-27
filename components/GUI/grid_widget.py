@@ -18,18 +18,20 @@
 from typing import Callable
 from PySide6 import QtWidgets
 from components.GUI.task_row import TaskRow, COLS
+from components.GUI.xpbar import XpBar
 from .menubar import MenuBar
 
+from utils.task import Task
 from utils.task_api import api
 from utils.logger import logger
 
 class GridWidget(QtWidgets.QWidget):
     '''The widget that corresponds to a module'''
-    ROW_HEIGHT=50  # Height of each row in the grid.
+    ROW_HEIGHT=45  # Height of each row in the grid.
     DEFAULT_ROWS=10  # Default number of rows to display.
-    DEFAULT_WIDTH=800 # Default width, scrollable.
+    DEFAULT_WIDTH=1000 # Default width, scrollable.
 
-    def __init__(self, load_styles : Callable[[], None]):
+    def __init__(self, load_styles : Callable[[], None], fetch_xp_fns : Callable[[Task], list[XpBar]]):
         super().__init__()  # Call the parent constructor.
         self.setObjectName('GridWidget')  # Set the object name for styling.
         self.setFixedWidth(self.DEFAULT_WIDTH)
@@ -49,6 +51,7 @@ class GridWidget(QtWidgets.QWidget):
         self.add_header()  # Add the header to the grid.
 
         self.refresh_styles = load_styles
+        self.fetch_xp_fns = fetch_xp_fns
 
     def add_task(self) -> None:
         """Assumes that addTask has already been called in TaskChampionGUI. 
@@ -60,19 +63,13 @@ class GridWidget(QtWidgets.QWidget):
         2) broadcast to all `TaskRow`s to update their current task.
         """
         num_tasks = api.num_tasks()  # Increment the number of rows.
-
             
         if self.grid.rowCount() == num_tasks:  # If the row count of the grid is equal to the number of rows.
             self.setMinimumHeight(num_tasks * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the number of rows times the row height.
 
-            # Append a new task row to the row array.
-            try:
-                self.row_arr.append(TaskRow(num_tasks))
-                self.row_arr[num_tasks-1].insert(self.grid, num_tasks)
-            except ValueError as err:
-                logger.log_error(str(err))
-
-            # Row inserts itself into the grid, insertion logic is handled in `TaskRow` obj.
+            row = TaskRow(num_tasks, self.fetch_xp_fns)
+            row.insert(self.grid, num_tasks) # Row inserts itself into the grid, insertion logic is handled in `TaskRow` obj.
+            self.row_arr.append(row)
             
         for row in range(len(self.row_arr)):
             self.row_arr[row].update_task()
@@ -105,8 +102,9 @@ class GridWidget(QtWidgets.QWidget):
         for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
             # Append a new task row to the row array.
             try:
-                self.row_arr.append(TaskRow(i))
-                self.row_arr[i].insert(self.grid, i+1)  # Insert the row into the grid.
+                row = TaskRow(i, self.fetch_xp_fns)
+                row.insert(self.grid, i+1)  # Insert the row into the grid.
+                self.row_arr.append(row)
             except ValueError as err:
                 logger.log_error(str(err))
 

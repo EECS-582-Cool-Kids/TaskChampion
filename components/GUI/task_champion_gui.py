@@ -44,6 +44,7 @@ class TaskChampionGUI:
 
     def load_tasks(self):
         self.main_widget.grids[0].fillGrid()
+        self.main_widget.xp_bars.update_bars()
         self.load_styles()
 
     def on_exit(self) -> int:

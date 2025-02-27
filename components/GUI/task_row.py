@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/23/2025
+ *  Last Modified: 2/27/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -15,13 +15,16 @@
  *  Known Faults: None encountered
 """
 
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtWidgets
+from utils.task import Task
 from utils.task_api import api
 from components.GUI.checkbox import Checkbox
 from components.GUI.textbox import Textbox
 from components.GUI.buttonbox import ButtonBox
+from components.GUI.xpbar import XpBar
+from components.GUI.xp_controller_widget import HIGH_PRIORITY_MULT, MED_PRIORITY_MULT, LOW_PRIORITY_MULT
 from components.Dialogs.edit_task_dialog import EditTaskDialog
-from typing import Final
+from typing import Callable, Final
 
 # The names of the columns.
 # TODO: in the image Richard posted, the second col was Age instead of 'start', but taskw_ng doesn't have an age.
@@ -29,15 +32,23 @@ from typing import Final
 COLS: Final = ('id', 'start', 'priority', 'project', 'recur', 'due', 'until', 'description', 'urgency')
 
 class TaskRow:
-    def __init__(self, row_num: int):
+    def __init__(self, row_num: int, fetch_xp_brs : Callable[[Task], list[XpBar]]):
         self.idx = row_num
 
         self.task = api.task_at(self.idx)
-        self.check = Checkbox(row_num, self.get_task)
+        self.check = Checkbox(row_num, self.get_task, self._update_xp_bars)
         self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]
 
         self.edit_button = ButtonBox(row_num, self.get_task, "edit", self.edit_task)
         self.delete_button = ButtonBox(row_num, self.get_task, "delete", self.delete_task)
+
+        self.xp_add_calls : list[Callable[[int], int]] = [] # list of function calls to call when a task is checked
+        self.xp_sub_calls : list[Callable[[int], int]] = [] # list of function calls to call when a task is unchecked
+        self.fetch_xp_brs : Callable[[Task], list[XpBar]] = fetch_xp_brs # call to fetch relevant xp functions
+
+        # Initial fetch of function calls
+        if self.task != None:
+            self._bind_xp_fns(self.fetch_xp_brs(self.task))
 
     def get_task(self): return self.task
 
@@ -60,6 +71,9 @@ class TaskRow:
             self.cols[i].update_task()
         self.edit_button.update_task()
         self.delete_button.update_task()
+
+        if self.task != None:
+            self._bind_xp_fns(self.fetch_xp_brs(self.task))
     
     def edit_task(self):
         if not self.task:
@@ -105,3 +119,22 @@ class TaskRow:
             widget.deleteLater()
         # add an empty row to the grid to maintain the same number of rows
         grid.addWidget(QtWidgets.QLabel(), grid.row_count(), 0)
+
+    def _bind_xp_fns(self, xp_bars : list[XpBar]) -> None:
+        # clear the lists and reset them every time.
+        self.xp_add_calls.clear()
+        self.xp_sub_calls.clear()
+
+        for xp_bar in xp_bars:
+            self.xp_add_calls.append(xp_bar.add_xp)
+            self.xp_sub_calls.append(xp_bar.sub_xp)
+    
+    def _update_xp_bars(self, checkbox_state : bool) -> None:
+        val : int = HIGH_PRIORITY_MULT if self.task.get_priority() == 'H' else MED_PRIORITY_MULT if self.task.get_priority() == 'M' else LOW_PRIORITY_MULT
+
+        if checkbox_state:
+            for add_fn in self.xp_add_calls:
+                add_fn(val)
+        else:
+            for sub_fn in self.xp_sub_calls:
+                sub_fn(val)

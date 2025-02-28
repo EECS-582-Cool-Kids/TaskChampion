@@ -26,11 +26,12 @@ class GridWidget(QtWidgets.QWidget):
     '''The widget that corresponds to a module'''
     ROW_HEIGHT=50  # Height of each row in the grid.
     DEFAULT_ROWS=10  # Default number of rows to display.
+    DEFAULT_WIDTH=800 # Default width, scrollable.
 
     def __init__(self, load_styles : Callable[[], None]):
         super().__init__()  # Call the parent constructor.
         self.setObjectName('GridWidget')  # Set the object name for styling.
-        self.setFixedHeight(200)  # Set the fixed height of the widget. 
+        self.setFixedWidth(self.DEFAULT_WIDTH)
 
         self.scroll_area = QtWidgets.QScrollArea()  # Create a scroll area.
         self.scroll_area.setWidgetResizable(True)  # Set the scroll area to be resizable.
@@ -76,6 +77,7 @@ class GridWidget(QtWidgets.QWidget):
             self.row_arr[row].update_task()
         
         self.refresh_styles()
+
 
     def add_header(self):
         # Make header row take up as little vertical space as it needs.

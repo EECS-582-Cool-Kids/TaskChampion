@@ -20,6 +20,7 @@ from components.Dialogs.add_task_dialog import AddTaskDialog
 from components.GUI.grid_widget import GridWidget
 from components.GUI.xp_controller_widget import XpControllerWidget
 from .menubar import MenuBar
+from components.GUI.xp_bar import XpBar
 from utils.task_api import api
 from typing import Callable
 
@@ -67,9 +68,7 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.set_menu_bar()     # set the window's menu bar
     
     def add_task(self) -> None:
-
         '''Add a task to the GUI list and link it to a new task in TaskWarrior.'''
-        # TODO: Do something meaningful with this, remove it from this function!
         newTaskDetails : AddTaskDialog.TaskDetails | None = self.add_task_dialog.add_task()  # Get the details of the new task from the add task dialog.
         
         if newTaskDetails == None:  # If the new task details are None.

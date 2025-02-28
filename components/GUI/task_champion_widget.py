@@ -19,7 +19,7 @@ from PySide6 import QtWidgets
 from components.Dialogs.add_task_dialog import AddTaskDialog
 from components.GUI.grid_widget import GridWidget
 from .menubar import MenuBar
-from components.GUI.xpbar import XpBar
+from components.GUI.xp_bar import XpBar
 from utils.task_api import api
 from typing import Callable
 
@@ -44,10 +44,6 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.main_tab = QtWidgets.QTabWidget()  # Create a tab widget.
         self.add_button = QtWidgets.QPushButton("Add Task")  # Create a push button.
 
-        self.xp_bar = XpBar(self)
-        self.xp_bar.set_max_xp(5) # TODO: Replace this with a meaningful value.
-        self.main_layout.addWidget(self.xp_bar)
-
         self.add_button.setMaximumWidth(100)  # Set the maximum width of the push button.
         self.add_button.clicked.connect(lambda: self.add_task())  # Connect the clicked signal of the push button to the addTask method.
  
@@ -70,11 +66,7 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.set_menu_bar()     # set the window's menu bar
     
     def add_task(self) -> None:
-
         '''Add a task to the GUI list and link it to a new task in TaskWarrior.'''
-        # TODO: Do something meaningful with this, remove it from this function!
-        print(self.xp_bar.add_xp(1))
-
         newTaskDetails : AddTaskDialog.TaskDetails | None = self.add_task_dialog.add_task()  # Get the details of the new task from the add task dialog.
         
         if newTaskDetails == None:  # If the new task details are None.

@@ -29,6 +29,8 @@ class XpBar(QtWidgets.QWidget):
         self.progress_label.setText(f"{self.cur_xp} XP / {self.xp_bar.max_xp} XP")
 
     def set_max_xp(self, val: int):
+        if val == 0:
+            raise ValueError("Cannot set max xp to 0.")
         self.xp_bar.set_max_xp(val)
         self.update_text()
         
@@ -61,8 +63,6 @@ class XpBarChild(QtWidgets.QProgressBar):
         self.animation.setEasingCurve(self.EASING_CURVE)
         
         self.setRange(0, self.MAX_VAL)
-
-
 
     def set_max_xp(self, val: int):
         self.max_xp = val

@@ -4,13 +4,10 @@ class XpBar(QtWidgets.QWidget):
     """Wrapper around an XP Bar.
     
     Just the XP bar + label."""
-    
-    # MAX_HEIGHT = 100
 
     def __init__(self, parent=None, bar_type="Main", bar_name="Main XP Bar"):
         super().__init__(parent)
         self.cur_xp = 0
-        # self.setMaximumHeight(self.MAX_HEIGHT)
 
         self.xp_bar = XpBarChild(self, bar_type)
         self.lay = QtWidgets.QGridLayout()
@@ -65,6 +62,8 @@ class XpBarChild(QtWidgets.QProgressBar):
         self.setRange(0, self.MAX_VAL)
 
     def set_max_xp(self, val: int):
+        if val == 0:
+            raise ValueError("Cannot set max xp to 0.")
         self.max_xp = val
         self.multiplier = self.MAX_VAL / val
 

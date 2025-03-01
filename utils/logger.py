@@ -16,12 +16,11 @@
 """
 import os
 import datetime
-from enum import Enum
-from .singleton import singleton
+from utils.singleton import singleton
 
 @singleton
 class Logger:
-    '''Handles all logging functionality for the application'''
+    """Handles all logging functionality for the application"""
     def __init__(self, is_debug : bool = False):
         # Create and open the log with the datetime the app was started.
         os.makedirs('logs/', exist_ok = True)
@@ -29,7 +28,7 @@ class Logger:
         self.is_debug : bool = is_debug
 
     def log_info(self, info : str) -> str:
-        '''Log information about the applicaton. This should be used for notifying the user of something that is not a concern.'''
+        """Log information about the applicaton. This should be used for notifying the user of something that is not a concern."""
         info_out : str = f"[INFO: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]: {info}"
 
         print(info_out)
@@ -38,7 +37,7 @@ class Logger:
         return info_out
     
     def log_debug(self, debug : str) -> str:
-        '''Log debug information about the application. Anything we only want to print when debugging should be put here.'''
+        """Log debug information about the application. Anything we only want to print when debugging should be put here."""
         if not self.is_debug:
             return
 
@@ -50,7 +49,7 @@ class Logger:
         return debug_out
 
     def log_error(self, error : str) -> str:
-        '''Log errors about the application. This should be called whenever we catch an error within a try-catch.'''
+        """Log errors about the application. This should be called whenever we catch an error within a try-catch."""
         error_out : str = f"[ERROR: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]: {error}"
 
         print(error_out)
@@ -59,7 +58,7 @@ class Logger:
         return error_out
 
     def log_warn(self, warn : str) -> str:
-        '''Log warnings about the application. These should identify failures that are not critical and won't stop the functionality of the program.'''
+        """Log warnings about the application. These should identify failures that are not critical and won't stop the functionality of the program."""
         warn_out : str = f"[WARN: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]: {warn}"
 
         print(warn_out)

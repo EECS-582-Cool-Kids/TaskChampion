@@ -65,8 +65,11 @@ class Task(task.Task):
     def set_priority(self, priority : str) -> None:
         self.set("priority", priority)  # Set the priority field to the given priority.
 
-    def get_project(self) -> fields.StringField:
-        return self['project']  # Return the project field.
+    def _has_project(self) -> bool:
+        return 'project' in self
+
+    def get_project(self) -> fields.StringField | None: 
+        return self['project'] if self._has_project() else None  # Return the project field.
 
     def set_project(self, project : str) -> None:
         self.set("project", project)  # Set the project field to the given project.
@@ -86,8 +89,11 @@ class Task(task.Task):
     def get_status(self) -> status_t:
         return cast(status_t, str(self['status']))  # Return the status field.
 
-    def get_tags(self) -> fields.ArrayField:
-        return self['tags']  # Return the tags field.
+    def _has_tags(self) -> bool:
+        return 'tags' in self
+
+    def get_tags(self) -> fields.ArrayField | None:
+        return self['tags'] if self._has_tags() else None # Return the tags field.
 
     def get_until(self) -> fields.DateField:
         return self['until']  # Return the until field.

@@ -14,24 +14,13 @@
  *  Invariants: None
  *  Known Faults: None encountered
 """
-import os
-import datetime
+
 from taskw_ng.warrior import TaskWarrior
-from .singleton import singleton
-from .sortmetric import SortMetric 
-from .task import Task
-from enum import Enum
+from utils.singleton import singleton
+from utils.sortmetric import SortMetric
+from utils.task import Task
 from typing import Callable, Optional
 import uuid
-
-
-def singleton(cls):
-    instances = {}
-    def getinstance(*args, **kwargs):
-        if cls not in instances:
-            instances[cls] = cls(*args, **kwargs)
-        return instances[cls]
-    return getinstance
 
 class TaskAPI:
     def __init__(self):
@@ -65,10 +54,10 @@ class TaskAPI:
             Examples: description, id, project.
             Counterexamples: priority."""
             
-            def subFn(t: Task):
+            def sub_fn(t: Task):
                 return str(t[attr_name]).lower()
             
-            return subFn
+            return sub_fn
 
         def priority_sorting(t: Task): 
             match t.get_priority():
@@ -107,7 +96,7 @@ class TaskAPI:
     def add_new_task(self, description: str, tags=None, **kw) -> dict: ...
     def add_task(self, t: Task) -> None: ...
     def delete_at(self, idx: int) -> None: ...
-    def update_task(self, newTask: Task) -> None: ...
+    def update_task(self, new_task: Task) -> None: ...
     def set_sort_metric(self, metric: SortMetric): ...    
     def clear_tasks(self): ...
 
@@ -147,8 +136,8 @@ class TaskAPIImpl(TaskAPI):
         t = self.task_list.pop(idx)
         self.warrior.task_delete(uuid=str(t['uuid']))
 
-    def update_task(self, newTask: Task) -> None:
-        self.warrior.task_update(newTask)
+    def update_task(self, new_task: Task) -> None:
+        self.warrior.task_update(new_task)
         self._init_task_list()
 
     def set_sort_metric(self, metric: SortMetric):
@@ -198,16 +187,16 @@ class FakeTaskAPI(TaskAPI):
 
         self.task_list.pop(idx)
 
-    def update_task(self, newTask: Task) -> None:
+    def update_task(self, new_task: Task) -> None:
         found = False
         for idx in range(self.num_tasks()):
-            if self.task_list[idx].get_uuid() == newTask.get_uuid():
-                self.task_list[idx] = newTask
+            if self.task_list[idx].get_uuid() == new_task.get_uuid():
+                self.task_list[idx] = new_task
                 found = True
                 break
         
         if not found:
-            raise ValueError(f"task {newTask} not found.")
+            raise ValueError(f"task {new_task} not found.")
         
         self._init_task_list()
 

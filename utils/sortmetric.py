@@ -14,8 +14,6 @@
  *  Invariants: None
  *  Known Faults: None encountered
 """
-import os
-import datetime
 from enum import Enum
 
 class SortMetric(Enum):

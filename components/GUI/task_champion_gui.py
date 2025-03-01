@@ -15,9 +15,8 @@
  *  Known Faults: None encountered
 """
 
-from typing import Callable
 from PySide6 import QtWidgets
-from .task_champion_widget import TaskChampionWidget
+from components.GUI.task_champion_widget import TaskChampionWidget
 
 class TaskChampionGUI:
     """The main application class for Task Champion."""  
@@ -43,7 +42,8 @@ class TaskChampionGUI:
         self.qtapp.setStyleSheet(self.style_str)  # Set the style sheet of the Qt Application to be the style string.
 
     def load_tasks(self):
-        self.main_widget.grids[0].fillGrid()
+        self.main_widget.grids[0].fill_grid()
+        self.main_widget.xp_bars.update_bars()
         self.load_styles()
 
     def on_exit(self) -> int:

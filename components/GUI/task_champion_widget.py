@@ -19,13 +19,12 @@ from PySide6 import QtWidgets
 from components.Dialogs.add_task_dialog import AddTaskDialog
 from components.GUI.grid_widget import GridWidget
 from components.GUI.xp_controller_widget import XpControllerWidget
-from .menubar import MenuBar
-from components.GUI.xp_bar import XpBar
-from utils.task_api import api
+from components.GUI.menubar import MenuBar
+from utils.task_api import TaskAPI
 from typing import Callable
 
 class TaskChampionWidget(QtWidgets.QWidget):
-    '''The main widget for the Task Champion application.'''
+    """The main widget for the Task Champion application."""
     def __init__(self, load_styles : Callable[[], None]):
         super().__init__()  # Call the parent constructor.
         self.setObjectName('MainWidget')  # Set the object name for styling.
@@ -37,7 +36,7 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.task_layout = QtWidgets.QVBoxLayout()
         
         self.main_layout.addLayout(self.task_layout)  # Set the layout of the widget to be the vertical layout.
-        # TODO: put another layout in the 'gamefication' part of the screen, and do something with it.
+        # TODO: put another layout in the 'gamification' part of the screen, and do something with it.
         
         self.setLayout(self.main_layout)
 
@@ -68,19 +67,19 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.set_menu_bar()     # set the window's menu bar
     
     def add_task(self) -> None:
-        '''Add a task to the GUI list and link it to a new task in TaskWarrior.'''
-        newTaskDetails : AddTaskDialog.TaskDetails | None = self.add_task_dialog.add_task()  # Get the details of the new task from the add task dialog.
+        """Add a task to the GUI list and link it to a new task in TaskWarrior."""
+        new_task_details : AddTaskDialog.TaskDetails | None = self.add_task_dialog.add_task()  # Get the details of the new task from the add task dialog.
         
-        if newTaskDetails == None:  # If the new task details are None.
+        if new_task_details is None:  # If the new task details are None.
             return  # Return.
 
-        api.add_new_task(
-            description = newTaskDetails.description, 
-            tags        = newTaskDetails.tag,
-            priority    = newTaskDetails.priority,
-            project     = newTaskDetails.project,
-            recur       = newTaskDetails.recurrence,
-            due         = newTaskDetails.due,
+        TaskAPI.add_new_task(
+            description = new_task_details.description, 
+            tags        = new_task_details.tag,
+            priority    = new_task_details.priority,
+            project     = new_task_details.project,
+            recur       = new_task_details.recurrence,
+            due         = new_task_details.due,
         )  # Create a new task with the details from the add task dialog.
 
         self.grids[self.current_grid].add_task()  # Add the new task to the current grid.

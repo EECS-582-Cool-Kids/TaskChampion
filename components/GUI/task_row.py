@@ -22,7 +22,7 @@ from utils.task_api import api
 from components.GUI.checkbox import Checkbox
 from components.GUI.textbox import Textbox
 from components.GUI.buttonbox import ButtonBox
-from components.GUI.xpbar import XpBar
+from components.GUI.xp_bar import XpBar
 from components.Dialogs.edit_task_dialog import EditTaskDialog
 from typing import Callable, Final
 

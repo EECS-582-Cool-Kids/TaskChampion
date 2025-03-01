@@ -18,15 +18,14 @@
 from typing import Callable
 from PySide6 import QtWidgets
 from components.GUI.task_row import TaskRow, COLS
-from components.GUI.xpbar import XpBar
-from .menubar import MenuBar
+from components.GUI.xp_bar import XpBar
 
 from utils.task import Task
 from utils.task_api import api
 from utils.logger import logger
 
 class GridWidget(QtWidgets.QWidget):
-    '''The widget that corresponds to a module'''
+    """The widget that corresponds to a module"""
     ROW_HEIGHT=45  # Height of each row in the grid.
     DEFAULT_ROWS=10  # Default number of rows to display.
     DEFAULT_WIDTH=1000 # Default width, scrollable.
@@ -92,11 +91,7 @@ class GridWidget(QtWidgets.QWidget):
             self.grid.addWidget(QtWidgets.QLabel(COLS[i]), 0, i+1)  # Add a label to the grid.
             self.grid.setColumnStretch(i+1, 0)  # Set the column stretch of the grid to 0.
 
-    def set_menu_bar(self):
-        """Sets the menu bar for the application."""
-        self.menu_bar = MenuBar()  # Create a new menu bar.
-
-    def fillGrid(self):
+    def fill_grid(self):
         # Also adds tasks to the grid, which doesn't work for the "example" tab. So for now, it's empty.
 
         for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.

@@ -1,6 +1,6 @@
 from PySide6 import QtCore, QtWidgets
 
-from utils.task_api import api
+from utils.task_api import TaskAPI
 from utils.task import Task, priority_t
 
 class XpBar(QtWidgets.QWidget):
@@ -35,7 +35,7 @@ class XpBar(QtWidgets.QWidget):
         self.lay.addWidget(self.xp_bar, 1, 0, 1, 3)
         
     def set_attributes(self, priority, project, tags):
-        if self.attributes == None:
+        if self.attributes is None:
             self.attributes = XpBar.XpBarAttributes(priority, project, tags)
             return
         
@@ -56,9 +56,26 @@ class XpBar(QtWidgets.QWidget):
         self.update_text()
 
     def complete_task(self) -> None:
+        """
+        This method is responsible for marking a task as complete.
+
+        Upon completion, it grants experience points to the user based on
+        the task's completion value attribute. This operation updates the
+        user's XP progress as a result of task fulfillment.
+
+        Returns: None
+        """
         self.add_xp(self.completion_value)
     
     def uncomplete_task(self) -> None:
+        """
+        Mark a task as uncompleted, triggering a reduction in experience points.
+
+        This method reverses the completion of a task and subtracts a defined value 
+        from the current experience points by invoking the `sub_xp()` method.
+
+        Returns: None
+        """
         self.sub_xp(self.completion_value)
         
     def add_xp(self, val : int) -> None:
@@ -81,10 +98,10 @@ class XpBar(QtWidgets.QWidget):
         xp_gain : int = 0
 
         # calculate all tasks relevant to set the max_xp value.
-        for i in range(0, api.num_tasks()):
-            task : Task = api.task_at(i)
+        for i in range(0, TaskAPI.num_tasks()):
+            task : Task = TaskAPI.task_at(i)
 
-            if task == None:
+            if task is None:
                 continue
 
             valid = False
@@ -149,7 +166,7 @@ class XpBarChild(QtWidgets.QProgressBar):
         self.animation.start()
 
     def _sub_xp(self, val : int) -> None:
-        '''Returns how many levels we just lost.'''
+        """Returns how many levels we just lost."""
 
         adjusted = val * self.multiplier
         self.animation.setStartValue(self.adjusted_value)

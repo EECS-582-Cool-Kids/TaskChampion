@@ -1,4 +1,4 @@
-from components.GUI.xpbar import XpBar
+from components.GUI.xp_bar import XpBar
 from PySide6 import QtWidgets
 from utils.task import priority_t, Task
 from utils.task_api import api
@@ -13,7 +13,7 @@ def get_completion_value(priority : priority_t, project : str | None, tags : lis
     if project in PROJECT_MULT_MAP:
         completion_value *= PROJECT_MULT_MAP[project]
 
-    if tags != None:
+    if tags is not None:
         for tag in tags:
             if tag in TAG_MULT_MAP:
                 completion_value *= TAG_MULT_MAP[tag]
@@ -53,7 +53,7 @@ class XpControllerWidget(QtWidgets.QWidget):
         bars_to_return = []
 
         for bar in self.xp_bars:
-            if bar.attributes == None:
+            if bar.attributes is None:
                 continue
             
             if bar.attributes.priority == task.get_priority():
@@ -79,7 +79,7 @@ class XpControllerWidget(QtWidgets.QWidget):
         for i in range(0, api.num_tasks()):
             task : Task = api.task_at(i)
 
-            if task == None:
+            if task is None:
                 continue
             
             completion_value : int = get_completion_value(task.get_priority(), task.get_project(), task.get_tags())

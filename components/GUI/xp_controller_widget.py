@@ -1,3 +1,20 @@
+"""
+ *  Module Name: xp_controller_widget.py
+ *  Purpose: Defines the XP controller widget, which manages the display of XP bars
+ *  Inputs: None
+ *  Outputs: None
+ *  Additional code sources: None
+ *  Developers: Mo Morgan
+ *  Date: 2/26/2025
+ *  Last Modified: 2/28/2025
+ *  Preconditions: None
+ *  Postconditions: None
+ *  Error/Exception conditions:
+ *  Side effects: None
+ *  Invariants: None
+ *  Known Faults: None encountered
+"""
+
 from components.GUI.xp_bar import XpBar
 from PySide6 import QtWidgets
 from utils.task import priority_t, Task
@@ -37,6 +54,23 @@ class XpControllerWidget(QtWidgets.QWidget):
         self.setLayout(self.main_layout)
     
     def add_xp_bar(self, task : Task, max_xp : int, title : str) -> None:
+        """
+        Adds a new XP bar for a specific task to the user interface. The XP bar visually
+        represents the progress of a task based on its completion value, maximum XP,
+        and associated attributes like priority, project, and tags.
+
+        Parameters:
+        task : Task
+            The task object containing details like priority, project, and tags
+            used to determine the XP bar's attributes.
+        max_xp : int
+            The maximum XP value that the XP bar can display.
+        title : str
+            The title of the XP bar, which is displayed as a label.
+
+        Returns:
+        None
+        """
         completion_value : int = get_completion_value(task.get_priority(), task.get_project(), task.get_tags())
 
         new_xp_bar = XpBar(self, completion_value)
@@ -50,6 +84,22 @@ class XpControllerWidget(QtWidgets.QWidget):
         self.main_layout.addWidget(new_xp_bar)
     
     def get_relevant_xp_bars(self, task : Task) -> list[XpBar]:
+        """
+        Retrieves experience bars relevant to the provided task based on task attributes,
+        matching priority, project, or tags. The function also includes the main experience
+        bar in the returned list.
+
+        Parameters:
+
+        task : Task
+            The task object containing attributes that determine relevance to
+            experience bars.
+
+        Returns:
+        list[XpBar]
+            A list of experience bars relevant to the task. This includes any matching bars
+            based on priority, project, or tags, as well as the main experience bar.
+        """
         bars_to_return = []
 
         for bar in self.xp_bars:

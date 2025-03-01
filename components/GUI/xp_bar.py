@@ -79,7 +79,19 @@ class XpBar(QtWidgets.QWidget):
         self.sub_xp(self.completion_value)
         
     def add_xp(self, val : int) -> None:
-        self.cur_xp = (self.cur_xp + val) % self.xp_bar.max_xp if self.xp_bar.max_xp != 0 else 1    
+        """
+        Increments the current experience (XP) value with the provided input and updates
+        the associated XP bar and text display. If the maximum XP in the XP bar is non-zero,
+        the method calculates the new XP by wrapping its value around the maximum XP.
+        Otherwise, a default value of 1 is set for the XP.
+
+        Args:
+            val (int): The amount of experience to be added.
+
+        Returns:
+            None
+        """
+        self.cur_xp = (self.cur_xp + val) % self.xp_bar.max_xp if self.xp_bar.max_xp != 0 else 1
         self.update_text()
         self.xp_bar._add_xp(val)
     

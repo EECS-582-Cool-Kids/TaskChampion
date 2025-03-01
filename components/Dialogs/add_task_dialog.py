@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/23/2025
+ *  Last Modified: 2/28/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -17,6 +17,7 @@
 
 from PySide6 import QtWidgets
 from typing import Optional
+from components.Dialogs.define_xp_dialog import XPConfigDialog
 
 
 class AddTaskDialog(QtWidgets.QDialog):
@@ -30,6 +31,7 @@ class AddTaskDialog(QtWidgets.QDialog):
             self.due = due
 
     def __init__(self):
+
         super().__init__()
 
         self.form = QtWidgets.QFormLayout()
@@ -69,6 +71,16 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.form.addRow("Due Date", self.due_date)
 
         self.layout : QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout()
+        self.tabs = QtWidgets.QTabWidget() # create a tab widget to hold the task details and xp configuration tabs
+        self.task_details_tab = QtWidgets.QWidget() # create a new tab for the task details
+        self.task_details_tab.setLayout(self.form) # set the layout of the task details tab to the form
+        self.tabs.addTab(self.task_details_tab, "Task Details") # add the task details tab to the tabs
+
+        self.xp_config_tab = XPConfigDialog(config_file="user_defined_xp.json") # create the xp configuration tab
+        self.tabs.addTab(self.xp_config_tab, "XP Configuration") # add the xp configuration tab to the tabs
+
+        self.layout.addWidget(self.tabs) # add the tabs to the layout
+
         self.layout.addLayout(self.form)
         self.layout.addWidget(self.buttons)
 

@@ -30,6 +30,31 @@ class XpControllerWidget(QtWidgets.QWidget):
 
     @staticmethod
     def get_completion_value(priority : priority_t, project : str | None, tags : list[str] | None) -> int:
+        """
+        Determine the completion value based on priority, project, and tags.
+
+        This function calculates a completion value utilizing multipliers found in
+        pre-defined maps. The base value is retrieved using the provided priority
+        and is potentially adjusted based on the existence and matching of the
+        project and tags in their respective multiplier maps.
+
+        Parameters
+        ----------
+        priority : priority_t
+            The priority level used to determine the base completion value.
+        project : str | None
+            The associated project name, if any, used to adjust the completion
+            value. If the project matches one in the project multiplier map,
+            the value is adjusted accordingly.
+        tags : list[str] | None
+            A list of tags that, if present in the tag multiplier map, are used
+            to further modify the completion value.
+
+        Returns
+        -------
+        int
+            The computed completion value after applying all relevant multipliers.
+        """
         completion_value : int = XpControllerWidget.PRIORITY_MULT_MAP[priority]
 
         if project in XpControllerWidget.PROJECT_MULT_MAP:
@@ -39,7 +64,7 @@ class XpControllerWidget(QtWidgets.QWidget):
             for tag in tags:
                 if tag in XpControllerWidget.TAG_MULT_MAP:
                     completion_value *= XpControllerWidget.TAG_MULT_MAP[tag]
-        
+
         return completion_value
 
     def __init__(self):
@@ -144,7 +169,6 @@ class XpControllerWidget(QtWidgets.QWidget):
                 continue
             
             completion_value : int = self.get_completion_value(task.get_priority(), task.get_project(), task.get_tags())
-            print(completion_value)
             xp_poss += completion_value
             xp_gain += completion_value if task.get_status() == "completed" else 0
         

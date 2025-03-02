@@ -143,6 +143,8 @@ class XpBar(QtWidgets.QWidget):
         xp_gain : int = 0
 
         # calculate all tasks relevant to set the max_xp value.
+        for i in range(0, api.num_tasks(self)):
+            task : Task = api.task_at(i)
         for i in range(0, api.num_tasks()):
             task : Task = api.task_at(i)
 

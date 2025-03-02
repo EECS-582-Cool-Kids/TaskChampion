@@ -21,19 +21,21 @@ import json
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QTableWidget, QPushButton, QTableWidgetItem, \
     QMessageBox, QComboBox
 from PySide6.QtCore import Signal
-
+from typing import Any
+import os
 
 class XPConfigDialog(QDialog):
 
     # Add a class attribute to store the priority values
-    PRIORITY_T = ["H", "M","L"]
+    PRIORITY_T = ["H", "M", "L"]
     xp_values_updated = Signal(dict) # Signal to indicate that the XP values have been updated
 
     def __init__(self, config_file="components/config/user_defined_xp.json"):
         super().__init__()
+        os.makedirs('components/config/', exist_ok=True)
         self.setWindowTitle("Edit XP Configuration")
         self.config_file = config_file
-        self.config: dict[str, any] = self.load_config()
+        self.config: dict[str, Any] = self.load_config()
 
         # Layout
         layout = QVBoxLayout(self)
@@ -94,14 +96,21 @@ class XPConfigDialog(QDialog):
     def save_config(self):
         # Save table data back to the config file
         priorities = {}
+        tags = {}
         for row in range(self.priority_table.rowCount()):
             priority = self.priority_table.item(row, 0).text()
             xp = int(self.priority_table.item(row, 1).text())
             priorities[priority] = xp
         #TODO: we will eventually need to figure out what
 
-
+        for row in range(self.tag_table.rowCount()):
+            tag = self.tag_table.item(row, 0).text()
+            xp = int(self.tag_table.item(row, 1).text())
+            tags[tag] = xp
+            
         self.config['priorities'] = priorities # Update the priorities
+        self.config['tags'] = tags
+
         self.update_xp_values() # Update the XP values
 
         with open(self.config_file, 'w') as file:

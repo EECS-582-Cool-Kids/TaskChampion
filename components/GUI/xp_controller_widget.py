@@ -19,6 +19,7 @@ from components.GUI.xp_bar import XpBar
 from PySide6 import QtWidgets
 from utils.task import priority_t, Task
 from utils.task_api import api
+from components.Dialogs.define_xp_dialog import XPConfigDialog
 
 PRIORITY_MULT_MAP : dict[priority_t, int] = { 'H':3, 'M':2, 'L':1 }
 PROJECT_MULT_MAP : dict[str, int] = {}
@@ -52,6 +53,9 @@ class XpControllerWidget(QtWidgets.QWidget):
         self.xp_bars.append(self.main_xp_bar)
 
         self.setLayout(self.main_layout)
+
+        self.xp_config_dialog = XPConfigDialog()
+        self.xp_config_dialog.xp_values_updated.connect(self.update_priority_mult_map)
     
     def add_xp_bar(self, task : Task, max_xp : int, title : str) -> None:
         """
@@ -73,7 +77,7 @@ class XpControllerWidget(QtWidgets.QWidget):
         """
         completion_value : int = get_completion_value(task.get_priority(), task.get_project(), task.get_tags())
 
-        new_xp_bar = XpBar(self, completion_value)
+        new_xp_bar = XpBar(completion_value)
         new_xp_bar.set_max_xp(max_xp)
         new_xp_bar.set_attributes(task.get_priority(), task.get_project(), task.get_tags())
 
@@ -133,9 +137,22 @@ class XpControllerWidget(QtWidgets.QWidget):
                 continue
             
             completion_value : int = get_completion_value(task.get_priority(), task.get_project(), task.get_tags())
-
+            print(completion_value)
             xp_poss += completion_value
             xp_gain += completion_value if task.get_status() == "completed" else 0
         
         self.main_xp_bar.set_max_xp(xp_poss)
         self.main_xp_bar.add_xp(xp_gain)
+
+    def update_priority_mult_map(self, updated_values: dict):
+        """
+        Updates the priority multiplier map with the provided values from the XP configuration dialog.
+
+        Parameters:
+        updated_values : dict
+            A dictionary containing updated priority multiplier values.
+        """
+        global PRIORITY_MULT_MAP
+        PRIORITY_MULT_MAP = updated_values
+        self.update_bars()    # update the XP bars to reflect the new values. This functionality may not be wanted.
+                                # Discuss in PR

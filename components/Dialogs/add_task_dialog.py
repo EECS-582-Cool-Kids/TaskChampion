@@ -76,7 +76,7 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.task_details_tab.setLayout(self.form) # set the layout of the task details tab to the form
         self.tabs.addTab(self.task_details_tab, "Task Details") # add the task details tab to the tabs
 
-        self.xp_config_tab = XPConfigDialog(config_file="user_defined_xp.json") # create the xp configuration tab
+        self.xp_config_tab = XPConfigDialog() # create the xp configuration tab
         self.tabs.addTab(self.xp_config_tab, "XP Configuration") # add the xp configuration tab to the tabs
 
         self.layout.addWidget(self.tabs) # add the tabs to the layout

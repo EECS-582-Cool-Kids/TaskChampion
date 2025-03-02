@@ -111,11 +111,11 @@ class XPConfigDialog(QDialog):
         self.config['priorities'] = priorities # Update the priorities
         self.config['tags'] = tags
 
-        self.update_xp_values() # Update the XP values
+        # Tell XpControllerWidget to update stuff.
+        self.xp_values_updated.emit(self.config)
 
         with open(self.config_file, 'w') as file:
             json.dump(self.config, file)
-
 
         QMessageBox.information(self, "Success", "Configuration saved!", QMessageBox.StandardButtons.Ok)
 
@@ -137,12 +137,3 @@ class XPConfigDialog(QDialog):
         self.tag_table.setItem(row_position, 0, QTableWidgetItem(""))
         self.tag_table.setItem(row_position, 1, QTableWidgetItem(""))
 
-    def update_xp_values(self):
-        """Updates the default values of the XP earned for each priority and tag."""
-        updated_xp_values = {
-            'H': self.priority_table.item(0, 1).text(), # Get the XP value for the high priority
-            'M': self.priority_table.item(1, 1).text(), # Get the XP value for the medium priority
-            'L': self.priority_table.item(2, 1).text() # Get the XP value for the low priority
-        }
-
-        self.xp_values_updated.emit(updated_xp_values) # Emit the signal with the updated XP values

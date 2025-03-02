@@ -30,6 +30,7 @@ class TaskAPI:
         self.task_list: list[Task] = []
 
         self._init_task_list()
+        
     def _init_task_list(self) -> None:
         k, r = self._get_sort_params(self.sort_metric)
         self.task_list.sort(key=k, reverse=r)

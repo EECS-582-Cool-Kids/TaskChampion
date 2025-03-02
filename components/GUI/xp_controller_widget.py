@@ -49,6 +49,10 @@ class XpControllerWidget(QtWidgets.QWidget):
         self.xp_bars : list[XpBar] = []
         self.main_layout = QtWidgets.QVBoxLayout()
 
+        self.config_button = QtWidgets.QPushButton('Config')
+        self.config_button.pressed.connect(self.popup_xp_config)
+        self.main_layout.addWidget(self.config_button)
+
         self.main_xp_bar = XpBar(self)
         self.main_xp_bar.set_max_xp(5)
         self.main_layout.addWidget(self.main_xp_bar)
@@ -58,7 +62,8 @@ class XpControllerWidget(QtWidgets.QWidget):
 
         self.xp_config_dialog = XPConfigDialog()
         self.xp_config_dialog.xp_values_updated.connect(self.update_priority_mult_map)
-    
+        self.update_priority_mult_map(self.xp_config_dialog.config)
+        
     def add_xp_bar(self, task : Task, max_xp : int, title : str) -> None:
         """
         Adds a new XP bar for a specific task to the user interface. The XP bar visually
@@ -128,7 +133,6 @@ class XpControllerWidget(QtWidgets.QWidget):
             # update the xp of all bars but the main xp bar
             if bar != self.main_xp_bar:
                 bar.update_xp()
-            
 
         xp_poss : int = 0
         xp_gain : int = 0
@@ -147,6 +151,9 @@ class XpControllerWidget(QtWidgets.QWidget):
         self.main_xp_bar.set_max_xp(xp_poss)
         self.main_xp_bar.add_xp(xp_gain)
 
+    def popup_xp_config(self):
+        self.xp_config_dialog.exec()
+        
     def update_priority_mult_map(self, updated_values: dict):
         """
         Updates the priority multiplier map with the provided values from the XP configuration dialog.
@@ -155,7 +162,9 @@ class XpControllerWidget(QtWidgets.QWidget):
         updated_values : dict
             A dictionary containing updated priority multiplier values.
         """
-
-        self.PRIORITY_MULT_MAP = updated_values
+        
+        XpControllerWidget.PRIORITY_MULT_MAP = updated_values['priorities']
+        XpControllerWidget.TAG_MULT_MAP = updated_values['tags']
+        
         self.update_bars()    # update the XP bars to reflect the new values. This functionality may not be wanted.
                                 # Discuss in PR

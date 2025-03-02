@@ -195,33 +195,30 @@ class XpBarChild(QtWidgets.QProgressBar):
 
     
     def _add_xp(self, val: int) -> None:
-        """returns how many levels we just gained."""
-        
+        self.animation.stop()
         adjusted = val * self.multiplier
-        self.animation.setStartValue(self.adjusted_value)
-
+        
         self.adjusted_value += adjusted
         
         while self.adjusted_value >= self.MAX_VAL:
             self.adjusted_value -= 0.1
         
         self.adjusted_value %= self.MAX_VAL
-
-        self.animation.setEndValue(self.adjusted_value)
+        self.animation.setStartValue(self.value())
+        self.animation.setEndValue(int(self.adjusted_value))
         self.animation.start()
 
     def _sub_xp(self, val : int) -> None:
-        """Returns how many levels we just lost."""
-
+        self.animation.stop()
         adjusted = val * self.multiplier
-        self.animation.setStartValue(self.adjusted_value)
-
+        
         self.adjusted_value -= adjusted
 
         while self.adjusted_value <= 0:
             self.adjusted_value += 0.1
         
         self.adjusted_value %= self.MAX_VAL
-
-        self.animation.setEndValue(self.adjusted_value)
+        self.animation.setStartValue(self.value())
+        self.animation.setEndValue(int(self.adjusted_value))
         self.animation.start()
+        

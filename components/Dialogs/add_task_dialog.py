@@ -1,4 +1,4 @@
-""" Prologue:
+""" Prologue:0
  *  Module Name: add_task_dialog.py
  *  Purpose: Adds details of a task once created.
  *  Inputs: None
@@ -28,6 +28,7 @@ class AddTaskDialog(QtWidgets.QDialog):
             self.project = project
             self.recurrence = recurrence
             self.due = due
+
 
     def __init__(self):
         super().__init__()
@@ -77,6 +78,8 @@ class AddTaskDialog(QtWidgets.QDialog):
 
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
+        self.setProperty('dialog', 'edit-task')
+
 
     def add_task(self) -> Optional[TaskDetails]:
         if self.exec():

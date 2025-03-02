@@ -1,10 +1,10 @@
-/*
+/* Prologue:
  *  Module Name: style.qss
  *  Purpose: The styling of the application in CSS.
  *  Inputs: None
  *  Outputs: None
  *  Additional code sources: None
- *  Developers: Ethan Berkley
+ *  Developers: Ethan Berkley, Richard Moser
  *  Date: 2/15/2025
  *  Last Modified: 2/15/2025
  *  Preconditions: None
@@ -15,41 +15,110 @@
  *  Known Faults: None encountered
 */
 
+/* The window background */
 #MainWidget {
     background-color: transparent;
-    background-color: white;
+    background-color: #d480bb;
 }
 
-
+/* The grid around the cells of the table */
 TableCell {
-    border: 2px solid red;
+    border: 1px solid #0e071b;
     width: 100%;
 }
 
-[row-even="0"][row-active="False"] {
-  background-color:rgb(24, 24, 151)
+
+
+/* a thin outline around the table and under the tabs */
+QTabWidget {
+    background-color: dark-blue;
+    color: white;
 }
 
-[row-even="1"][row-active="False"] {
-  background-color:rgb(15, 15, 92)
+/* a thin outline just inside the QTabWidget */
+QScrollArea {
+    background-color: dark-blue;
 }
 
-[row-even="0"][row-active="True"] {
-    background-color:rgb(233, 124, 124)
-}
 
-[row-even="1"][row-active="True"] {
-    background-color:rgb(134, 52, 52)
-}
+/* ------ The table rows ------ */
+    /* active rows*/
+        /* odd rows, active (darker row) */
+        [row-even="0"][row-active="True"] {
+            background-color: #e27285
+        }
+        
+        /* even rows, active (lighter row) */
+        [row-even="1"][row-active="True"] {
+            background-color: #fdc9c9
+        }
 
+    /* inactive rows*/
+        /* odd rows, inactive (darker row) */
+        [row-even="0"][row-active="False"] {
+            background-color: #7864c6
+        }
+        
+        /* even rows, inactive (lighter row) */
+        [row-even="1"][row-active="False"] {
+            background-color: #9c8bdb
+        }
+
+
+/* ------ dialog boxes ------ */
+
+    /* the dialog box background */
+    AddTaskDialog {
+        background-color: dark-blue;
+        color: red;
+    }
+
+
+/* most text in the app and dialog boxes */
+/* TODO: split this into column labels, row contents, and dialog box text */
 QLabel {
+    background-color: transparent;
+    color: white;
     font-size: 10px;
 }
 
+/* button background and text */
 QPushButton {
-    color: #000000;
+    background-color: #6881e0;
+    color: black;
+    border: 2px solid #231243;
 }
 
+/* not sure what this affects */
 QGridLayout {
     background-color: red;
 }
+
+/* for testing to identify elements */
+[type="test"] {
+    background-color: yellow;
+    color: yellow;
+}
+
+EditTaskDialog {
+    background-color: dark-blue;
+    color: yellow;
+}
+
+
+
+
+"Completed?" {
+    background-color: black;
+    color: yellow;
+    border: 2px solid yellow;
+}
+
+/* ### additional styles ### */
+#rowLabels {
+    font-weight: bold; 
+    font-size: 14px; 
+    #background-color: black;
+    text-align: center
+    }
+    

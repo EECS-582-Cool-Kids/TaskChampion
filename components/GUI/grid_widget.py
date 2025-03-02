@@ -20,6 +20,7 @@ from PySide6 import QtCore, QtWidgets
 from components.Dialogs.task_row import TaskRow, COLS
 from .menubar import MenuBar
 from components.Dialogs.edit_task_dialog import EditTaskDialog
+from styles.extra_styles import get_style
 from utils.logger import logger
 from utils.task_api import api
 
@@ -31,11 +32,16 @@ class GridWidget(QtWidgets.QWidget):
     def __init__(self, load_styles : Callable[[], None]):
         super().__init__()  # Call the parent constructor.
         self.setObjectName('GridWidget')  # Set the object name for styling.
-        self.setFixedHeight(200)  # Set the fixed height of the widget. 
+        self.setFixedHeight(200)  # Set the fixed height of the widget.
+        # self.setFixedWidth(765)
 
         self.scroll_area = QtWidgets.QScrollArea()  # Create a scroll area.
         self.scroll_area.setWidgetResizable(True)  # Set the scroll area to be resizable.
         self.scroll_area.setWidget(self)  # Set the widget of the scroll area to be this widget.
+
+        # set a horizontal scroll bar policy
+        self.scroll_area.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn)  # Set the horizontal scroll bar policy of the scroll area.
+
 
         self.grid = QtWidgets.QGridLayout()  # Create a grid layout.
 
@@ -87,13 +93,21 @@ class GridWidget(QtWidgets.QWidget):
         
         # QLabel is just simple text.
         self.grid.addWidget(QtWidgets.QLabel("Completed?"), 0, 0)  # Add a label to the grid.
-        # TODO: may be no point in setting column stretch like this and below,
+        # Set the style sheet of the label.
+        # self.grid.itemAtPosition(0, 0).widget().setStyleSheet("font-weight: bold; font-size: 14px; background-color: yellow;")
+        self.grid.itemAtPosition(0, 0).widget().setStyleSheet(get_style("rowLabels"))
+        
+        
+        # TODO: may be no point in setting column stretch like this and below
         # Consider changing.
         self.grid.setColumnStretch(0, 0)  # Set the column stretch of the grid to 0.
 
         for i in range(len(COLS)):  # Loop through the columns.
             self.grid.addWidget(QtWidgets.QLabel(COLS[i]), 0, i+1)  # Add a label to the grid.
             self.grid.setColumnStretch(i+1, 0)  # Set the column stretch of the grid to 0.
+            self.grid.itemAtPosition(0, i+1).widget().setStyleSheet(get_style("rowLabels"))
+            self.grid.itemAtPosition(0, i+1).widget().setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)  # Set the alignment of the label to be centered.
+
 
     def set_menu_bar(self):
         """Sets the menu bar for the application."""
@@ -111,7 +125,7 @@ class GridWidget(QtWidgets.QWidget):
                 logger.log_error(str(err))
 
         self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.
-
+        
     def _edit_task(self, idx: int):
         """Passed to taskrows."""
         cur_task = api.task_at(idx)
@@ -129,7 +143,7 @@ class GridWidget(QtWidgets.QWidget):
 
             for i in range(api.num_tasks()):
                 self.rowArr[i].update_task()
-
+        
         self.refresh_styles()
 
     def _delete_task(self, idx: int):

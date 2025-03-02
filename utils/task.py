@@ -30,7 +30,7 @@ class Task(task.Task):
         return self['depends']  # Return the depends field.
 
     def get_description(self) -> fields.StringField:
-        return self['description']  # Return the description field.
+        return self['Description']  # Return the description field.
 
     def get_due(self) -> fields.DateField:
         return self['due']  # Return the due field.

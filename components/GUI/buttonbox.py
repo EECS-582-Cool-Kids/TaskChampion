@@ -33,6 +33,8 @@ class ButtonBox(TableCell):
         self.add_sub_widget()  # Add the button to the sub widgets list.
         if action:  # If an action is provided.
             self.my_button.clicked.connect(action)  # Connect the clicked signal of the button to the action.
+        self.setProperty('type', 'test')
+
 
     def update_task(self):
         super().update_task()  # Call the parent update task method.

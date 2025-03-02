@@ -14,8 +14,9 @@
  *  Invariants: None
  *  Known Faults: None encountered
 """
-
+import sys
 from PySide6 import QtWidgets
+
 from .task_champion_widget import TaskChampionWidget
 
 class TaskChampionGUI:
@@ -30,7 +31,9 @@ class TaskChampionGUI:
         self.main_widget.resize(800, 400) # set basic window size.
         self.main_widget.show() # show the window
 
-        self.main_widget.move(0, 0)
+        # self.main_widget.move(0, 0)
+        self.move_window()
+    
 
         self.style_str = ""  # Initialize the style string.
         with open ('styles/style.qss', 'r')as f:  # Open the style file.
@@ -38,9 +41,24 @@ class TaskChampionGUI:
 
         self.load_styles()  # Load the styles.
     
+    def move_window(self, x=None, y=None):
+        if x is None or y is None:
+            # put the window in the upper right corner
+            screen = QtWidgets.QApplication.primaryScreen()
+            screen_size = screen.size()
+            screen_width = screen_size.width()
+            screen_height = screen_size.height()
+            window_width = self.main_widget.width()
+            window_height = self.main_widget.height()
+            x = screen_width - window_width
+            y = 0
+        print(f"Moving window to {x}, {y}")
+        self.main_widget.move(x, y)
+
     def load_tasks(self):
         self.main_widget.grids[0].fillGrid()
         self.load_styles()
+                
 
     def load_styles(self):
         self.qtapp.setStyleSheet(self.style_str)  # Set the style sheet of the Qt Application to be the style string.

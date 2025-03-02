@@ -30,6 +30,7 @@ class Checkbox(TableCell):
         super().__init__(row_num, get_task, attribute)  # Call the parent constructor.
     
         self.add_sub_widget()  # Add the checkbox to the sub widgets list.
+        
 
     def update_task(self):
         super().update_task()  # Call the parent update task method.

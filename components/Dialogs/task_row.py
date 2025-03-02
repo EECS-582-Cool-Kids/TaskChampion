@@ -26,7 +26,7 @@ from typing import Final, Callable
 # The names of the columns.
 # TODO: in the image Richard posted, the second col was Age instead of 'start', but taskw_ng doesn't have an age.
 # Should we keep it as start? do something else? Idk what start even means.
-COLS: Final = ('id', 'start', 'priority', 'project', 'recur', 'due', 'until', 'description', 'urgency')
+COLS: Final = ( 'description', 'id', 'start', 'priority', 'project', 'recur', 'due', 'until','urgency')
 
 class TaskRow:
     def __init__(self, row_num: int, edit_task: Callable[[int], None], delete_task: Callable[[int], None]):
@@ -64,7 +64,7 @@ class TaskRow:
     def edit_task(self):
         assert self.task
 
-        edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""), 
+        edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""),
           str(self.task.get("due") or ""), 
           str(self.task.get("priority") or ""))
         

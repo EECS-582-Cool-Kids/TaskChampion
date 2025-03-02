@@ -16,7 +16,7 @@
 """
 
 from PySide6 import QtWidgets
-from components.GUI.xp_controller_widget import get_completion_value
+from components.GUI.xp_controller_widget import XpControllerWidget
 from utils.task import Task
 from utils.task_api import api
 from components.GUI.checkbox import Checkbox
@@ -133,7 +133,7 @@ class TaskRow:
         if self.task is None:
             return
 
-        completion_value : int = get_completion_value(self.task.get_priority(), self.task.get_project(), self.task.get_tags())
+        completion_value : int = XpControllerWidget.get_completion_value(self.task.get_priority(), self.task.get_project(), self.task.get_tags())
 
         if checkbox_state:
             for add_fn in self.xp_add_calls:

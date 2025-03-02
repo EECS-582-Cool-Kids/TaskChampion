@@ -1,6 +1,6 @@
 from PySide6 import QtCore, QtWidgets
 
-from utils.task_api import TaskAPI
+from utils.task_api import api
 from utils.task import Task, priority_t
 
 class XpBar(QtWidgets.QWidget):
@@ -143,8 +143,8 @@ class XpBar(QtWidgets.QWidget):
         xp_gain : int = 0
 
         # calculate all tasks relevant to set the max_xp value.
-        for i in range(0, TaskAPI.num_tasks(self)):
-            task : Task = TaskAPI.task_at(i)
+        for i in range(0, api.num_tasks()):
+            task : Task = api.task_at(i)
 
             if task is None:
                 continue
@@ -160,7 +160,6 @@ class XpBar(QtWidgets.QWidget):
         
         self.set_max_xp(xp_poss)
         self.add_xp(xp_gain)
-            
 
 class XpBarChild(QtWidgets.QProgressBar):
     """Class representing an XP Bar. 

@@ -40,7 +40,7 @@ class Textbox(TableCell):
             assert self.task  # Assert that the task is not None.
             assert self.attribute  # Assert that the attribute is not None.
             self.my_text = str(self.task.get(self.attribute) or "")  # Set the text of the label to the attribute of the task.
-            print (self.task)
+            # print(self.task)
             self.my_label.setText(self.my_text)  # Set the text of the label to the text.
         else:
             self.my_text = ""

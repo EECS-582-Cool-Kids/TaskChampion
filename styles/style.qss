@@ -129,3 +129,8 @@ EditTaskDialog {
     text-align: center
     }
     
+#CheckBox {
+    margin-left:50%;
+    margin-right:50%;
+    color: black;
+}

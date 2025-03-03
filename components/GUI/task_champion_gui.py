@@ -52,7 +52,7 @@ class TaskChampionGUI:
             window_height = self.main_widget.height()
             x = screen_width - window_width
             y = 0
-        print(f"Moving window to {x}, {y}")
+        # print(f"Moving window to {x}, {y}")
         self.main_widget.move(x, y)
 
     def load_tasks(self):

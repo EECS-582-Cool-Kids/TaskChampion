@@ -170,6 +170,7 @@ class GridWidget(QtWidgets.QWidget):
 
         if num_tasks > self.DEFAULT_ROWS:
             self.rowArr.pop(-1).annihilate()
+            print(f"num_tasks: {num_tasks} > DEFAULT_ROWS: {self.DEFAULT_ROWS}, annihilating last row")
         
         for i in range(len(self.rowArr)):
             self.rowArr[i].update_task()

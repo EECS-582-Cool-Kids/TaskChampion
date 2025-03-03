@@ -15,7 +15,7 @@
  *  Known Faults: None encountered
 """
 
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtCore
 
 class ALIGN:
     # Declare where at in a layout an item aligns itself to.

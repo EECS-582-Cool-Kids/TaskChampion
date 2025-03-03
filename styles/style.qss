@@ -122,13 +122,13 @@ EditTaskDialog {
 /* ### additional styles ### */
 #rowLabels {
     border: 1px solid #0e071b;
-    font-weight: bold; 
-    font-size: 14px; 
+    font-weight: bold;
+    font-size: 14px;
     background-color: #8aa1f6;
     color: black;
     text-align: center
     }
-    
+
 #CheckBox {
     margin-left:50%;
     margin-right:50%;

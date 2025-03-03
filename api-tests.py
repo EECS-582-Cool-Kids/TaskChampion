@@ -1,12 +1,12 @@
 """ Prologue:
- *  Module Name: taskchampion-tests.py
- *  Purpose: automated tests for program functionality
+ *  Module Name: api-tests.py
+ *  Purpose: Unit Tests for the Taskwarrior API.
  *  Inputs: None
  *  Outputs: None
  *  Additional code sources: None
- *  Developers: Jacob Wilkus, Ethan Berkley, Mo Morgan, Richard Moser, Derek Norton
- *  Date: 2/23/2025
- *  Last Modified: 2/23/2025
+ *  Developers: Ethan Berkley, Jacob Wilkus
+ *  Date: 2/25/2025
+ *  Last Modified: 2/25/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -15,16 +15,18 @@
  *  Known Faults: None encountered
 """
 
+from utils.task_api import register_api, TaskAPIImpl
+register_api(TaskAPIImpl) # Order matters.
+
 from utils.task_api import api
 
-class Tests:
+class TestClass:
     '''Taskwarrior API tests'''
     def test_api_add_task(self):
         '''Test Adding a basic task to the API'''
-
         task : dict = api.add_new_task(
             description = "Test Description", 
-            tag         = "A",
+            tags        = "A",
             priority    = "H",
             project     = "Test Project",
         ) 
@@ -45,12 +47,13 @@ class Tests:
 
         task.set("description", "New Description")
         api.update_task(task)
-
-        assert api.task_at(task_idx).get_description() == "New Description"
+        
+        t = api.task_at(task_idx)
+        assert t != None
+        assert t.get_description() == "New Description"
     
     def test_api_delete_task(self):
         '''Test deleting a task in the API'''
-
         task_idx = api.num_tasks() - 1
         assert task_idx != -1 # test that a task exists. If not, then the test method failed.
 

@@ -1,7 +1,19 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+# *  Module Name: unit-tests.yml
+# *  Purpose: GitHub Workflow object that runs unit tests on the project when a PR is made to the develop branch.
+# *  Inputs: None
+# *  Outputs: None
+# *  Additional code sources: None
+# *  Developers: Jacob Wilkus
+# *  Date: 2/25/2025
+# *  Last Modified: 2/25/2025
+# *  Preconditions: None
+# *  Postconditions: None
+# *  Error/Exception conditions: None
+# *  Side effects: None
+# *  Invariants: None
+# *  Known Faults: None encountered
 
-name: Python application
+name: Unit Tests
 
 on:
   push:
@@ -13,24 +25,43 @@ permissions:
   contents: read
 
 jobs:
-  build:
-
+  api-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.13
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.13"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pytest taskw-ng
-        sudo apt-get install taskwarrior
-    - name: Initialize Taskwarrior
-      run: |
-        echo "data.location=~/.task" > ~/.taskrc
-    - name: Test with pytest
-      run: |
-        pytest taskchampion-tests.py
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest taskw-ng
+          sudo apt-get install taskwarrior
+      - name: Initialize Taskwarrior
+        run: |
+          echo "data.location=~/.task" > ~/.taskrc
+      - name: API Tests
+        run: |
+          pytest api-tests.py
+  data-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest taskw-ng
+          sudo apt-get install taskwarrior
+      - name: Initialize Taskwarrior
+        run: |
+          echo "data.location=~/.task" > ~/.taskrc
+      - name: Data Tests
+        run: |
+          pytest data-tests.py

@@ -17,7 +17,7 @@
 
 from PySide6 import QtWidgets
 from typing import Callable, Optional
-from .tablecell import TableCell
+from components.GUI.tablecell import TableCell
 from utils.task import Task
 
 class ButtonBox(TableCell):

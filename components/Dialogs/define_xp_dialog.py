@@ -1,4 +1,4 @@
-"""
+""" Prologue
  *  Module Name: define_xp_dialog.py
  *  Purpose: Defines the XP configuration dialog.
  *  Inputs: None

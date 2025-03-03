@@ -1,4 +1,4 @@
-"""
+""" Prologue
  *  Module Name: textbox.py
  *  Purpose: Module for the Textbox class, which is a class for creating a textbox in the GUI.
  *  Inputs: None
@@ -20,8 +20,8 @@ from PySide6 import QtWidgets
 from typing import Callable, Optional
 from components.GUI.tablecell import TableCell
 
-class Textbox(TableCell):
-    def __init__(self, row_num:int, get_task: Callable[[], Optional[Task]], attribute: str=""): 
+class Textbox(TableCell):  # Create a Textbox class that inherits from TableCell.
+    def __init__(self, row_num:int, get_task: Callable[[], Optional[Task]], attribute: str=""):
 
         self.my_text = ""  # Initialize the text of the textbox
         self.my_label = QtWidgets.QLabel()  # Create a label.

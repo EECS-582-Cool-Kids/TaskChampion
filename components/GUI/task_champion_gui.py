@@ -46,29 +46,29 @@ class TaskChampionGUI:
     def move_window(self, x=None, y=None):
         if x is None or y is None:
             # put the window in the upper right corner
-            screen = QtWidgets.QApplication.primaryScreen()
-            screen_size = screen.size()
-            screen_width = screen_size.width()
-            screen_height = screen_size.height()
-            window_width = self.main_widget.width()
-            window_height = self.main_widget.height()
-            x = screen_width - window_width
-            y = 0
+            screen = QtWidgets.QApplication.primaryScreen()  # Get the primary screen.
+            screen_size = screen.size()  # Get the size of the screen.
+            screen_width = screen_size.width()  # Get the width of the screen.
+            screen_height = screen_size.height()  # Get the height of the screen.
+            window_width = self.main_widget.width()  # Get the width of the window.
+            window_height = self.main_widget.height()  # Get the height of the window.
+            x = screen_width - window_width  # Calculate the x position of the window.
+            y = 0  # Calculate the y position of the window
         # print(f"Moving window to {x}, {y}")
-        self.main_widget.move(x, y)
+        self.main_widget.move(x, y)  # Move the window to the x, y position.
 
     def load_tasks(self):
-        self.main_widget.grids[0].fillGrid()
-        self.load_styles()
+        self.main_widget.grids[0].fillGrid()  # Fill the grid.
+        self.load_styles()  # Load the styles.
 
 
     def load_styles(self):
         self.qtapp.setStyleSheet(self.style_str)  # Set the style sheet of the Qt Application to be the style string.
 
     def load_tasks(self):
-        self.main_widget.grids[0].fill_grid()
-        self.main_widget.xp_bars.update_bars()
-        self.load_styles()
+        self.main_widget.grids[0].fill_grid()  # Fill the grid.
+        self.main_widget.xp_bars.update_bars()  # Update the XP bars.
+        self.load_styles()  # Load the styles.
 
     def on_exit(self) -> int:
         """The behavior for exiting the application."""

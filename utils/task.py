@@ -1,4 +1,4 @@
-"""
+""" Prologue
  *  Module Name: task.py
  *  Purpose: Module for the Task class, which is a class for creating a task object.
  *  Inputs: None
@@ -65,7 +65,7 @@ class Task(task.Task):
     def set_priority(self, priority : str) -> None:
         self.set("priority", priority)  # Set the priority field to the given priority.
 
-    def _has_project(self) -> bool:
+    def _has_project(self) -> bool:  # Check if the project field exists.
         return 'project' in self
 
     def get_project(self) -> fields.StringField | None: 
@@ -86,10 +86,10 @@ class Task(task.Task):
     def get_start(self) -> fields.DateField:
         return self['start']  # Return the start field.
 
-    def get_status(self) -> status_t:
+    def get_status(self) -> status_t:  # Get the status of the task.
         return cast(status_t, str(self['status']))  # Return the status field.
 
-    def _has_tags(self) -> bool:
+    def _has_tags(self) -> bool:  # Check if the tags field exists.
         return 'tags' in self
 
     def get_tags(self) -> fields.ArrayField | None:

@@ -26,7 +26,7 @@ class Checkbox(TableCell):
         self.my_checkbox = QtWidgets.QCheckBox()  # Create a checkbox.
         self.get_sub_widget = lambda: self.my_checkbox  # Create a lambda function that returns the checkbox.
         self.my_checkbox.stateChanged.connect(lambda: self.check_checkbox())  # Connect the state changed signal of the checkbox to the check checkbox method.
-        self.on_update = on_update
+        self.on_update = on_update  # Set the on update method.
 
         super().__init__(row_num, get_task, attribute)  # Call the parent constructor.
     
@@ -36,11 +36,11 @@ class Checkbox(TableCell):
         super().update_task()  # Call the parent update task method.
         if self.active:  # If the cell is active.
             assert self.task  # Assert that the task is not None.
-            self.my_checkbox.setEnabled(True)
+            self.my_checkbox.setEnabled(True)  # Enable the checkbox.
             self.my_checkbox.setChecked(self.task.get_status() == 'completed')  # Set the checked state of the checkbox to the status of the task.
         else:
-            self.my_checkbox.setChecked(False)
-            self.my_checkbox.setEnabled(False)
+            self.my_checkbox.setChecked(False)  # Set the checkbox to be unchecked.
+            self.my_checkbox.setEnabled(False)  # Disable the checkbox.
         self.update()  # Update the cell.
 
     @QtCore.Slot()
@@ -49,10 +49,10 @@ class Checkbox(TableCell):
         assert self.task  # Assert that the task is not None.
 
         if self.my_checkbox.isChecked():  # If the checkbox is checked.
-            self.task.set('status', 'completed')
+            self.task.set('status', 'completed')  # Set the status of the task to completed.
 
         else:  # If the checkbox is not checked.
-            self.task.set('status', 'pending')
+            self.task.set('status', 'pending')  # Set the status of the task to pending.
             
         api.update_task(self.task)  # Update the task status.
         self.on_update(self.my_checkbox.isChecked()) # handle the xp updates

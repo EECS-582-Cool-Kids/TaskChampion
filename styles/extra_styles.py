@@ -20,22 +20,22 @@ style_string = None  # Start as None to distinguish "not loaded" from "empty fil
 def get_style_string():
     # open style.qss, read it to a global string
     style_str = ""
-    with open ('styles/style.qss', 'r') as f:
-        style_str = f.read()
-    return style_str
+    with open ('styles/style.qss', 'r') as f:  # Open the style file.
+        style_str = f.read()  # Read the style file.
+    return style_str  # Return the style string
 
 
 def get_style(style_name):
     global style_string
     if style_string is None:  # Only load if it's never been loaded
-        style_string = get_style_string()
+        style_string = get_style_string()  # Load the style string
         
     # find the style in the style string. The style will be named #style_name have contents with curly braces
-    start = style_string.find(f"#{style_name}")
-    if start == -1:
+    start = style_string.find(f"#{style_name}")  # Find the style name in the style string.
+    if start == -1:  # If the style name is not found.
         return None
     
-    start = style_string.find("{", start) +1
-    end = style_string.find("}", start)
+    start = style_string.find("{", start) +1  # Find the opening curly brace.
+    end = style_string.find("}", start)  # Find the closing curly brace.
     # print(f"Found style {style_name} contents: {style_string[start:end]}")
-    return style_string[start:end+1]
+    return style_string[start:end+1]  # Return the style contents

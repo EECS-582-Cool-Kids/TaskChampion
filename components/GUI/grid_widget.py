@@ -1,4 +1,4 @@
-"""
+""" Prologue
  *  Module Name: grid_widget.py
  *  Purpose: Initialization of the grid used within the GUI.
  *  Inputs: None
@@ -116,10 +116,10 @@ class GridWidget(QtWidgets.QWidget):
         for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
             # Append a new task row to the row array.
             try:
-                row = TaskRow(i, self.fetch_xp_fns)
+                row = TaskRow(i, self.fetch_xp_fns)  # Create a new task row.
                 row.insert(self.grid, i+1)  # Insert the row into the grid.
-                self.row_arr.append(row)
-            except ValueError as err:
-                logger.log_error(str(err))
+                self.row_arr.append(row)  # Append the row to the row array.
+            except ValueError as err:  # If a value error is raised.
+                logger.log_error(str(err))  # Log the error.
 
         self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.

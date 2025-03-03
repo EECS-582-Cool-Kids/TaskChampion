@@ -59,8 +59,8 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.main_tab.setStyleSheet(get_style('example_tab'))  # Set the style of the tab widget.
 
         # Set grid widget to take up 75% of the app's width.
-        self.main_layout.setStretch(0, 3)
-        self.main_layout.setStretch(1, 1)
+        self.main_layout.setStretch(0, 3)  # Set the stretch of the first grid widget to 3.
+        self.main_layout.setStretch(1, 1)  # Set the stretch of the second grid widget to 1.
 
         # TODO: reinstate this when we have a second tab
         # self.main_tab.addTab(self.grids[1].scroll_area, "Example Empty Tab")  # Add the second grid widget to the tab widget.
@@ -89,7 +89,7 @@ class TaskChampionWidget(QtWidgets.QWidget):
         )  # Create a new task with the details from the add task dialog.
 
         self.grids[self.current_grid].add_task()  # Add the new task to the current grid.
-        self.xp_bars.update_bars()
+        self.xp_bars.update_bars()  # Update the XP bars.
 
     def set_menu_bar(self):
         """Sets the menu bar for the application."""  

@@ -1,4 +1,4 @@
-"""
+""" Prologue
  *  Module Name: singleton.py
  *  Purpose: Initialization of the singleton TaskWarrior API object
  *  Inputs: None
@@ -16,9 +16,9 @@
 """
 
 def singleton(cls):
-    instances = {}
-    def getinstance(*args, **kwargs):
-        if cls not in instances:
-            instances[cls] = cls(*args, **kwargs)
-        return instances[cls]
-    return getinstance
+    instances = {}  # Create a dictionary to store instances of the class.
+    def getinstance(*args, **kwargs):  # Create a function that returns the instance of the class.
+        if cls not in instances:  # If the class is not in the instances dictionary.
+            instances[cls] = cls(*args, **kwargs)  # Create a new instance of the class.
+        return instances[cls]  # Return the instance of the class.
+    return getinstance  # Return the function that returns the instance of the class.

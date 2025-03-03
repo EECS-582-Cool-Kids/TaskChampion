@@ -35,9 +35,9 @@ QTabWidget {
     color: white;
 }
 
-/* a thin outline just inside the QTabWidget */
+/* area around the grid (unless GridWidget is not defined, then it will be system default) */
 QScrollArea {
-    background-color: dark-blue;
+    background-color: #9a97b9;
 }
 
 
@@ -47,7 +47,7 @@ QScrollArea {
         [row-even="0"][row-active="True"] {
             background-color: #e27285
         }
-        
+
         /* even rows, active (lighter row) */
         [row-even="1"][row-active="True"] {
             background-color: #fdc9c9
@@ -58,7 +58,7 @@ QScrollArea {
         [row-even="0"][row-active="False"] {
             background-color: #7864c6
         }
-        
+
         /* even rows, inactive (lighter row) */
         [row-even="1"][row-active="False"] {
             background-color: #9c8bdb
@@ -69,7 +69,7 @@ QScrollArea {
 
     /* the dialog box background */
     AddTaskDialog {
-        background-color: dark-blue;
+        background-color: #8aa1f6;
         color: red;
     }
 
@@ -78,20 +78,26 @@ QScrollArea {
 /* TODO: split this into column labels, row contents, and dialog box text */
 QLabel {
     background-color: transparent;
-    color: white;
+    color: #1b2447;
     font-size: 10px;
 }
 
 /* button background and text */
 QPushButton {
-    background-color: #6881e0;
+    background-color: #8aa1f6;
     color: black;
     border: 2px solid #231243;
+    font-size: 12px
 }
 
 /* not sure what this affects */
 QGridLayout {
     background-color: red;
+}
+
+GridWidget {
+    background-color: #9a97b9;
+    color: #9a97b9;
 }
 
 /* for testing to identify elements */
@@ -101,14 +107,14 @@ QGridLayout {
 }
 
 EditTaskDialog {
-    background-color: dark-blue;
+    background-color: #8aa1f6;
     color: yellow;
 }
 
 
 
 
-"Completed?" {
+"Done?" {
     background-color: black;
     color: yellow;
     border: 2px solid yellow;
@@ -116,9 +122,11 @@ EditTaskDialog {
 
 /* ### additional styles ### */
 #rowLabels {
+    border: 1px solid #0e071b;
     font-weight: bold; 
     font-size: 14px; 
-    #background-color: black;
+    background-color: #8aa1f6;
+    color: black;
     text-align: center
     }
     

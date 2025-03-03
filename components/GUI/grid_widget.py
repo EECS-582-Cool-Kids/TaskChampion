@@ -46,7 +46,7 @@ class GridWidget(QtWidgets.QWidget):
         self.grid = QtWidgets.QGridLayout()  # Create a grid layout.
 
         self.grid.rowMinimumHeight(self.ROW_HEIGHT)  # Set the minimum height of the rows in the grid.
- 
+
         self.setLayout(self.grid)  # Set the layout of the widget to be the grid layout.
 
         self.row_arr: list[TaskRow] = []  # Initialize the row array to an empty list.
@@ -92,7 +92,7 @@ class GridWidget(QtWidgets.QWidget):
         self.grid.setSpacing(0)  # Set the spacing of the grid to 0.
         
         # QLabel is just simple text.
-        self.grid.addWidget(QtWidgets.QLabel("Completed?"), 0, 0)  # Add a label to the grid.
+        self.grid.addWidget(QtWidgets.QLabel("Done?"), 0, 0)  # Add a label to the grid.
         # Set the style sheet of the label.
         # self.grid.itemAtPosition(0, 0).widget().setStyleSheet("font-weight: bold; font-size: 14px; background-color: yellow;")
         self.grid.itemAtPosition(0, 0).widget().setStyleSheet(get_style("rowLabels"))

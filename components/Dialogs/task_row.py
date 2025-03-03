@@ -31,7 +31,6 @@ COLS: Final = ( 'description', 'id', 'start', 'priority', 'project', 'recur', 'd
 class TaskRow:
     def __init__(self, row_num: int, edit_task: Callable[[int], None], delete_task: Callable[[int], None]):
         self.idx = row_num
-
         self.task = api.task_at(self.idx)
         self.check = Checkbox(row_num, self.get_task)
         self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]
@@ -41,16 +40,52 @@ class TaskRow:
 
     def get_task(self): return self.task
 
+
     def insert(self, grid: QtWidgets.QGridLayout, rowNum: int):
         # Row stretch of 0 means take up bare minimum amount of space?
         grid.setRowStretch(rowNum, 0)
+
+        # Set fixed size for each column to maintain a consistent width
+        column_widths = {
+            'description': 200,  # Set width per column as needed
+            'id': 30,
+            'start': 60,
+            'priority': 80,
+            'project': 120,
+            'recur': 60,
+            'due': 60,
+            'until': 60,
+            'urgency': 60
+        }
+
+        # self.check.setFixedWidth(45)  # Checkbox width
         grid.addWidget(self.check, rowNum, 0)
-        
+
         for i in range(len(self.cols)):
+            col_name = COLS[i]
+            if col_name in column_widths:
+                self.cols[i].setFixedWidth(column_widths[col_name])  # Apply fixed width
             grid.addWidget(self.cols[i], rowNum, i + 1)
 
-        grid.addWidget(self.edit_button, rowNum, len(self.cols) + 1)  # add the edit button to the grid
-        grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)  # add the delete button to the grid
+        # Set fixed sizes for buttons
+        self.edit_button.setFixedWidth(60)
+        self.delete_button.setFixedWidth(6)
+
+        grid.addWidget(self.edit_button, rowNum, len(self.cols) + 1)  # Add the edit button
+        grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)  # Add the delete button
+
+    # def insert(self, grid: QtWidgets.QGridLayout, rowNum: int):
+    #     # Row stretch of 0 means take up bare minimum amount of space?
+    #     grid.setRowStretch(rowNum, 0)
+    #
+    #
+    #     grid.addWidget(self.check, rowNum, 0)
+    #
+    #     for i in range(len(self.cols)):
+    #         grid.addWidget(self.cols[i], rowNum, i + 1)
+    #
+    #     grid.addWidget(self.edit_button, rowNum, len(self.cols) + 1)  # add the edit button to the grid
+    #     grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)  # add the delete button to the grid
 
     def update_task(self):
         self.task = api.task_at(self.idx)

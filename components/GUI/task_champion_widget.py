@@ -55,7 +55,7 @@ class TaskChampionWidget(QtWidgets.QWidget):
 
         self.grids = [GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars), GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars)]  # Create a list of grid widgets.
         self.main_tab.addTab(self.grids[0].scroll_area, "Example Tab")  # Add the first grid widget to the tab widget.
-        self.main_tab.addTab(self.grids[1].scroll_area, "Example Empty Tab")  # Add the second grid widget to the tab widget.
+        # self.main_tab.addTab(self.grids[1].scroll_area, "Example Empty Tab")  # Add the second grid widget to the tab widget.
         self.main_tab.setStyleSheet(get_style('example_tab'))  # Set the style of the tab widget.
 
         # Set grid widget to take up 75% of the app's width.

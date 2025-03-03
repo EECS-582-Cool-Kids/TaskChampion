@@ -1,4 +1,4 @@
-"""
+""" Prologue:
  *  Module Name: grid_widget.py
  *  Purpose: Initialization of the grid used within the GUI.
  *  Inputs: None

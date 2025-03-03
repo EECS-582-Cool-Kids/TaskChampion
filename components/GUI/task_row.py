@@ -1,4 +1,4 @@
-"""
+""" Prologue:
  *  Module Name: task_row.py
  *  Purpose: Defines the details within each row of the task manager app.
  *  Inputs: None
@@ -24,7 +24,8 @@ from components.GUI.textbox import Textbox
 from components.GUI.buttonbox import ButtonBox
 from components.GUI.xp_bar import XpBar
 from components.Dialogs.edit_task_dialog import EditTaskDialog
-from typing import Callable, Final
+from styles.extra_styles import get_style
+from typing import Final, Callable
 
 # The names of the columns.
 # TODO: in the image Richard posted, the second col was Age instead of 'start', but taskw_ng doesn't have an age.
@@ -56,7 +57,9 @@ class TaskRow:
         # Row stretch of 0 means take up bare minimum amount of space?
         grid.setRowStretch(row_num, 0)
         grid.addWidget(self.check, row_num, 0)
-        
+        # set style for the checkbox
+        # self.check.setStyleSheet(get_style("CheckBox"))
+
         for i in range(len(self.cols)):
             grid.addWidget(self.cols[i], row_num, i + 1)
 

@@ -29,7 +29,7 @@ class XpControllerWidget(QtWidgets.QWidget):
     TAG_MULT_MAP : dict[str, int] = {}
 
     @staticmethod
-    def get_completion_value(priority : priority_t, project : str | None, tags : list[str] | None) -> int:
+    def get_completion_value(priority : priority_t, projects : list[str] | None, tags : list[str] | None) -> int:
         """
         Determine the completion value based on priority, project, and tags.
 
@@ -42,7 +42,7 @@ class XpControllerWidget(QtWidgets.QWidget):
         ----------
         priority : priority_t
             The priority level used to determine the base completion value.
-        project : str | None
+        projects : str | None
             The associated project name, if any, used to adjust the completion
             value. If the project matches one in the project multiplier map,
             the value is adjusted accordingly.
@@ -57,8 +57,10 @@ class XpControllerWidget(QtWidgets.QWidget):
         """
         completion_value : int = XpControllerWidget.PRIORITY_MULT_MAP[priority]
 
-        if project in XpControllerWidget.PROJECT_MULT_MAP:
-            completion_value *= XpControllerWidget.PROJECT_MULT_MAP[project]
+        if projects is not None:
+            for project in projects:
+                if project in XpControllerWidget.PROJECT_MULT_MAP:
+                    completion_value *= XpControllerWidget.PROJECT_MULT_MAP[project]
 
         if tags is not None:
             for tag in tags:
@@ -189,6 +191,7 @@ class XpControllerWidget(QtWidgets.QWidget):
         
         XpControllerWidget.PRIORITY_MULT_MAP = updated_values['priorities']
         XpControllerWidget.TAG_MULT_MAP = updated_values['tags']
+        XpControllerWidget.PROJECT_MULT_MAP_MULT_MAP = updated_values['projects']
         
         self.update_bars()    # update the XP bars to reflect the new values. This functionality may not be wanted.
                                 # Discuss in PR

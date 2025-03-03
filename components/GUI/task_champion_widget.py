@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/23/2025
+ *  Last Modified: 3/2/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -20,7 +20,7 @@ from components.Dialogs.add_task_dialog import AddTaskDialog
 from components.GUI.grid_widget import GridWidget
 from components.GUI.xp_controller_widget import XpControllerWidget
 from components.GUI.menubar import MenuBar
-from utils.task_api import TaskAPI
+from utils.task_api import api
 from typing import Callable
 
 class TaskChampionWidget(QtWidgets.QWidget):
@@ -73,9 +73,9 @@ class TaskChampionWidget(QtWidgets.QWidget):
         if new_task_details is None:  # If the new task details are None.
             return  # Return.
 
-        TaskAPI.add_new_task(
+        api.add_new_task(
             description = new_task_details.description, 
-            tags        = new_task_details.tag,
+            tags        = new_task_details.tag.split(),
             priority    = new_task_details.priority,
             project     = new_task_details.project,
             recur       = new_task_details.recurrence,

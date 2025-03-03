@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/27/2025
+ *  Last Modified: 2/28/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -16,7 +16,7 @@
 """
 
 from PySide6 import QtWidgets
-from components.GUI.xp_controller_widget import get_completion_value
+from components.GUI.xp_controller_widget import XpControllerWidget
 from utils.task import Task
 from utils.task_api import api
 from components.GUI.checkbox import Checkbox
@@ -47,21 +47,21 @@ class TaskRow:
         self.delete_button = ButtonBox(row_num, self.get_task, "delete", self.delete_task)
 
         # Initial fetch of function calls
-        if self.task != None:
+        if self.task is not None:
             self._bind_xp_fns(self.fetch_xp_brs(self.task))
 
     def get_task(self): return self.task
 
-    def insert(self, grid: QtWidgets.QGridLayout, rowNum: int):
+    def insert(self, grid: QtWidgets.QGridLayout, row_num: int):
         # Row stretch of 0 means take up bare minimum amount of space?
-        grid.setRowStretch(rowNum, 0)
-        grid.addWidget(self.check, rowNum, 0)
+        grid.setRowStretch(row_num, 0)
+        grid.addWidget(self.check, row_num, 0)
         
         for i in range(len(self.cols)):
-            grid.addWidget(self.cols[i], rowNum, i + 1)
+            grid.addWidget(self.cols[i], row_num, i + 1)
 
-        grid.addWidget(self.edit_button, rowNum, len(self.cols) + 1)  # add the edit button to the grid
-        grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)  # add the delete button to the grid
+        grid.addWidget(self.edit_button, row_num, len(self.cols) + 1)  # add the edit button to the grid
+        grid.addWidget(self.delete_button, row_num, len(self.cols) + 2)  # add the delete button to the grid
 
     def update_task(self):
         self.task = api.task_at(self.idx)
@@ -72,7 +72,7 @@ class TaskRow:
         self.edit_button.update_task()
         self.delete_button.update_task()
 
-        if self.task != None:
+        if self.task is not None:
             self._bind_xp_fns(self.fetch_xp_brs(self.task))
     
     def edit_task(self):
@@ -130,10 +130,10 @@ class TaskRow:
             self.xp_sub_calls.append(xp_bar.sub_xp)
     
     def _update_xp_bars(self, checkbox_state : bool) -> None:
-        if self.task == None:
+        if self.task is None:
             return
 
-        completion_value : int = get_completion_value(self.task.get_priority(), self.task.get_project(), self.task.get_tags())
+        completion_value : int = XpControllerWidget.get_completion_value(self.task.get_priority(), self.task.get_project(), self.task.get_tags())
 
         if checkbox_state:
             for add_fn in self.xp_add_calls:

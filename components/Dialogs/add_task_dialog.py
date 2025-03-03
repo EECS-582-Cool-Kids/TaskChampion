@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/23/2025
+ *  Last Modified: 2/28/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -17,7 +17,6 @@
 
 from PySide6 import QtWidgets
 from typing import Optional
-
 
 class AddTaskDialog(QtWidgets.QDialog):
     class TaskDetails:
@@ -30,6 +29,7 @@ class AddTaskDialog(QtWidgets.QDialog):
             self.due = due
 
     def __init__(self):
+
         super().__init__()
 
         self.form = QtWidgets.QFormLayout()
@@ -69,6 +69,7 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.form.addRow("Due Date", self.due_date)
 
         self.layout : QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout()
+
         self.layout.addLayout(self.form)
         self.layout.addWidget(self.buttons)
 

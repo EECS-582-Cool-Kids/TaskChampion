@@ -1,6 +1,6 @@
 from PySide6 import QtCore, QtWidgets
 
-from utils.task_api import TaskAPI
+from utils.task_api import api
 from utils.task import Task, priority_t
 
 class XpBar(QtWidgets.QWidget):
@@ -51,7 +51,7 @@ class XpBar(QtWidgets.QWidget):
 
     def set_max_xp(self, val: int):
         if val == 0:
-            raise ValueError("Cannot set max xp to 0.")
+            val += 1 # prevents division by zero
         self.xp_bar.set_max_xp(val)
         self.update_text()
 
@@ -79,7 +79,19 @@ class XpBar(QtWidgets.QWidget):
         self.sub_xp(self.completion_value)
         
     def add_xp(self, val : int) -> None:
-        self.cur_xp = (self.cur_xp + val) % self.xp_bar.max_xp if self.xp_bar.max_xp != 0 else 1    
+        """
+        Increments the current experience (XP) value with the provided input and updates
+        the associated XP bar and text display. If the maximum XP in the XP bar is non-zero,
+        the method calculates the new XP by wrapping its value around the maximum XP.
+        Otherwise, a default value of 1 is set for the XP.
+
+        Args:
+            val (int): The amount of experience to be added.
+
+        Returns:
+            None
+        """
+        self.cur_xp = (self.cur_xp + val) % self.xp_bar.max_xp if self.xp_bar.max_xp != 0 else 1
         self.update_text()
         self.xp_bar._add_xp(val)
     
@@ -89,17 +101,50 @@ class XpBar(QtWidgets.QWidget):
         self.xp_bar._sub_xp(val)
     
     def reset_xp(self) -> None:
+        """
+        Resets the experience points (XP) of the user.
+
+        This method resets the current XP by subtracting it from the XP bar, sets
+        the XP bar's value to zero, and updates the current XP to zero. It is
+        used to initialize or reset a user's progress.
+
+        Raises:
+            None
+        """
         self.xp_bar._sub_xp(self.cur_xp)
         self.xp_bar.setValue(0)
         self.cur_xp = 0
 
     def update_xp(self) -> None:
+        """
+        Updates the experience points (XP) for the current object based on the
+        tasks from the TaskAPI. This includes calculating the maximum possible
+        XP from relevant tasks and the amount of XP gained from completed tasks.
+        Relevance of tasks is determined by comparing their attributes such as
+        priority, project, and tags with the current object's attributes.
+
+        Attributes
+        ----------
+        xp_poss : int
+            Represents the total potential XP that can be gained from all relevant
+            tasks.
+        xp_gain : int
+            Represents the actual XP gained from tasks that are completed.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
         xp_poss : int = 0
         xp_gain : int = 0
 
         # calculate all tasks relevant to set the max_xp value.
-        for i in range(0, TaskAPI.num_tasks()):
-            task : Task = TaskAPI.task_at(i)
+        for i in range(0, api.num_tasks()):
+            task : Task = api.task_at(i)
 
             if task is None:
                 continue
@@ -115,7 +160,6 @@ class XpBar(QtWidgets.QWidget):
         
         self.set_max_xp(xp_poss)
         self.add_xp(xp_gain)
-            
 
 class XpBarChild(QtWidgets.QProgressBar):
     """Class representing an XP Bar. 
@@ -150,33 +194,30 @@ class XpBarChild(QtWidgets.QProgressBar):
 
     
     def _add_xp(self, val: int) -> None:
-        """returns how many levels we just gained."""
-        
+        self.animation.stop()
         adjusted = val * self.multiplier
-        self.animation.setStartValue(self.adjusted_value)
-
+        
         self.adjusted_value += adjusted
         
         while self.adjusted_value >= self.MAX_VAL:
             self.adjusted_value -= 0.1
         
         self.adjusted_value %= self.MAX_VAL
-
-        self.animation.setEndValue(self.adjusted_value)
+        self.animation.setStartValue(self.value())
+        self.animation.setEndValue(int(self.adjusted_value))
         self.animation.start()
 
     def _sub_xp(self, val : int) -> None:
-        """Returns how many levels we just lost."""
-
+        self.animation.stop()
         adjusted = val * self.multiplier
-        self.animation.setStartValue(self.adjusted_value)
-
+        
         self.adjusted_value -= adjusted
 
         while self.adjusted_value <= 0:
             self.adjusted_value += 0.1
         
         self.adjusted_value %= self.MAX_VAL
-
-        self.animation.setEndValue(self.adjusted_value)
+        self.animation.setStartValue(self.value())
+        self.animation.setEndValue(int(self.adjusted_value))
         self.animation.start()
+        

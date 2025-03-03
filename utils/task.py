@@ -1,12 +1,12 @@
-"""
+""" Prologue
  *  Module Name: task.py
  *  Purpose: Module for the Task class, which is a class for creating a task object.
  *  Inputs: None
  *  Outputs: None
  *  Additional code sources: None
- *  Developers: Ethan Berkley, Mo Morgan
+ *  Developers: Ethan Berkley, Mo Morgan, Jacob Wilkus
  *  Date: 2/15/2025
- *  Last Modified: 2/15/2025
+ *  Last Modified: 2/25/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -65,8 +65,11 @@ class Task(task.Task):
     def set_priority(self, priority : str) -> None:
         self.set("priority", priority)  # Set the priority field to the given priority.
 
-    def get_project(self) -> fields.StringField:
-        return self['project']  # Return the project field.
+    def _has_project(self) -> bool:  # Check if the project field exists.
+        return 'project' in self
+
+    def get_project(self) -> fields.StringField | None: 
+        return self['project'] if self._has_project() else None  # Return the project field.
 
     def set_project(self, project : str) -> None:
         self.set("project", project)  # Set the project field to the given project.
@@ -83,11 +86,14 @@ class Task(task.Task):
     def get_start(self) -> fields.DateField:
         return self['start']  # Return the start field.
 
-    def get_status(self) -> status_t:
+    def get_status(self) -> status_t:  # Get the status of the task.
         return cast(status_t, str(self['status']))  # Return the status field.
 
-    def get_tags(self) -> fields.ArrayField:
-        return self['tags']  # Return the tags field.
+    def _has_tags(self) -> bool:  # Check if the tags field exists.
+        return 'tags' in self
+
+    def get_tags(self) -> fields.ArrayField | None:
+        return self['tags'] if self._has_tags() else None # Return the tags field.
 
     def get_until(self) -> fields.DateField:
         return self['until']  # Return the until field.

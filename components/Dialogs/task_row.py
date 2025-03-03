@@ -47,14 +47,14 @@ class TaskRow:
 
         # Set fixed size for each column to maintain a consistent width
         column_widths = {
-            'description': 200,  # Set width per column as needed
+            'description': 150,  # Set width per column as needed
             'id': 30,
-            'start': 60,
-            'priority': 80,
-            'project': 120,
-            'recur': 60,
-            'due': 60,
-            'until': 60,
+            'start': 45,
+            'priority': 60,
+            'project': 80,
+            'recur': 45,
+            'due': 45,
+            'until': 45,
             'urgency': 60
         }
 
@@ -69,7 +69,7 @@ class TaskRow:
 
         # Set fixed sizes for buttons
         self.edit_button.setFixedWidth(60)
-        self.delete_button.setFixedWidth(6)
+        self.delete_button.setFixedWidth(65)
 
         grid.addWidget(self.edit_button, rowNum, len(self.cols) + 1)  # Add the edit button
         grid.addWidget(self.delete_button, rowNum, len(self.cols) + 2)  # Add the delete button
@@ -100,8 +100,8 @@ class TaskRow:
         assert self.task
 
         edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""),
-          str(self.task.get("due") or ""), 
-          str(self.task.get("priority") or ""))
+            str(self.task.get("due") or ""),
+            str(self.task.get("priority") or ""))
         
         if edit_task_dialog.exec():
             self.task.set("description", edit_task_dialog.description or None)

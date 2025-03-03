@@ -45,10 +45,10 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.qt_layout.addWidget(self.main_tab)  # Add the tab widget to the layout.
         self.grids = [GridWidget(load_styles), GridWidget(load_styles)]  # Create a list of grid widgets.
         self.main_tab.addTab(self.grids[0].scroll_area, "Example Tab")  # Add the first grid widget to the tab widget.
-        # get the example tab style
         self.main_tab.setStyleSheet(get_style('example_tab'))  # Set the style of the tab widget.
-        
-        self.main_tab.addTab(self.grids[1].scroll_area, "Example Empty Tab")  # Add the second grid widget to the tab widget.
+
+        # TODO: reinstate this when we have a second tab
+        # self.main_tab.addTab(self.grids[1].scroll_area, "Example Empty Tab")  # Add the second grid widget to the tab widget.
 
         self.current_grid = 0  # Set the current grid to 0.
 

@@ -93,11 +93,14 @@ class GridWidget(QtWidgets.QWidget):
         
         # QLabel is just simple text.
         self.grid.addWidget(QtWidgets.QLabel("Done?"), 0, 0)  # Add a label to the grid.
-        # Set the style sheet of the label.
-        # self.grid.itemAtPosition(0, 0).widget().setStyleSheet("font-weight: bold; font-size: 14px; background-color: yellow;")
-        self.grid.itemAtPosition(0, 0).widget().setStyleSheet(get_style("rowLabels"))
-        
-        
+        self.grid.addWidget(QtWidgets.QLabel(""), 0, 10)  # Add a blank label cell to the grid
+        self.grid.addWidget(QtWidgets.QLabel(""), 0, 11)  # Add a blank label cell to the grid
+
+        self.grid.itemAtPosition(0, 0).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the "Done?" label
+        self.grid.itemAtPosition(0, 10).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the blank label cell
+        self.grid.itemAtPosition(0, 11).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the blank label cell
+
+
         # TODO: may be no point in setting column stretch like this and below
         # Consider changing.
         self.grid.setColumnStretch(0, 0)  # Set the column stretch of the grid to 0.
@@ -105,7 +108,7 @@ class GridWidget(QtWidgets.QWidget):
         for i in range(len(COLS)):  # Loop through the columns.
             self.grid.addWidget(QtWidgets.QLabel(COLS[i]), 0, i+1)  # Add a label to the grid.
             self.grid.setColumnStretch(i+1, 0)  # Set the column stretch of the grid to 0.
-            self.grid.itemAtPosition(0, i+1).widget().setStyleSheet(get_style("rowLabels"))
+            self.grid.itemAtPosition(0, i+1).widget().setStyleSheet(get_style("rowLabels"))  # Set the style of the label to be the row labels style.
             self.grid.itemAtPosition(0, i+1).widget().setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)  # Set the alignment of the label to be centered.
 
 
@@ -116,15 +119,28 @@ class GridWidget(QtWidgets.QWidget):
     def fillGrid(self):
         # Also adds tasks to the grid, which doesn't work for the "example" tab. So for now, it's empty.
 
-        for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
-            # Append a new task row to the row array.
-            try:
-                self.row_arr.append(TaskRow(i, self._edit_task, self._delete_task))
-                self.row_arr[i].insert(self.grid, i+1)  # Insert the row into the grid.
-            except ValueError as err:
-                logger.log_error(str(err))
+        if api.num_tasks() < self.DEFAULT_ROWS:  # if there are fewer tasks than the default number of rows
+            for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
+                # Append a new task row to the row array.
+                try:
+                    self.row_arr.append(TaskRow(i, self._edit_task, self._delete_task))
+                    self.row_arr[i].insert(self.grid, i+1)  # Insert the row into the grid.
+                except ValueError as err:
+                    logger.log_error(str(err))
+                height = self.DEFAULT_ROWS * self.ROW_HEIGHT
 
-        self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.
+        else:  # if there are more tasks than the default number of rows
+            # if there are more tasks than the default number of rows, populate the grid with the extra tasks and update the height of the widget
+            for i in range(api.num_tasks()):  # Loop through the number of tasks.
+                # Append a new task row to the row array.
+                try:
+                    self.row_arr.append(TaskRow(i, self._edit_task, self._delete_task))
+                    self.row_arr[i].insert(self.grid, i+1)  # Insert the row into the grid.
+                except ValueError as err:
+                    logger.log_error(str(err))
+                height = api.num_tasks() * self.ROW_HEIGHT
+
+        self.setMinimumHeight(height)  # Set the minimum height of the widget to be the default number of rows times the row height.
         
     def _edit_task(self, idx: int):
         """Passed to taskrows."""

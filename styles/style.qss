@@ -17,7 +17,6 @@
 
 /* The window background */
 #MainWidget {
-    background-color: transparent;
     background-color: #d480bb;
 }
 

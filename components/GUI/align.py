@@ -1,4 +1,4 @@
-"""
+""" Prologue
  *  Module Name: align.py
  *  Purpose: Class to declare where at in a layout an item aligns itself to.
  *  Inputs: None
@@ -19,7 +19,7 @@ from PySide6 import QtCore
 
 class ALIGN:
     # Declare where at in a layout an item aligns itself to.
-    TL = QtCore.Qt.AlignmentFlag.AlignTop | QtCore.Qt.AlignmentFlag.AlignLeft
-    TC = QtCore.Qt.AlignmentFlag.AlignTop | QtCore.Qt.AlignmentFlag.AlignHCenter
-    CC = QtCore.Qt.AlignmentFlag.AlignCenter
-    CL = QtCore.Qt.AlignmentFlag.AlignVCenter | QtCore.Qt.AlignmentFlag.AlignLeft
+    TL = QtCore.Qt.AlignmentFlag.AlignTop | QtCore.Qt.AlignmentFlag.AlignLeft  # Top Left
+    TC = QtCore.Qt.AlignmentFlag.AlignTop | QtCore.Qt.AlignmentFlag.AlignHCenter  # Top Center
+    CC = QtCore.Qt.AlignmentFlag.AlignCenter  # Center Center
+    CL = QtCore.Qt.AlignmentFlag.AlignVCenter | QtCore.Qt.AlignmentFlag.AlignLeft  # Center Left

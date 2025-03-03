@@ -1,4 +1,4 @@
-"""
+""" Prologue
  *  Module Name: sortmetric.py
  *  Purpose: Initialization of the SortMetric TaskWarrior API enum
  *  Inputs: None
@@ -17,10 +17,10 @@
 from enum import Enum
 
 class SortMetric(Enum):
-    ID_ASCENDING           = 0
-    ID_DESCENDING          = 1
-    PRIORITY_ASCENDING     = 2
-    PRIORITY_DESCENDING    = 3
-    DESCRIPTION_ASCENDING  = 4
-    DESCRIPTION_DESCENDING = 5
+    ID_ASCENDING           = 0  # Create an enum for the sort metric.
+    ID_DESCENDING          = 1  # Create an enum for the sort metric.
+    PRIORITY_ASCENDING     = 2  # Create an enum for the sort metric.
+    PRIORITY_DESCENDING    = 3  # Create an enum for the sort metric.
+    DESCRIPTION_ASCENDING  = 4  # Create an enum for the sort metric
+    DESCRIPTION_DESCENDING = 5  # Create an enum for the sort metric
     # TODO: Add wayy more

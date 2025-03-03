@@ -1,4 +1,4 @@
-"""
+""" Prologue
  *  Module Name: TableCell.py
  *  Purpose: Module for the TableCell class, which is a class for creating a cell in the table in the GUI.
  *  Inputs: None

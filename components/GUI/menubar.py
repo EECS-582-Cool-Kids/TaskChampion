@@ -1,4 +1,4 @@
-"""
+""" Prologue
  *  Module Name: menubar.py
  *  Purpose: Module for the MenuBar class, which is a class for creating the menu bar in the application window.
  *  Inputs: None

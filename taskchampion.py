@@ -1,4 +1,4 @@
-"""
+""" Prologue
  *  Module Name: taskchampion.py
  *  Purpose: Entry point for the TaskChampion Application.
  *  Inputs: None
@@ -24,6 +24,6 @@ from components.GUI.task_champion_gui import TaskChampionGUI  # Import the GUI c
 # Program entry point
 if __name__ == "__main__":
     app = TaskChampionGUI()  # Create a new TaskChampionGUI object.
-    app.load_tasks()
+    app.load_tasks()  # Load the tasks.
     sys.exit(app.on_exit())  # Exit the application.
-    logger.exit()
+    logger.exit()  # Exit the logger.

@@ -1,4 +1,4 @@
-"""
+""" Prologue:
  *  Module Name: edit_task_dialog.py
  *  Purpose: Allows users to edit tasks when selected.
  *  Inputs: None

@@ -1,4 +1,4 @@
-""" Prologue:
+"""
  *  Module Name: taskchampion.py
  *  Purpose: Entry point for the TaskChampion Application.
  *  Inputs: None
@@ -14,16 +14,16 @@
  *  Invariants: None
  *  Known Faults: None encountered
 """
+from utils.task_api import TaskAPIImpl, register_api
+register_api(TaskAPIImpl) # Order matters.
 
 import sys
-from PySide6 import QtCore
 from utils.logger import logger
 from components.GUI.task_champion_gui import TaskChampionGUI  # Import the GUI class
 
 # Program entry point
 if __name__ == "__main__":
     app = TaskChampionGUI()  # Create a new TaskChampionGUI object.
-    app.load_tasks()  # Load the tasks from the TaskWarrior API.
-    # TODO: Consider doing this in a better way.  
-    sys.exit(app.on_exit())  # Exit the application 
-    logger.exit()  # Exit the logger 
+    app.load_tasks()
+    sys.exit(app.on_exit())  # Exit the application.
+    logger.exit()

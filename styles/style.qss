@@ -122,10 +122,140 @@ EditTaskDialog {
 /* ### additional styles ### */
 #rowLabels {
     border: 1px solid #0e071b;
-    font-weight: bold; 
-    font-size: 14px; 
+    font-weight: bold;
+    font-size: 14px;
     background-color: #8aa1f6;
     color: black;
     text-align: center
     }
-    
+
+#CheckBox {
+    margin-left:50%;
+    margin-right:50%;
+    color: black;
+}
+
+    background-color: #d480bb;
+XpBar {
+    max-height: 75px;
+}
+
+XpBarChild {
+    background-color: white;
+    text-align: center;
+    padding: 2px;
+
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 2px;
+}
+
+
+/* Chunk refers to the actual 'bar' part of the xpbar'
+XpBarChild::chunk {
+    border-style: solid;
+    border-width: 1px;
+    border-radius:2px;
+
+    text-align: center;
+}
+
+
+/* Example color styling. */
+XpBarChild#XpBarMain {
+    border-color: rgb(255, 127, 53);
+}
+
+XpBarChild#XpBarMain::chunk {
+    background-color: orange;
+}
+
+/* The grid around the cells of the table */
+    border: 1px solid #0e071b;
+
+
+/* a thin outline around the table and under the tabs */
+QTabWidget {
+    background-color: dark-blue;
+    color: white;
+/* area around the grid (unless GridWidget is not defined, then it will be system default) */
+QScrollArea {
+    background-color: #9a97b9;
+
+/* ------ The table rows ------ */
+    /* active rows*/
+        /* odd rows, active (darker row) */
+        [row-even="0"][row-active="True"] {
+            background-color: #e27285
+        }
+        /* even rows, active (lighter row) */
+        [row-even="1"][row-active="True"] {
+            background-color: #fdc9c9
+        }
+
+    /* inactive rows*/
+        /* odd rows, inactive (darker row) */
+        [row-even="0"][row-active="False"] {
+            background-color: #7864c6
+        }
+        /* even rows, inactive (lighter row) */
+        [row-even="1"][row-active="False"] {
+            background-color: #9c8bdb
+        }
+
+
+/* ------ dialog boxes ------ */
+
+    /* the dialog box background */
+    AddTaskDialog {
+        background-color: #8aa1f6;
+        color: red;
+    }
+
+
+/* most text in the app and dialog boxes */
+/* TODO: split this into column labels, row contents, and dialog box text */
+    background-color: transparent;
+    color: #1b2447;
+/* button background and text */
+    background-color: #8aa1f6;
+    color: black;
+    border: 2px solid #231243;
+    font-size: 12px
+/* not sure what this affects */
+
+GridWidget {
+    background-color: #9a97b9;
+    color: #9a97b9;
+}
+
+/* for testing to identify elements */
+[type="test"] {
+    background-color: yellow;
+    color: yellow;
+}
+
+EditTaskDialog {
+    background-color: #8aa1f6;
+    color: yellow;
+}
+
+
+
+
+"Done?" {
+    background-color: black;
+    color: yellow;
+    border: 2px solid yellow;
+}
+
+/* ### additional styles ### */
+#rowLabels {
+    border: 1px solid #0e071b;
+    font-weight: bold;
+    font-size: 14px;
+    background-color: #8aa1f6;
+    color: black;
+    text-align: center
+    }
+

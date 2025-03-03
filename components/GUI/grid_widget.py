@@ -1,4 +1,4 @@
-""" Prologue:
+"""
  *  Module Name: grid_widget.py
  *  Purpose: Initialization of the grid used within the GUI.
  *  Inputs: None
@@ -16,32 +16,28 @@
 """
 
 from typing import Callable
-from PySide6 import QtCore, QtWidgets
-from components.Dialogs.task_row import TaskRow, COLS
-from .menubar import MenuBar
-from components.Dialogs.edit_task_dialog import EditTaskDialog
-from styles.extra_styles import get_style
-from utils.logger import logger
+from PySide6 import QtWidgets
+from components.GUI.task_row import TaskRow, COLS
+from components.GUI.xp_bar import XpBar
+
+from utils.task import Task
 from utils.task_api import api
+from utils.logger import logger
 
 class GridWidget(QtWidgets.QWidget):
-    '''The widget that corresponds to a module'''
-    ROW_HEIGHT=50  # Height of each row in the grid.
+    """The widget that corresponds to a module"""
+    ROW_HEIGHT=45  # Height of each row in the grid.
     DEFAULT_ROWS=10  # Default number of rows to display.
+    DEFAULT_WIDTH=1000 # Default width, scrollable.
 
-    def __init__(self, load_styles : Callable[[], None]):
+    def __init__(self, load_styles : Callable[[], None], fetch_xp_fns : Callable[[Task], list[XpBar]]):
         super().__init__()  # Call the parent constructor.
         self.setObjectName('GridWidget')  # Set the object name for styling.
-        self.setFixedHeight(200)  # Set the fixed height of the widget.
-        # self.setFixedWidth(765)
+        self.setFixedWidth(self.DEFAULT_WIDTH)
 
         self.scroll_area = QtWidgets.QScrollArea()  # Create a scroll area.
         self.scroll_area.setWidgetResizable(True)  # Set the scroll area to be resizable.
         self.scroll_area.setWidget(self)  # Set the widget of the scroll area to be this widget.
-
-        # set a horizontal scroll bar policy
-        self.scroll_area.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn)  # Set the horizontal scroll bar policy of the scroll area.
-
 
         self.grid = QtWidgets.QGridLayout()  # Create a grid layout.
 
@@ -54,6 +50,7 @@ class GridWidget(QtWidgets.QWidget):
         self.add_header()  # Add the header to the grid.
 
         self.refresh_styles = load_styles
+        self.fetch_xp_fns = fetch_xp_fns
 
     def add_task(self) -> None:
         """Assumes that addTask has already been called in TaskChampionGUI. 
@@ -65,113 +62,45 @@ class GridWidget(QtWidgets.QWidget):
         2) broadcast to all `TaskRow`s to update their current task.
         """
         num_tasks = api.num_tasks()  # Increment the number of rows.
-
             
         if self.grid.rowCount() == num_tasks:  # If the row count of the grid is equal to the number of rows.
             self.setMinimumHeight(num_tasks * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the number of rows times the row height.
 
-            # Append a new task row to the row array.
-            try:
-                self.row_arr.append(TaskRow(num_tasks, self._edit_task, self._delete_task))
-                self.row_arr[num_tasks-1].insert(self.grid, num_tasks)
-            except ValueError as err:
-                logger.log_error(str(err))
-
-            # Row inserts itself into the grid, insertion logic is handled in `TaskRow` obj.
+            row = TaskRow(num_tasks, self.fetch_xp_fns)
+            row.insert(self.grid, num_tasks) # Row inserts itself into the grid, insertion logic is handled in `TaskRow` obj.
+            self.row_arr.append(row)
             
         for row in range(len(self.row_arr)):
             self.row_arr[row].update_task()
         
         self.refresh_styles()
 
+
     def add_header(self):
         # Make header row take up as little vertical space as it needs.
         self.grid.setRowStretch(0, 0)  # Set the row stretch of the grid to 0.
-        # self.grid.setContentsMargins(0, 0, 0, 0)
-        # self.grid.setHorizontalSpacing(0)
         self.grid.setSpacing(0)  # Set the spacing of the grid to 0.
         
         # QLabel is just simple text.
-        self.grid.addWidget(QtWidgets.QLabel("Done?"), 0, 0)  # Add a label to the grid.
-        self.grid.addWidget(QtWidgets.QLabel(""), 0, 10)  # Add a blank label cell to the grid
-        self.grid.addWidget(QtWidgets.QLabel(""), 0, 11)  # Add a blank label cell to the grid
-
-        self.grid.itemAtPosition(0, 0).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the "Done?" label
-        self.grid.itemAtPosition(0, 10).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the blank label cell
-        self.grid.itemAtPosition(0, 11).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the blank label cell
-
-
-        # TODO: may be no point in setting column stretch like this and below
+        self.grid.addWidget(QtWidgets.QLabel("Completed?"), 0, 0)  # Add a label to the grid.
+        # TODO: may be no point in setting column stretch like this and below,
         # Consider changing.
         self.grid.setColumnStretch(0, 0)  # Set the column stretch of the grid to 0.
 
         for i in range(len(COLS)):  # Loop through the columns.
             self.grid.addWidget(QtWidgets.QLabel(COLS[i]), 0, i+1)  # Add a label to the grid.
             self.grid.setColumnStretch(i+1, 0)  # Set the column stretch of the grid to 0.
-            self.grid.itemAtPosition(0, i+1).widget().setStyleSheet(get_style("rowLabels"))  # Set the style of the label to be the row labels style.
-            self.grid.itemAtPosition(0, i+1).widget().setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)  # Set the alignment of the label to be centered.
 
-
-    def set_menu_bar(self):
-        """Sets the menu bar for the application."""
-        self.menu_bar = MenuBar()  # Create a new menu bar.
-
-    def fillGrid(self):
+    def fill_grid(self):
         # Also adds tasks to the grid, which doesn't work for the "example" tab. So for now, it's empty.
 
-        if api.num_tasks() < self.DEFAULT_ROWS:  # if there are fewer tasks than the default number of rows
-            for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
-                # Append a new task row to the row array.
-                try:
-                    self.row_arr.append(TaskRow(i, self._edit_task, self._delete_task))
-                    self.row_arr[i].insert(self.grid, i+1)  # Insert the row into the grid.
-                except ValueError as err:
-                    logger.log_error(str(err))
-                height = self.DEFAULT_ROWS * self.ROW_HEIGHT
+        for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
+            # Append a new task row to the row array.
+            try:
+                row = TaskRow(i, self.fetch_xp_fns)
+                row.insert(self.grid, i+1)  # Insert the row into the grid.
+                self.row_arr.append(row)
+            except ValueError as err:
+                logger.log_error(str(err))
 
-        else:  # if there are more tasks than the default number of rows
-            # if there are more tasks than the default number of rows, populate the grid with the extra tasks and update the height of the widget
-            for i in range(api.num_tasks()):  # Loop through the number of tasks.
-                # Append a new task row to the row array.
-                try:
-                    self.row_arr.append(TaskRow(i, self._edit_task, self._delete_task))
-                    self.row_arr[i].insert(self.grid, i+1)  # Insert the row into the grid.
-                except ValueError as err:
-                    logger.log_error(str(err))
-                height = api.num_tasks() * self.ROW_HEIGHT
-
-        self.setMinimumHeight(height)  # Set the minimum height of the widget to be the default number of rows times the row height.
-        
-    def _edit_task(self, idx: int):
-        """Passed to taskrows."""
-        cur_task = api.task_at(idx)
-        assert cur_task
-
-        edit_task_dialog = EditTaskDialog(str(cur_task.get("description") or ""), 
-            str(cur_task.get("due") or ""), 
-            str(cur_task.get("priority") or ""))
-        
-        if edit_task_dialog.exec():
-            cur_task.set("description", edit_task_dialog.description or None)
-            cur_task.set("due", edit_task_dialog.due or None)
-            cur_task.set("priority", edit_task_dialog.priority or None)
-            api.update_task(cur_task)
-
-            for i in range(api.num_tasks()):
-                self.rowArr[i].update_task()
-        
-        self.refresh_styles()
-
-    def _delete_task(self, idx: int):
-        """passed to taskrows."""
-        api.delete_at(idx)
-        
-        num_tasks = api.num_tasks()
-
-        if num_tasks > self.DEFAULT_ROWS:
-            self.rowArr.pop(-1).annihilate()
-        
-        for i in range(len(self.rowArr)):
-            self.rowArr[i].update_task()
-
-        self.refresh_styles()
+        self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.

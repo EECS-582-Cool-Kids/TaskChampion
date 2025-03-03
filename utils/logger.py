@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/23/2025
+ *  Last Modified: 2/25/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -16,28 +16,28 @@
 """
 import os
 import datetime
-from enum import Enum
-from .singleton import singleton
-from .sortmetric import SortMetric
+from utils.singleton import singleton
 
 @singleton
 class Logger:
-    '''Handles all logging functionality for the application'''
+    """Handles all logging functionality for the application"""
     def __init__(self, is_debug : bool = False):
         # Create and open the log with the datetime the app was started.
         os.makedirs('logs/', exist_ok = True)
         self.log_file = open(f"logs/taskchampion-log-{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.log", "w")
         self.is_debug : bool = is_debug
 
-    def log_info(self, info : str) -> None:
-        '''Log information about the applicaton. This should be used for notifying the user of something that is not a concern.'''
+    def log_info(self, info : str) -> str:
+        """Log information about the applicaton. This should be used for notifying the user of something that is not a concern."""
         info_out : str = f"[INFO: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]: {info}"
 
         print(info_out)
         self.log_file.write(info_out + "\n")
-    
-    def log_debug(self, debug : str) -> None:
-        '''Log debug information about the application. Anything we only want to print when debugging should be put here.'''
+
+        return info_out
+
+    def log_debug(self, debug : str) -> str:
+        """Log debug information about the application. Anything we only want to print when debugging should be put here."""
         if not self.is_debug:
             return
 
@@ -46,19 +46,25 @@ class Logger:
         print(debug_out)
         self.log_file.write(debug_out + "\n")
 
-    def log_error(self, error : str) -> None:
-        '''Log errors about the application. This should be called whenever we catch an error within a try-catch.'''
+        return debug_out
+
+    def log_error(self, error : str) -> str:
+        """Log errors about the application. This should be called whenever we catch an error within a try-catch."""
         error_out : str = f"[ERROR: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]: {error}"
 
         print(error_out)
         self.log_file.write(error_out + "\n")
 
-    def log_warn(self, warn : str) -> None:
-        '''Log warnings about the application. These should identify failures that are not critical and won't stop the functionality of the program.'''
+        return error_out
+
+    def log_warn(self, warn : str) -> str:
+        """Log warnings about the application. These should identify failures that are not critical and won't stop the functionality of the program."""
         warn_out : str = f"[WARN: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]: {warn}"
 
         print(warn_out)
         self.log_file.write(warn_out + "\n")
+
+        return warn_out
 
     def exit(self) -> None:
         if not self.log_file.closed:

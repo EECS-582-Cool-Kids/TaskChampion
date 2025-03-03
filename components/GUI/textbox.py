@@ -18,8 +18,7 @@
 from utils.task import Task
 from PySide6 import QtWidgets
 from typing import Callable, Optional
-from .tablecell import TableCell
-from utils.task_api import api
+from components.GUI.tablecell import TableCell
 
 class Textbox(TableCell):
     def __init__(self, row_num:int, get_task: Callable[[], Optional[Task]], attribute: str=""): 
@@ -40,7 +39,6 @@ class Textbox(TableCell):
             assert self.task  # Assert that the task is not None.
             assert self.attribute  # Assert that the attribute is not None.
             self.my_text = str(self.task.get(self.attribute) or "")  # Set the text of the label to the attribute of the task.
-            print (self.task)
             self.my_label.setText(self.my_text)  # Set the text of the label to the text.
         else:
             self.my_text = ""

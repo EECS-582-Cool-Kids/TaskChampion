@@ -1,4 +1,4 @@
-"""
+""" Prologue:
  *  Module Name: add_task_dialog.py
  *  Purpose: Adds details of a task once created.
  *  Inputs: None

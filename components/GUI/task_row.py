@@ -24,12 +24,13 @@ from components.GUI.textbox import Textbox
 from components.GUI.buttonbox import ButtonBox
 from components.GUI.xp_bar import XpBar
 from components.Dialogs.edit_task_dialog import EditTaskDialog
+from styles.extra_styles import get_style
 from typing import Callable, Final
 
 # The names of the columns.
 # TODO: in the image Richard posted, the second col was Age instead of 'start', but taskw_ng doesn't have an age.
 # Should we keep it as start? do something else? Idk what start even means.
-COLS: Final = ('id', 'start', 'priority', 'project', 'recur', 'due', 'until', 'description', 'urgency')
+COLS: Final = ( 'description', 'id', 'start', 'priority', 'project', 'recur', 'due', 'until','urgency')
 
 class TaskRow:
     def __init__(self, row_num: int, fetch_xp_brs : Callable[[Task], list[XpBar]]):
@@ -55,13 +56,43 @@ class TaskRow:
     def insert(self, grid: QtWidgets.QGridLayout, row_num: int):
         # Row stretch of 0 means take up bare minimum amount of space?
         grid.setRowStretch(row_num, 0)
+
+        # Set fixed size for each column to maintain a consistent width
+        column_widths = {
+            'description': 150,  # Set width per column as needed
+            'id': 30,
+            'start': 45,
+            'priority': 60,
+            'project': 80,
+            'recur': 45,
+            'due': 45,
+            'until': 45,
+            'urgency': 60
+        }
+
+        column_height = 50  # Set height per column as needed
+
+        self.check.setFixedWidth(50)  # Checkbox width
+        self.check.setFixedHeight(column_height)  # Checkbox height
         grid.addWidget(self.check, row_num, 0)
-        
+        # set style for the checkbox
+        # self.check.setStyleSheet(get_style("CheckBox"))
+
         for i in range(len(self.cols)):
+            col_name = COLS[i]
+            if col_name in column_widths:
+                self.cols[i].setFixedWidth(column_widths[col_name])  # Apply fixed width
+            self.cols[i].setFixedHeight(column_height)  # Apply fixed height
             grid.addWidget(self.cols[i], row_num, i + 1)
 
-        grid.addWidget(self.edit_button, row_num, len(self.cols) + 1)  # add the edit button to the grid
-        grid.addWidget(self.delete_button, row_num, len(self.cols) + 2)  # add the delete button to the grid
+        # Set fixed sizes for buttons
+        self.edit_button.setFixedWidth(60)
+        self.delete_button.setFixedWidth(65)
+        self.edit_button.setFixedHeight(column_height)
+        self.delete_button.setFixedHeight(column_height)
+
+        grid.addWidget(self.edit_button, row_num, len(self.cols) + 1)  # Add the edit button
+        grid.addWidget(self.delete_button, row_num, len(self.cols) + 2)  # Add the delete button
 
     def update_task(self):
         self.task = api.task_at(self.idx)
@@ -79,9 +110,9 @@ class TaskRow:
         if not self.task:
             return
 
-        edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""), 
-          str(self.task.get("due") or ""), 
-          str(self.task.get("priority") or ""))
+        edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""),
+            str(self.task.get("due") or ""),
+            str(self.task.get("priority") or ""))
         
         if edit_task_dialog.exec():
             self.task.set("description", edit_task_dialog.description or None)

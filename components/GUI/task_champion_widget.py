@@ -1,4 +1,4 @@
-"""
+""" Prologue:
  *  Module Name: task_champion_widget.py
  *  Purpose: Initialization of GUI widgets.
  *  Inputs: None
@@ -22,6 +22,8 @@ from components.GUI.xp_controller_widget import XpControllerWidget
 from components.GUI.menubar import MenuBar
 from utils.task_api import api
 from typing import Callable
+from styles.extra_styles import get_style
+
 
 class TaskChampionWidget(QtWidgets.QWidget):
     """The main widget for the Task Champion application."""
@@ -54,10 +56,14 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.grids = [GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars), GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars)]  # Create a list of grid widgets.
         self.main_tab.addTab(self.grids[0].scroll_area, "Example Tab")  # Add the first grid widget to the tab widget.
         self.main_tab.addTab(self.grids[1].scroll_area, "Example Empty Tab")  # Add the second grid widget to the tab widget.
+        self.main_tab.setStyleSheet(get_style('example_tab'))  # Set the style of the tab widget.
 
         # Set grid widget to take up 75% of the app's width.
         self.main_layout.setStretch(0, 3)
         self.main_layout.setStretch(1, 1)
+
+        # TODO: reinstate this when we have a second tab
+        # self.main_tab.addTab(self.grids[1].scroll_area, "Example Empty Tab")  # Add the second grid widget to the tab widget.
 
         self.current_grid = 0  # Set the current grid to 0.
 

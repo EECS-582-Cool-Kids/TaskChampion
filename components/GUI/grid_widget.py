@@ -16,28 +16,34 @@
 """
 
 from typing import Callable
-from PySide6 import QtWidgets
+from PySide6 import QtCore, QtWidgets
 from components.GUI.task_row import TaskRow, COLS
 from components.GUI.xp_bar import XpBar
+from styles.extra_styles import get_style
 
 from utils.task import Task
 from utils.task_api import api
 from utils.logger import logger
 
 class GridWidget(QtWidgets.QWidget):
-    """The widget that corresponds to a module"""
-    ROW_HEIGHT=45  # Height of each row in the grid.
+    '''The widget that corresponds to a module'''
+    ROW_HEIGHT=50  # Height of each row in the grid.
     DEFAULT_ROWS=10  # Default number of rows to display.
     DEFAULT_WIDTH=1000 # Default width, scrollable.
 
     def __init__(self, load_styles : Callable[[], None], fetch_xp_fns : Callable[[Task], list[XpBar]]):
         super().__init__()  # Call the parent constructor.
         self.setObjectName('GridWidget')  # Set the object name for styling.
-        self.setFixedWidth(self.DEFAULT_WIDTH)
+        self.setFixedHeight(200)  # Set the fixed height of the widget.
+        # self.setFixedWidth(765)
 
         self.scroll_area = QtWidgets.QScrollArea()  # Create a scroll area.
         self.scroll_area.setWidgetResizable(True)  # Set the scroll area to be resizable.
         self.scroll_area.setWidget(self)  # Set the widget of the scroll area to be this widget.
+
+        # set a horizontal scroll bar policy
+        self.scroll_area.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn)  # Set the horizontal scroll bar policy of the scroll area.
+
 
         self.grid = QtWidgets.QGridLayout()  # Create a grid layout.
 
@@ -79,17 +85,30 @@ class GridWidget(QtWidgets.QWidget):
     def add_header(self):
         # Make header row take up as little vertical space as it needs.
         self.grid.setRowStretch(0, 0)  # Set the row stretch of the grid to 0.
+        # self.grid.setContentsMargins(0, 0, 0, 0)
+        # self.grid.setHorizontalSpacing(0)
         self.grid.setSpacing(0)  # Set the spacing of the grid to 0.
         
         # QLabel is just simple text.
-        self.grid.addWidget(QtWidgets.QLabel("Completed?"), 0, 0)  # Add a label to the grid.
-        # TODO: may be no point in setting column stretch like this and below,
+        self.grid.addWidget(QtWidgets.QLabel("Done?"), 0, 0)  # Add a label to the grid.
+        self.grid.addWidget(QtWidgets.QLabel(""), 0, 10)  # Add a blank label cell to the grid
+        self.grid.addWidget(QtWidgets.QLabel(""), 0, 11)  # Add a blank label cell to the grid
+
+        self.grid.itemAtPosition(0, 0).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the "Done?" label
+        self.grid.itemAtPosition(0, 10).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the blank label cell
+        self.grid.itemAtPosition(0, 11).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the blank label cell
+
+
+        # TODO: may be no point in setting column stretch like this and below
         # Consider changing.
         self.grid.setColumnStretch(0, 0)  # Set the column stretch of the grid to 0.
 
         for i in range(len(COLS)):  # Loop through the columns.
             self.grid.addWidget(QtWidgets.QLabel(COLS[i]), 0, i+1)  # Add a label to the grid.
             self.grid.setColumnStretch(i+1, 0)  # Set the column stretch of the grid to 0.
+            self.grid.itemAtPosition(0, i+1).widget().setStyleSheet(get_style("rowLabels"))  # Set the style of the label to be the row labels style.
+            self.grid.itemAtPosition(0, i+1).widget().setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)  # Set the alignment of the label to be centered.
+
 
     def fill_grid(self):
         # Also adds tasks to the grid, which doesn't work for the "example" tab. So for now, it's empty.

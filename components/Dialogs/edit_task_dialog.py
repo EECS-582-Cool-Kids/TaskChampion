@@ -23,7 +23,10 @@ class EditTaskDialog(QtWidgets.QDialog):
         self.form = QtWidgets.QFormLayout()
 
         self.description_text = QtWidgets.QLineEdit(description)
-        self.due_text = QtWidgets.QLineEdit(due)
+        self.due_text = QtWidgets.QDateEdit()
+        # set the due date to the current date + 1 day
+        self.due_text.setDate(self.due_text.date().currentDate().addDays(1))
+        # self.due_text = QtWidgets.QLineEdit(due)
 
         self.priority_text = QtWidgets.QComboBox() # Create a combo box for the priority
         self.priority_text.addItems(["H", "M", "L"]) # Add the priority options to the combo box

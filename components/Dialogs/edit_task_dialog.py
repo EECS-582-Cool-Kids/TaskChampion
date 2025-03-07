@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/23/2025
+ *  Last Modified: 3/7/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -15,7 +15,7 @@
  *  Known Faults: None encountered
 """
 
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtWidgets
 
 class EditTaskDialog(QtWidgets.QDialog):
     def __init__(self, description="", due="", priority=""):
@@ -24,7 +24,10 @@ class EditTaskDialog(QtWidgets.QDialog):
 
         self.description_text = QtWidgets.QLineEdit(description)
         self.due_text = QtWidgets.QLineEdit(due)
-        self.priority_text = QtWidgets.QLineEdit(priority)
+
+        self.priority_text = QtWidgets.QComboBox() # Create a combo box for the priority
+        self.priority_text.addItems(["H", "M", "L"]) # Add the priority options to the combo box
+        self.priority_text.setCurrentText(priority) # Set the current text to the priority of the task
 
         self.form.addRow("Description", self.description_text)
         self.form.addRow("Due", self.due_text)
@@ -33,8 +36,6 @@ class EditTaskDialog(QtWidgets.QDialog):
 
         button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok
                                       | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
-
-
 
         layout = QtWidgets.QVBoxLayout()
         layout.addLayout(self.form)
@@ -60,4 +61,4 @@ class EditTaskDialog(QtWidgets.QDialog):
 
     @property
     def priority(self):
-        return self.priority_text.text()
+        return self.priority_text.currentText()

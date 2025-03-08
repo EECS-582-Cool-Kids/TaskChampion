@@ -21,6 +21,7 @@ from utils.sortmetric import SortMetric
 from utils.task import Task
 from typing import Callable, Optional
 import uuid
+from PySide6 import QtCore
 
 class TaskAPI:
     def __init__(self):
@@ -118,8 +119,10 @@ class TaskAPIImpl(TaskAPI):
         
         super()._init_task_list()  # Call the parent init task list method.
     
-    def add_new_task(self, description: str, tags=None, **kw) -> dict:  # Add a new task.
-        task : dict = self.warrior.task_add(description, tags, **kw)  # Add a task.
+    def add_new_task(self, description: str, tags=None, due="", **kw) -> dict:  # Add a new task.
+        if due:
+            due = QtCore.QDate.fromString(due, "yyyy-MM-dd").toString("yyyy-MM-dd")
+        task : dict = self.warrior.task_add(description, tags, due, **kw)  # Add a task.
         self._init_task_list()  # Initialize the task list.
 
         return task  # Return the task.
@@ -138,6 +141,8 @@ class TaskAPIImpl(TaskAPI):
         self.warrior.task_delete(uuid=str(t['uuid']))  # Delete the task.
 
     def update_task(self, new_task: Task) -> None:
+        if new_task.get_due():
+            new_task['due'] = QtCore.QDate.fromString(new_task['due'], "yyyy-MM-dd").toString("yyyy-MM-dd")
         self.warrior.task_update(new_task)  # Update the task.
         self._init_task_list()  # Initialize the task list.
 
@@ -166,6 +171,8 @@ class FakeTaskAPI(TaskAPI):
         return self.task_list[idx]  # Return the task at the index.
     
     def add_new_task(self, description: str = "", tags=None, priority="", project="", recur="", due="") -> dict:
+        if due:
+            due = QtCore.QDate.fromString(due, "yyyy-MM-dd").toString("yyyy-MM-dd")
         d = dict({'uuid': str(uuid.uuid1()), 'id': str(self.cur_id), 'description': description, 'tags': [tags], 'priority': priority, 'project': project, 'recur': recur, 'due': due})
         self.cur_id += 1  # Increment the current ID.
         
@@ -190,6 +197,8 @@ class FakeTaskAPI(TaskAPI):
 
     def update_task(self, new_task: Task) -> None:
         found = False  # Initialize found to False.
+        if new_task.get_due():
+            new_task['due'] = QtCore.QDate.fromString(new_task['due'], "yyyy-MM-dd").toString("yyyy-MM-dd")
         for idx in range(self.num_tasks()):  # For each task.
             if self.task_list[idx].get_uuid() == new_task.get_uuid():  # If the UUIDs match.
                 self.task_list[idx] = new_task  # Update the task.

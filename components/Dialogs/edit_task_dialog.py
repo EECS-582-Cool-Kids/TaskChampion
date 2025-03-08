@@ -22,18 +22,26 @@ class EditTaskDialog(QtWidgets.QDialog):
         super().__init__()
         self.form = QtWidgets.QFormLayout()
 
-        self.description_text = QtWidgets.QLineEdit(description)
-        self.due_text = QtWidgets.QDateEdit()
+        self.description_text = QtWidgets.QLineEdit(description) # set the description text to the description of the task
+
+        self.due_date = QtWidgets.QDateEdit() # Create a date edit object for the due date
         # set the due date to the current date + 1 day
-        self.due_text.setDate(self.due_text.date().currentDate().addDays(1))
-        # self.due_text = QtWidgets.QLineEdit(due)
+        self.due_date.setDate(self.due_date.date().currentDate().addDays(1))
+        # and bring up the calendar if the arrow is clicked
+        self.due_date.setCalendarPopup(True)
+        if due:
+            # if the format of `due` isn't yyy-MM-dd, then the date will be set to the current date + 1 day. The user will have
+            # to use the calendar to set the date to the correct one.
+
+            self.due_date.setDate(self.due_date.date().fromString(due, "yyyy-MM-dd"))
+
 
         self.priority_text = QtWidgets.QComboBox() # Create a combo box for the priority
         self.priority_text.addItems(["H", "M", "L"]) # Add the priority options to the combo box
         self.priority_text.setCurrentText(priority) # Set the current text to the priority of the task
 
         self.form.addRow("Description", self.description_text)
-        self.form.addRow("Due", self.due_text)
+        self.form.addRow("Due", self.due_date)
         self.form.addRow("Priority", self.priority_text)
 
 
@@ -60,7 +68,13 @@ class EditTaskDialog(QtWidgets.QDialog):
 
     @property
     def due(self):
-        return self.due_text.text()
+        """
+        Returns the due date of the task as a string in the format 'yyyy-MM-dd'.
+
+         Returns:
+             str: The due date of the task
+             """
+        return self.due_date.date().toString("yyyy-MM-dd")
 
     @property
     def priority(self):

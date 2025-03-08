@@ -24,7 +24,6 @@ from components.GUI.textbox import Textbox
 from components.GUI.buttonbox import ButtonBox
 from components.GUI.xp_bar import XpBar
 from components.Dialogs.edit_task_dialog import EditTaskDialog
-from styles.extra_styles import get_style
 from typing import Callable, Final
 
 # The names of the columns.
@@ -105,7 +104,7 @@ class TaskRow:
 
         if self.task is not None:  # If the task is not None.
             self._bind_xp_fns(self.fetch_xp_brs(self.task))  # Bind the xp functions.
-    
+
     def edit_task(self):
         if not self.task:  # If the task is None.
             return  # Return.
@@ -113,14 +112,14 @@ class TaskRow:
         edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""),
             str(self.task.get("due") or ""),
             str(self.task.get("priority") or ""))  # Create an instance of the EditTaskDialog class.
-        
+
         if edit_task_dialog.exec():  # If the dialog is executed.
             self.task.set("description", edit_task_dialog.description or None)  # Set the description of the task.
             self.task.set("due", edit_task_dialog.due or None)  # Set the due date of the task.
             self.task.set("priority", edit_task_dialog.priority or None)  # Set the priority of the task.
             api.update_task(self.task)  # Update the task.
             self.update_task()  # Update the task.
-            
+
     def delete_task(self):
         api.delete_at(self.idx)  # Delete the task at the index.
         self.remove_task_row()  # remove the task row from the UI
@@ -130,7 +129,7 @@ class TaskRow:
         grid = self.check.parentWidget().layout()  # Get the layout of the parent widget.
         if not grid:  # If the grid is None.
             return  # Return.
-    
+
         # Loop through the widgets in the row and remove them
         for widget in [self.check] + self.cols + [self.edit_button, self.delete_button]:
             grid.removeWidget(widget)  # Remove the widget from the grid.
@@ -143,7 +142,7 @@ class TaskRow:
         grid = self.check.parentWidget().layout()  # Get the layout of the parent widget.
         if not grid:  # If the grid is None.
             return  # Return.
-    
+
         # Loop through the widgets in the row and remove them
         for widget in [self.check] + self.cols + [self.edit_button, self.delete_button]:  # Loop through the widgets.
             grid.removeWidget(widget)  # Remove the widget from the grid.
@@ -159,7 +158,7 @@ class TaskRow:
         for xp_bar in xp_bars:
             self.xp_add_calls.append(xp_bar.add_xp)  # Append the add xp function.
             self.xp_sub_calls.append(xp_bar.sub_xp)  # Append the sub xp function.
-    
+
     def _update_xp_bars(self, checkbox_state : bool) -> None:
         if self.task is None:  # If the task is None.
             return  # Return.

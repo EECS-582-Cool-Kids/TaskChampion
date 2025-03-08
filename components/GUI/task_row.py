@@ -33,6 +33,24 @@ from typing import Callable, Final
 COLS: Final = ( 'description', 'id', 'start', 'priority', 'project', 'recur', 'due', 'until','urgency')
 
 class TaskRow:
+    # Minimum size for each column to maintain a consistent width
+    COLUMN_WIDTHS = {
+        'checkbox': 50,
+
+        'description': 150,  # Set width per column as needed
+        'id': 30,
+        'start': 45,
+        'priority': 60,
+        'project': 80,
+        'recur': 45,
+        'due': 45,
+        'until': 45,
+        'urgency': 60,
+
+        'edit': 60,
+        'delete': 65
+    }
+
     def __init__(self, row_num: int, fetch_xp_brs : Callable[[Task], list[XpBar]]):
         self.idx = row_num
 
@@ -57,22 +75,9 @@ class TaskRow:
         # Row stretch of 0 means take up bare minimum amount of space?
         grid.setRowStretch(row_num, 0)  # Set the row stretch of the grid.
 
-        # Set fixed size for each column to maintain a consistent width
-        column_widths = {
-            'description': 150,  # Set width per column as needed
-            'id': 30,
-            'start': 45,
-            'priority': 60,
-            'project': 80,
-            'recur': 45,
-            'due': 45,
-            'until': 45,
-            'urgency': 60
-        }
-
         column_height = 50  # Set height per column as needed
 
-        self.check.setFixedWidth(50)  # Checkbox width
+        self.check.setMinimumWidth(self.COLUMN_WIDTHS['checkbox'])  # Checkbox width
         self.check.setFixedHeight(column_height)  # Checkbox height
         grid.addWidget(self.check, row_num, 0)  # Add the checkbox to the grid
         # set style for the checkbox
@@ -80,14 +85,14 @@ class TaskRow:
 
         for i in range(len(self.cols)):  # Loop through the columns.
             col_name = COLS[i]  # Get the name of the column.
-            if col_name in column_widths:  # If the column name is in the column widths.
-                self.cols[i].setFixedWidth(column_widths[col_name])  # Apply fixed width
+            if col_name in self.COLUMN_WIDTHS:  # If the column name is in the column widths.
+                self.cols[i].setMinimumWidth(self.COLUMN_WIDTHS[col_name])  # Apply fixed width
             self.cols[i].setFixedHeight(column_height)  # Apply fixed height
             grid.addWidget(self.cols[i], row_num, i + 1)
 
         # Set fixed sizes for buttons
-        self.edit_button.setFixedWidth(60)  # Set the fixed width of the edit button.
-        self.delete_button.setFixedWidth(65)  # Set the fixed width of the delete button.
+        self.edit_button.setMinimumWidth(self.COLUMN_WIDTHS['edit'])  # Set the fixed width of the edit button.
+        self.delete_button.setMinimumWidth(self.COLUMN_WIDTHS['delete'])  # Set the fixed width of the delete button.
         self.edit_button.setFixedHeight(column_height)  # Set the fixed height of the edit button.
         self.delete_button.setFixedHeight(column_height)  # Set the fixed height of the delete button.
 

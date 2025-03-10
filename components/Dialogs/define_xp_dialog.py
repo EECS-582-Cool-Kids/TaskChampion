@@ -107,7 +107,7 @@ class XPConfigDialog(QDialog):
                 return json.load(file)
         except (FileNotFoundError, json.JSONDecodeError):
             # return some arbitrary default config if the file doesn't exist
-            return {"priorities": {'H': 10, 'M': 5, 'L': 1}, "tags": {}, "projects": {}}
+            return {"priorities": {'H': 10, 'M': 5, 'L': 1, None: 0.5}, "tags": {}, "projects": {}}
 
 
     def save_config(self):

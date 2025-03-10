@@ -48,6 +48,7 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.due_date = QtWidgets.QDateEdit()
         self.due_date.setDateTime(self.due_date.dateTime().currentDateTime())
 
+        self.priorities.addItem("None")
         self.priorities.addItem("H")
         self.priorities.addItem("M")
         self.priorities.addItem("L")
@@ -81,14 +82,21 @@ class AddTaskDialog(QtWidgets.QDialog):
 
     def add_task(self) -> Optional[TaskDetails]:
         if self.exec():
-            if self.is_recurring:
-                return AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(), 
-                                             self.project.text(), self.recurrence.currentText(), self.due_date.dateTime().toPython())
-            else:
-                return AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(), 
-                                             self.project.text(), None, None)
+            if not self.is_recurring:  # If the task is not recurring
+                self.recurrence = None  # Set the recurrence to None
+                self.due_date = None  # Set the due date to None
+            else:  # If the task is recurring
+                self.recurrence = self.recurrence.currentText()  # Set the recurrence to the current text of the recurrence field
+                self.due_date = self.due_date.dateTime().toPython()  # Set the due date to the due date field
+
+            if self.priorities.currentText() == "None":  # If the priority is None
+                self.priorities.clear()  # Clear the priority field
+
+
+            return AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(),
+                                             self.project.text(), self.recurrence, self.due_date)  # Return the task details
         else:
             return None
-    
+        #
     def open_recurrence(self) -> None:
         self.is_recurring = self.recurring_box.isChecked()

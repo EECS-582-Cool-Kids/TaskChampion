@@ -37,7 +37,8 @@ class TaskChampionGUI:
         # Initialize the main Qt Widget 
         self.main_widget = TaskChampionWidget(self.load_styles)  # Create a new TaskChampionWidget.
         self.main_widget.setWindowTitle("Task Champion")  # Set the window title.
-        self.main_widget.resize(800, 400) # set basic window size.
+        # self.main_widget.resize(800, 400) # set basic window size.
+        self.main_widget.resize(1100, 400)
         self.main_widget.show() # show the window
 
         # self.main_widget.move(0, 0)

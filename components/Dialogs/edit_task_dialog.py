@@ -24,15 +24,28 @@ class EditTaskDialog(QtWidgets.QDialog):
 
         self.description_text = QtWidgets.QLineEdit(description)
         self.due_text = QtWidgets.QLineEdit(due)
-        self.priority_text = QtWidgets.QLineEdit(priority)
+        # self.priority_text = QtWidgets.QLineEdit(priority)
+        self.priorities = QtWidgets.QComboBox()
 
         self.form.addRow("Description", self.description_text)
         self.form.addRow("Due", self.due_text)
-        self.form.addRow("Priority", self.priority_text)
+        # self.form.addRow("Priority", self.priority_text)
+
+
+        self.priorities.addItem("None")
+        self.priorities.addItem("H")
+        self.priorities.addItem("M")
+        self.priorities.addItem("L")
+
+        # get the current index of the priority
+
+
+
+        self.form.addRow("Priority", self.priorities)
 
 
         button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok
-                                      | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
+                                          | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
 
 
 
@@ -60,4 +73,7 @@ class EditTaskDialog(QtWidgets.QDialog):
 
     @property
     def priority(self):
-        return self.priority_text.text()
+        if self.priorities.currentText() == "None":
+            return ""
+        else:
+            return self.priorities.currentText()

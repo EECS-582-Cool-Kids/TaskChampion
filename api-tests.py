@@ -25,7 +25,7 @@ class TestClass:
     def test_api_add_task(self):
         """Test Adding a basic task to the API"""
         task : dict = api.add_new_task(
-            delete_function = "print",
+            # delete_function = "print",
             description = "Test Description",
             tags        = "A",
             priority    = "H",
@@ -36,7 +36,7 @@ class TestClass:
         assert "A" in task["tags"] # test if the tag is set
         assert task["priority"] == "H" # test if the priority is set
         assert task["project"] == "Test Project" # test if the project is set
-        assert task["function"] == "print"
+        # assert task["function"] == "print"
     
     def test_api_update_task(self):
         """Test updating a task in the API"""

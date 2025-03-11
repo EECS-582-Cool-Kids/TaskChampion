@@ -37,7 +37,7 @@ class EditTaskDialog(QtWidgets.QDialog):
 
 
         self.priority_text = QtWidgets.QComboBox() # Create a combo box for the priority
-        self.priority_text.addItems(["H", "M", "L"]) # Add the priority options to the combo box
+        self.priority_text.addItems(["None", "H", "M", "L"]) # Add the priority options to the combo box
         self.priority_text.setCurrentText(priority) # Set the current text to the priority of the task
 
         self.form.addRow("Description", self.description_text)
@@ -78,4 +78,7 @@ class EditTaskDialog(QtWidgets.QDialog):
 
     @property
     def priority(self):
+        if self.priority_text.currentText() == "None":
+            return ""
         return self.priority_text.currentText()
+        # return self.priority_text.currentText()

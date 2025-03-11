@@ -45,13 +45,13 @@ class TestClass:
         assert task_idx != -1 # test that a task exists. If not, then the test method failed.
 
         task = api.task_at(task_idx)  # get the task at the index
-        assert task != None  # test that the task exists. If not, then the test method failed.
+        assert task is not None  # test that the task exists. If not, then the test method failed.
 
         task.set("description", "New Description")  # set the description of the task
         api.update_task(task)  # update the task in the API
         
         t = api.task_at(task_idx)  # get the task at the index
-        assert t != None  # test that the task exists. If not, then the test method failed.
+        assert t is not None  # test that the task exists. If not, then the test method failed.
         assert t.get_description() == "New Description"  # test if the description is set
     
     def test_api_delete_task(self):

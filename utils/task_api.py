@@ -122,7 +122,7 @@ class TaskAPIImpl(TaskAPI):
     def add_new_task(self, description: str, tags=None, due="", **kw) -> dict:  # Add a new task.
         if due:
             due = QtCore.QDate.fromString(due, "yyyy-MM-dd").toString("yyyy-MM-dd")
-        task : dict = self.warrior.task_add(description, tags, due, **kw)  # Add a task.
+        task : dict = self.warrior.task_add(description, tags, **kw)  # Add a task.
         self._init_task_list()  # Initialize the task list.
 
         return task  # Return the task.

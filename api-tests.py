@@ -4,8 +4,8 @@
  *  Inputs: None
  *  Outputs: None
  *  Additional code sources: None
- *  Developers: Ethan Berkley, Jacob Wilkus
- *  Date: 2/25/2025
+ *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan
+ *  Date: 3/10/2025
  *  Last Modified: 2/25/2025
  *  Preconditions: None
  *  Postconditions: None
@@ -21,10 +21,11 @@ register_api(TaskAPIImpl) # Order matters.
 from utils.task_api import api
 
 class TestClass:
-    '''Taskwarrior API tests'''
+    """Taskwarrior API tests"""
     def test_api_add_task(self):
-        '''Test Adding a basic task to the API'''
+        """Test Adding a basic task to the API"""
         task : dict = api.add_new_task(
+            delete_function = print,
             description = "Test Description",
             tags        = "A",
             priority    = "H",
@@ -35,9 +36,10 @@ class TestClass:
         assert "A" in task["tags"] # test if the tag is set
         assert task["priority"] == "H" # test if the priority is set
         assert task["project"] == "Test Project" # test if the project is set
+        assert task["function"] == "print"
     
     def test_api_update_task(self):
-        '''Test updating a task in the API'''
+        """Test updating a task in the API"""
 
         task_idx = api.num_tasks() - 1
         assert task_idx != -1 # test that a task exists. If not, then the test method failed.
@@ -53,7 +55,7 @@ class TestClass:
         assert t.get_description() == "New Description"  # test if the description is set
     
     def test_api_delete_task(self):
-        '''Test deleting a task in the API'''
+        """Test deleting a task in the API"""
         task_idx = api.num_tasks() - 1  # get the index of the last task
         assert task_idx != -1 # test that a task exists. If not, then the test method failed.
 

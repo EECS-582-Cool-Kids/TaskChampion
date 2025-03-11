@@ -25,7 +25,7 @@ class TestClass:
     def test_api_add_task(self):
         """Test Adding a basic task to the API"""
         task : dict = api.add_new_task(
-            delete_function = print,
+            delete_function = "print"",
             description = "Test Description",
             tags        = "A",
             priority    = "H",

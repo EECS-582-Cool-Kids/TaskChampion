@@ -30,9 +30,9 @@ class XPConfigDialog(QDialog):
     PRIORITY_T = ["H", "M", "L"]
     xp_values_updated = Signal(dict) # Signal to indicate that the XP values have been updated
 
-    def __init__(self, config_file="components/config/user_defined_xp.json"):
+    def __init__(self, config_file="config/user_defined_xp.json"):
         super().__init__()
-        os.makedirs('components/config/', exist_ok=True)
+        os.makedirs('config/', exist_ok=True)
         self.setWindowTitle("Edit XP Configuration")
         self.config_file = config_file
         self.config: dict[str, Any] = self.load_config()
@@ -117,17 +117,17 @@ class XPConfigDialog(QDialog):
         projects = {}
         for row in range(self.priority_table.rowCount()):
             priority = self.priority_table.item(row, 0).text()
-            xp = int(self.priority_table.item(row, 1).text())
+            xp = float(self.priority_table.item(row, 1).text())
             priorities[priority] = xp
 
         for row in range(self.tag_table.rowCount()):
             tag = self.tag_table.item(row, 0).text()
-            xp = int(self.tag_table.item(row, 1).text())
+            xp = float(self.tag_table.item(row, 1).text())
             tags[tag] = xp
 
         for row in range(self.project_table.rowCount()):
             project = self.project_table.item(row, 0).text()
-            xp = int(self.project_table.item(row, 1).text())
+            xp = float(self.project_table.item(row, 1).text())
             projects[project] = xp
             
         self.config['priorities'] = priorities # Update the priorities
@@ -138,7 +138,7 @@ class XPConfigDialog(QDialog):
         self.xp_values_updated.emit(self.config)
 
         with open(self.config_file, 'w') as file:
-            json.dump(self.config, file)
+            json.dump(self.config, file, indent=2)
 
         QMessageBox.information(self, "Success", "Configuration saved!", QMessageBox.StandardButtons.Ok)
 

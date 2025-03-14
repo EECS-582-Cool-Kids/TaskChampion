@@ -86,12 +86,9 @@ class TaskRow:
 
         # Set fixed sizes for buttons
         self.edit_button.setFixedWidth(60)  # Set the fixed width of the edit button.
-        self.delete_button.setFixedWidth(65)  # Set the fixed width of the delete button.
         self.edit_button.setFixedHeight(column_height)  # Set the fixed height of the edit button.
-        self.delete_button.setFixedHeight(column_height)  # Set the fixed height of the delete button.
 
         grid.addWidget(self.edit_button, row_num, len(self.cols) + 1)  # Add the edit button
-        grid.addWidget(self.delete_button, row_num, len(self.cols) + 2)  # Add the delete button
 
     def update_task(self):
         self.task = api.task_at(self.idx)  # Get the task at the index.
@@ -100,7 +97,6 @@ class TaskRow:
         for i in range(len(self.cols)):  # Loop through the columns.
             self.cols[i].update_task()  # Update the column.
         self.edit_button.update_task()  # Update the edit button.
-        self.delete_button.update_task()  # Update the delete button.
 
         if self.task is not None:  # If the task is not None.
             self._bind_xp_fns(self.fetch_xp_brs(self.task))  # Bind the xp functions.
@@ -131,7 +127,7 @@ class TaskRow:
             return  # Return.
 
         # Loop through the widgets in the row and remove them
-        for widget in [self.check] + self.cols + [self.edit_button, self.delete_button]:
+        for widget in [self.check] + self.cols + [self.edit_button]:
             grid.removeWidget(widget)  # Remove the widget from the grid.
             widget.deleteLater()  # Delete the widget.
         # add an empty row to the grid to maintain the same number of rows
@@ -144,7 +140,7 @@ class TaskRow:
             return  # Return.
 
         # Loop through the widgets in the row and remove them
-        for widget in [self.check] + self.cols + [self.edit_button, self.delete_button]:  # Loop through the widgets.
+        for widget in [self.check] + self.cols + [self.edit_button]:  # Loop through the widgets.
             grid.removeWidget(widget)  # Remove the widget from the grid.
             widget.deleteLater()  # Delete the widget.
         # add an empty row to the grid to maintain the same number of rows

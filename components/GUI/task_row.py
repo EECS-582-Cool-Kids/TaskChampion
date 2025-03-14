@@ -9,10 +9,10 @@
  *  Last Modified: 3/14/2025
  *  Preconditions: None
  *  Postconditions: None
- *  Error/Exception conditions: None
+ *  Error/Exception conditions: If attempting to add a task after another task has been deleted
  *  Side effects: None
  *  Invariants: None
- *  Known Faults: None encountered
+ *  Known Faults: RuntimeError: Internal C++ object (Checkbox) already deleted.
 """
 
 from PySide6 import QtWidgets
@@ -133,6 +133,10 @@ class TaskRow:
         grid = self.check.parentWidget().layout()  # Get the layout of the parent widget.
         if not grid:  # If the grid is None.
             return  # Return.
+
+        # Get the current row index
+        row_idx = grid.indexOf(self.check)  # Get the index of the checkbox.
+
 
         # Loop through the widgets in the row and remove them
         for widget in [self.check] + self.cols + [self.edit_button]:

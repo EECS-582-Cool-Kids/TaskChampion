@@ -30,6 +30,11 @@ class GridWidget(QtWidgets.QWidget):
     ROW_HEIGHT=50  # Height of each row in the grid.
     DEFAULT_ROWS=10  # Default number of rows to display.
     DEFAULT_WIDTH=1000 # Default width, scrollable.
+    #            Done,  Description,    id, start,  priority,   project, 
+    COL_STRETCH=(0,     4,              0,  1,      0,          2, 
+
+    #   recur,  due,    until,  urgency,    edit,   delete.
+        0,      3,      0,      2,          1,      1)
 
     def __init__(self, load_styles : Callable[[], None], fetch_xp_fns : Callable[[Task], list[XpBar]]):
         super().__init__()  # Call the parent constructor.
@@ -84,9 +89,7 @@ class GridWidget(QtWidgets.QWidget):
 
     def add_header(self):
         # Make header row take up as little vertical space as it needs.
-        self.grid.setRowStretch(0, 0)  # Set the row stretch of the grid to 0.
-        # self.grid.setContentsMargins(0, 0, 0, 0)
-        # self.grid.setHorizontalSpacing(0)
+        self.grid.setRowStretch(0, 0)  # Set the row stretch of the header row to 0.
         self.grid.setSpacing(0)  # Set the spacing of the grid to 0.
         
         # QLabel is just simple text.
@@ -98,17 +101,13 @@ class GridWidget(QtWidgets.QWidget):
         self.grid.itemAtPosition(0, 10).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the blank label cell
         self.grid.itemAtPosition(0, 11).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the blank label cell
 
-
-        # TODO: may be no point in setting column stretch like this and below
-        # Consider changing.
-        self.grid.setColumnStretch(0, 0)  # Set the column stretch of the grid to 0.
-
         for i in range(len(COLS)):  # Loop through the columns.
             self.grid.addWidget(QtWidgets.QLabel(COLS[i]), 0, i+1)  # Add a label to the grid.
-            self.grid.setColumnStretch(i+1, 0)  # Set the column stretch of the grid to 0.
             self.grid.itemAtPosition(0, i+1).widget().setStyleSheet(get_style("rowLabels"))  # Set the style of the label to be the row labels style.
             self.grid.itemAtPosition(0, i+1).widget().setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)  # Set the alignment of the label to be centered.
 
+        for i in range(len(self.COL_STRETCH)):
+            self.grid.setColumnStretch(i, self.COL_STRETCH[i])
 
     def fill_grid(self):
         # Also adds tasks to the grid, which doesn't work for the "example" tab. So for now, it's empty.

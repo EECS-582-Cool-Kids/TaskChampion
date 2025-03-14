@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 3/10/2025
+ *  Last Modified: 3/14/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -105,9 +105,11 @@ class TaskRow:
         if not self.task:  # If the task is None.
             return  # Return.
 
-        edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""),
-            str(self.task.get("due") or ""),
-            str(self.task.get("priority") or ""))  # Create an instance of the EditTaskDialog class.
+        edit_task_dialog = EditTaskDialog(
+            deletion_function=self.delete_task,
+            description=str(self.task.get("description") or ""),
+            due=str(self.task.get("due") or ""),
+            priority=str(self.task.get("priority") or ""))  # Create an instance of the EditTaskDialog class.
 
         if edit_task_dialog.exec():  # If the dialog is executed.
             self.task.set("description", edit_task_dialog.description or None)  # Set the description of the task.

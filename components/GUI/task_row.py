@@ -119,7 +119,7 @@ class TaskRow:
             return  # Return.
 
         edit_task_dialog = EditTaskDialog(
-            deletion_function=self.delete_task,
+            delete_task=self.delete_task,
             description=str(self.task.get("description") or ""),
             due=str(self.task.get("due") or ""),
             priority=str(self.task.get("priority") or ""))  # Create an instance of the EditTaskDialog class.
@@ -143,7 +143,6 @@ class TaskRow:
 
         # Get the current row index
         row_idx = grid.indexOf(self.check)  # Get the index of the checkbox.
-
 
         # Loop through the widgets in the row and remove them
         for widget in [self.check] + self.cols + [self.edit_button]:

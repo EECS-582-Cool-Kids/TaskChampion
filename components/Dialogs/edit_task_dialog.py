@@ -18,10 +18,10 @@
 from PySide6 import QtWidgets
 
 class EditTaskDialog(QtWidgets.QDialog):
-    def __init__(self, deletion_function, description="", due="", priority=""):
+    def __init__(self, delete_task, description="", due="", priority=""):
         super().__init__()
         self.form = QtWidgets.QFormLayout()
-        self.deletion_function = deletion_function
+        self.deletion_function = delete_task
 
         self.description_text = QtWidgets.QLineEdit(description) # set the description text to the description of the task
 
@@ -50,8 +50,7 @@ class EditTaskDialog(QtWidgets.QDialog):
                                       | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
 
         self.delete_button = QtWidgets.QPushButton("Delete Task")
-        self.delete_button.clicked.connect(self.confirm_deletion)
-
+        self.delete_button.clicked.connect(self.delete)
 
         layout = QtWidgets.QVBoxLayout()
         layout.addLayout(self.form)
@@ -88,16 +87,13 @@ class EditTaskDialog(QtWidgets.QDialog):
             return ""
         return self.priority_text.currentText()
 
-    def delete_task(self):
-        self.deletion_function()
-        self.accept()
-
-    def confirm_deletion(self):
+    def delete(self):
         response = QtWidgets.QMessageBox.question(self, "Delete Task", "Are you sure you want to delete this task?",
                                                   QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
 
         if response == QtWidgets.QMessageBox.StandardButton.Yes: # If the user clicks Yes, the task will be deleted.
-            self.delete_task()
+            self.deletion_function()
+            self.accept()
 
         else: # If the user doesn't want to delete the task, then the dialog will close.
             return

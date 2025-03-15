@@ -86,11 +86,13 @@ class AddTaskDialog(QtWidgets.QDialog):
         # Define the projects
         self.projects.clear()
         self.projects.addItem("New Project...")
+        prev_proj = []
         
         for task in api.task_list:
             task_project = task.get_project()
-            if task_project != None:
+            if task_project != None and not task_project in prev_proj:
                 self.projects.addItem(task_project)
+                prev_proj.append(task_project)
 
         if self.exec():
             if not self.is_recurring:  # If the task is not recurring

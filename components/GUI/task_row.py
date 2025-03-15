@@ -62,7 +62,6 @@ class TaskRow:
         self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]  # Create a list of textboxes.
 
         self.edit_button = ButtonBox(row_num, self.get_task, "edit", self.edit_task)  # Create an edit button.
-        self.delete_button = ButtonBox(row_num, self.get_task, "delete", self.delete_task)  # Create a delete button.
 
         # Initial fetch of function calls
         if self.task is not None:
@@ -96,13 +95,21 @@ class TaskRow:
         grid.addWidget(self.edit_button, row_num, len(self.cols) + 1)  # Add the edit button
 
     def update_task(self):
+        """
+        Updates the task elements and associated components within the application.
+        This method retrieves the task at the specified index, updates associated
+        checkbox, column elements, edit and delete buttons, and binds external
+        functions if the task is valid.
+
+        Returns:
+            None
+        """
         self.task = api.task_at(self.idx)  # Get the task at the index.
 
         self.check.update_task()  # Update the checkbox.
         for i in range(len(self.cols)):  # Loop through the columns.
             self.cols[i].update_task()  # Update the column.
         self.edit_button.update_task()  # Update the edit button.
-        self.delete_button.update_task()  # Update the delete button.
 
         if self.task is not None:  # If the task is not None.
             self._bind_xp_fns(self.fetch_xp_brs(self.task))  # Bind the xp functions.

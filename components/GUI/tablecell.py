@@ -4,9 +4,9 @@
  *  Inputs: None
  *  Outputs: None
  *  Additional code sources: None
- *  Developers: Ethan Berkley
+ *  Developers: Ethan Berkley, Mo Morgan
  *  Date: 2/15/2025
- *  Last Modified: 2/23/2025
+ *  Last Modified: 3/14/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -43,9 +43,15 @@ class TableCell(QtWidgets.QLabel):
         self.my_layout.addWidget(self.get_sub_widget())  # Add the sub widget to the layout.
 
     def update_task(self):
+        """
+        Updates the task and its active state.
+
+        This method retrieves a task using the get_task method and updates the active state based
+        on whether the task exists.
+
+        Args: None
+        """
         self.task = self.get_task()  # Get the task from the get task method.
         self.active = self.task is not None  # Set the active variable to True if the task is not None.
 
         self.setProperty('row-active', str(self.active))  # Set the row active property of the cell.
-
-        

@@ -20,7 +20,7 @@ from typing import Optional
 
 class AddTaskDialog(QtWidgets.QDialog):
     class TaskDetails:
-        def __init__(self, description: str, tag: str, priority: str, project: str, recurrence: Optional[str], due: Optional[object]):
+        def __init__(self, description : str, tag: str, priority : str, project : str, recurrence : Optional[str], due : Optional[object]):
             self.description = description
             self.tag = tag
             self.priority = priority
@@ -29,6 +29,7 @@ class AddTaskDialog(QtWidgets.QDialog):
             self.due = due
 
     def __init__(self):
+
         super().__init__()
 
         self.form = QtWidgets.QFormLayout()
@@ -40,6 +41,7 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.recurring_box = QtWidgets.QCheckBox()
 
         self.is_recurring = False
+
         self.recurring_box.stateChanged.connect(self.open_recurrence)
 
         self.recurrence = QtWidgets.QComboBox()
@@ -50,7 +52,7 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.recurrence.addItems(["daily", "weekly", "monthly", "yearly"])
 
         self.buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok
-                                                  | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
+                                        | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
 
         self.form.addRow("Description*", self.description)
         self.form.addRow("Priority", self.priority)
@@ -59,7 +61,7 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.form.addRow("Recurrence", self.recurrence)
         self.form.addRow("Due Date", self.due_date)
 
-        self.layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout()
+        self.layout : QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout()
         self.layout.addLayout(self.form)
         self.layout.addWidget(self.buttons)
 

@@ -36,7 +36,7 @@ class AddTaskDialog(QtWidgets.QDialog):
 
         self.description = QtWidgets.QLineEdit()
         self.tag = QtWidgets.QLineEdit()
-        self.priority = QtWidgets.QComboBox()
+        self.priorities = QtWidgets.QComboBox()
         self.projects = QtWidgets.QComboBox()
         self.new_project = QtWidgets.QLineEdit()
         self.recurring_box = QtWidgets.QCheckBox()
@@ -49,14 +49,14 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.due_date = QtWidgets.QDateEdit()
         self.due_date.setDateTime(self.due_date.dateTime().currentDateTime())
 
-        self.priority.addItems(["None", "H", "M", "L"])
+        self.priorities.addItems(["None", "H", "M", "L"])
         self.recurrence.addItems(["daily", "weekly", "monthly", "yearly"])
 
         self.buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok
                                       | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
 
         self.form.addRow("Description*", self.description)
-        self.form.addRow("Priority", self.priority)
+        self.form.addRow("Priority", self.priorities)
         self.form.addRow("Project", self.projects)
         self.form.addRow("New Project", self.new_project)
         self.form.addRow("Is Recurring?", self.recurring_box)
@@ -159,15 +159,15 @@ class AddTaskDialog(QtWidgets.QDialog):
                 self.recurrence = self.recurrence.currentText()  # Set the recurrence to the current text of the recurrence field
                 self.due_date = self.due_date.dateTime().toPython()  # Set the due date to the due date field
 
-            if self.priority.currentText() == "None":  # If the priority is None
-                self.priority.clear()  # Clear the priority field
+            if self.priorities.currentText() == "None":  # If the priority is None
+                self.priorities.clear()  # Clear the priority field
 
             task_project = self.projects.currentText()
             if self.projects.currentText() == "New Project...":
                 task_project = self.new_project.text()
 
 
-            task_details = AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priority.currentText(),
+            task_details = AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(),
                                                      task_project, self.recurrence, self.due_date) # create a variable for the task details
 
             # Reset the input fields after adding the task
@@ -175,7 +175,7 @@ class AddTaskDialog(QtWidgets.QDialog):
             self.tags_list.clear()
             self.description.clear()
             self.projects.clear()
-            self.priority.setCurrentIndex(0)
+            self.priorities.setCurrentIndex(0)
             self.remove_all_tags()
 
             return task_details # Return the task details

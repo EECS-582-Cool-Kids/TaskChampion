@@ -6,13 +6,13 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 3/10/2025
+ *  Last Modified: 3/14/2025
  *  Preconditions: None
  *  Postconditions: None
- *  Error/Exception conditions: None
+ *  Error/Exception conditions: If attempting to add a task after another task has been deleted
  *  Side effects: None
  *  Invariants: None
- *  Known Faults: None encountered
+ *  Known Faults: RuntimeError: Internal C++ object (Checkbox) already deleted.
 """
 
 from PySide6 import QtWidgets
@@ -62,7 +62,6 @@ class TaskRow:
         self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]  # Create a list of textboxes.
 
         self.edit_button = ButtonBox(row_num, self.get_task, "edit", self.edit_task)  # Create an edit button.
-        self.delete_button = ButtonBox(row_num, self.get_task, "delete", self.delete_task)  # Create a delete button.
 
         # Initial fetch of function calls
         if self.task is not None:
@@ -91,21 +90,26 @@ class TaskRow:
 
         # Set fixed sizes for buttons
         self.edit_button.setMinimumWidth(self.COLUMN_WIDTHS['edit'])  # Set the fixed width of the edit button.
-        self.delete_button.setMinimumWidth(self.COLUMN_WIDTHS['delete'])  # Set the fixed width of the delete button.
         self.edit_button.setFixedHeight(column_height)  # Set the fixed height of the edit button.
-        self.delete_button.setFixedHeight(column_height)  # Set the fixed height of the delete button.
 
         grid.addWidget(self.edit_button, row_num, len(self.cols) + 1)  # Add the edit button
-        grid.addWidget(self.delete_button, row_num, len(self.cols) + 2)  # Add the delete button
 
     def update_task(self):
+        """
+        Updates the task elements and associated components within the application.
+        This method retrieves the task at the specified index, updates associated
+        checkbox, column elements, edit and delete buttons, and binds external
+        functions if the task is valid.
+
+        Returns:
+            None
+        """
         self.task = api.task_at(self.idx)  # Get the task at the index.
 
         self.check.update_task()  # Update the checkbox.
         for i in range(len(self.cols)):  # Loop through the columns.
             self.cols[i].update_task()  # Update the column.
         self.edit_button.update_task()  # Update the edit button.
-        self.delete_button.update_task()  # Update the delete button.
 
         if self.task is not None:  # If the task is not None.
             self._bind_xp_fns(self.fetch_xp_brs(self.task))  # Bind the xp functions.
@@ -114,9 +118,11 @@ class TaskRow:
         if not self.task:  # If the task is None.
             return  # Return.
 
-        edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""),
-            str(self.task.get("due") or ""),
-            str(self.task.get("priority") or ""))  # Create an instance of the EditTaskDialog class.
+        edit_task_dialog = EditTaskDialog(
+            delete_task=self.delete_task,
+            description=str(self.task.get("description") or ""),
+            due=str(self.task.get("due") or ""),
+            priority=str(self.task.get("priority") or ""))  # Create an instance of the EditTaskDialog class.
 
         if edit_task_dialog.exec():  # If the dialog is executed.
             self.task.set("description", edit_task_dialog.description or None)  # Set the description of the task.
@@ -135,8 +141,11 @@ class TaskRow:
         if not grid:  # If the grid is None.
             return  # Return.
 
+        # Get the current row index
+        row_idx = grid.indexOf(self.check)  # Get the index of the checkbox.
+
         # Loop through the widgets in the row and remove them
-        for widget in [self.check] + self.cols + [self.edit_button, self.delete_button]:
+        for widget in [self.check] + self.cols + [self.edit_button]:
             grid.removeWidget(widget)  # Remove the widget from the grid.
             widget.deleteLater()  # Delete the widget.
         # add an empty row to the grid to maintain the same number of rows
@@ -149,7 +158,7 @@ class TaskRow:
             return  # Return.
 
         # Loop through the widgets in the row and remove them
-        for widget in [self.check] + self.cols + [self.edit_button, self.delete_button]:  # Loop through the widgets.
+        for widget in [self.check] + self.cols + [self.edit_button]:  # Loop through the widgets.
             grid.removeWidget(widget)  # Remove the widget from the grid.
             widget.deleteLater()  # Delete the widget.
         # add an empty row to the grid to maintain the same number of rows

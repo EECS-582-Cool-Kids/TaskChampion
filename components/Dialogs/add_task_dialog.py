@@ -166,7 +166,6 @@ class AddTaskDialog(QtWidgets.QDialog):
             if self.projects.currentText() == "New Project...":
                 task_project = self.new_project.text()
 
-
             task_details = AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(),
                                                      task_project, self.recurrence, self.due_date) # create a variable for the task details
 
@@ -195,7 +194,6 @@ class AddTaskDialog(QtWidgets.QDialog):
             if widget:
                 self.tag_bubble_layout.removeWidget(widget) #removes widget
                 widget.deleteLater()  # Remove the widget and free memory
-
 
     def open_recurrence(self) -> None:
         self.is_recurring = self.recurring_box.isChecked()

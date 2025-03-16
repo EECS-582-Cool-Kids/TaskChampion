@@ -108,10 +108,15 @@ class AddTaskDialog(QtWidgets.QDialog):
             task_project = self.projects.currentText()
             if self.projects.currentText() == "New Project...":
                 task_project = self.new_project.text()
-
-            return AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(),
+                
+            task_details = AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(),
                                              task_project, self.recurrence, self.due_date)  # Return the task details
+            
+            self.description.clear() # Clear the description field so the text doesn't repopulate on the next task creation
+            return task_details
+          
         else:
+            self.description.clear() # Clear the description field so the text doesn't repopulate on the next task creation
             return None
         #
     def open_recurrence(self) -> None:

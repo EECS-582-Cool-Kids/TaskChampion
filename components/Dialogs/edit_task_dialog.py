@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 3/7/2025
+ *  Last Modified: 3/14/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -18,9 +18,10 @@
 from PySide6 import QtWidgets
 
 class EditTaskDialog(QtWidgets.QDialog):
-    def __init__(self, description="", due="", priority=""):
+    def __init__(self, delete_task, description="", due="", priority=""):
         super().__init__()
         self.form = QtWidgets.QFormLayout()
+        self.deletion_function = delete_task
 
         self.description_text = QtWidgets.QLineEdit(description) # set the description text to the description of the task
 
@@ -48,9 +49,13 @@ class EditTaskDialog(QtWidgets.QDialog):
         button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok
                                       | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
 
+        self.delete_button = QtWidgets.QPushButton("Delete Task")
+        self.delete_button.clicked.connect(self.delete)
+
         layout = QtWidgets.QVBoxLayout()
         layout.addLayout(self.form)
         layout.addWidget(button_box)
+        layout.addWidget(self.delete_button)
 
         self.setLayout(layout)
 
@@ -81,4 +86,14 @@ class EditTaskDialog(QtWidgets.QDialog):
         if self.priority_text.currentText() == "None":
             return ""
         return self.priority_text.currentText()
-        # return self.priority_text.currentText()
+
+    def delete(self):
+        response = QtWidgets.QMessageBox.question(self, "Delete Task", "Are you sure you want to delete this task?",
+                                                  QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+
+        if response == QtWidgets.QMessageBox.StandardButton.Yes: # If the user clicks Yes, the task will be deleted.
+            self.deletion_function()
+            self.accept()
+
+        else: # If the user doesn't want to delete the task, then the dialog will close.
+            return

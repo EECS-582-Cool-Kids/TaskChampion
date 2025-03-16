@@ -17,6 +17,7 @@
 
 from PySide6 import QtWidgets, QtCore, QtGui
 from typing import Optional
+from utils.task_api import api
 
 class AddTaskDialog(QtWidgets.QDialog):
     class TaskDetails:
@@ -29,7 +30,6 @@ class AddTaskDialog(QtWidgets.QDialog):
             self.due = due
 
     def __init__(self):
-
         super().__init__()
 
         self.form = QtWidgets.QFormLayout()
@@ -37,7 +37,8 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.description = QtWidgets.QLineEdit()
         self.tag = QtWidgets.QLineEdit()
         self.priority = QtWidgets.QComboBox()
-        self.project = QtWidgets.QLineEdit()
+        self.projects = QtWidgets.QComboBox()
+        self.new_project = QtWidgets.QLineEdit()
         self.recurring_box = QtWidgets.QCheckBox()
 
         self.is_recurring = False
@@ -56,7 +57,8 @@ class AddTaskDialog(QtWidgets.QDialog):
 
         self.form.addRow("Description*", self.description)
         self.form.addRow("Priority", self.priority)
-        self.form.addRow("Project", self.project)
+        self.form.addRow("Project", self.projects)
+        self.form.addRow("New Project", self.new_project)
         self.form.addRow("Is Recurring?", self.recurring_box)
         self.form.addRow("Recurrence", self.recurrence)
         self.form.addRow("Due Date", self.due_date)
@@ -138,6 +140,17 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.tag.clear()  # Clear the input field after adding the tag
 
     def add_task(self) -> Optional[TaskDetails]:
+        # Define the projects
+        self.projects.clear()
+        self.projects.addItem("New Project...")
+        prev_proj = []
+
+        for task in api.task_list:
+            task_project = task.get_project()
+            if task_project != None and not task_project in prev_proj:
+                self.projects.addItem(task_project)
+                prev_proj.append(task_project)
+
         if self.exec():
             if not self.is_recurring:  # If the task is not recurring
                 self.recurrence = None  # Set the recurrence to None
@@ -149,15 +162,19 @@ class AddTaskDialog(QtWidgets.QDialog):
             if self.priority.currentText() == "None":  # If the priority is None
                 self.priority.clear()  # Clear the priority field
 
+            task_project = self.projects.currentText()
+            if self.projects.currentText() == "New Project...":
+                task_project = self.new_project.text()
+
 
             task_details = AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priority.currentText(),
-                                                     self.project.text(), self.recurrence, self.due_date) # create a variable for the task details
+                                                     task_project, self.recurrence, self.due_date) # create a variable for the task details
 
             # Reset the input fields after adding the task
             self.tag.clear()
             self.tags_list.clear()
             self.description.clear()
-            self.project.clear()
+            self.projects.clear()
             self.priority.setCurrentIndex(0)
             self.remove_all_tags()
 

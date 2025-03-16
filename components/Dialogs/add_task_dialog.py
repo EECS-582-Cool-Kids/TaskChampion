@@ -179,6 +179,8 @@ class AddTaskDialog(QtWidgets.QDialog):
             self.remove_all_tags()
 
             return task_details # Return the task details
+
+        self.description.clear() # Clear the description field so the text doesn't repopulate on the next task creation
         return None
 
     def remove_tag(self, tag_button):

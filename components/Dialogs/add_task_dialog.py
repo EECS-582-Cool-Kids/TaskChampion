@@ -20,7 +20,7 @@ from typing import Optional
 
 class AddTaskDialog(QtWidgets.QDialog):
     class TaskDetails:
-        def __init__(self, description : str, tag: str, priority : str, project : str, recurrence : Optional[str], due : Optional[object]):
+        def __init__(self, description : str, tag : str, priority : str, project : str, recurrence : Optional[str], due : Optional[object]):
             self.description = description
             self.tag = tag
             self.priority = priority
@@ -52,7 +52,7 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.recurrence.addItems(["daily", "weekly", "monthly", "yearly"])
 
         self.buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok
-                                        | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
+                                      | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
 
         self.form.addRow("Description*", self.description)
         self.form.addRow("Priority", self.priority)

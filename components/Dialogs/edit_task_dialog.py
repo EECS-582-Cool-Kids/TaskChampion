@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/23/2025
+ *  Last Modified: 3/14/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -15,30 +15,47 @@
  *  Known Faults: None encountered
 """
 
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtWidgets
 
 class EditTaskDialog(QtWidgets.QDialog):
-    def __init__(self, description="", due="", priority=""):
+    def __init__(self, delete_task, description="", due="", priority=""):
         super().__init__()
         self.form = QtWidgets.QFormLayout()
+        self.deletion_function = delete_task
 
-        self.description_text = QtWidgets.QLineEdit(description)
-        self.due_text = QtWidgets.QLineEdit(due)
-        self.priority_text = QtWidgets.QLineEdit(priority)
+        self.description_text = QtWidgets.QLineEdit(description) # set the description text to the description of the task
+
+        self.due_date = QtWidgets.QDateEdit() # Create a date edit object for the due date
+        # set the due date to the current date + 1 day
+        self.due_date.setDate(self.due_date.date().currentDate().addDays(1))
+        # and bring up the calendar if the arrow is clicked
+        self.due_date.setCalendarPopup(True)
+        if due:
+            # if the format of `due` isn't yyy-MM-dd, then the date will be set to the current date + 1 day. The user will have
+            # to use the calendar to set the date to the correct one.
+
+            self.due_date.setDate(self.due_date.date().fromString(due, "yyyy-MM-dd"))
+
+
+        self.priority_text = QtWidgets.QComboBox() # Create a combo box for the priority
+        self.priority_text.addItems(["None", "H", "M", "L"]) # Add the priority options to the combo box
+        self.priority_text.setCurrentText(priority) # Set the current text to the priority of the task
 
         self.form.addRow("Description", self.description_text)
-        self.form.addRow("Due", self.due_text)
+        self.form.addRow("Due", self.due_date)
         self.form.addRow("Priority", self.priority_text)
 
 
         button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok
                                       | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
 
-
+        self.delete_button = QtWidgets.QPushButton("Delete Task")
+        self.delete_button.clicked.connect(self.delete)
 
         layout = QtWidgets.QVBoxLayout()
         layout.addLayout(self.form)
         layout.addWidget(button_box)
+        layout.addWidget(self.delete_button)
 
         self.setLayout(layout)
 
@@ -56,8 +73,27 @@ class EditTaskDialog(QtWidgets.QDialog):
 
     @property
     def due(self):
-        return self.due_text.text()
+        """
+        Returns the due date of the task as a string in the format 'yyyy-MM-dd'.
+
+         Returns:
+             str: The due date of the task
+             """
+        return self.due_date.date().toString("yyyy-MM-dd")
 
     @property
     def priority(self):
-        return self.priority_text.text()
+        if self.priority_text.currentText() == "None":
+            return ""
+        return self.priority_text.currentText()
+
+    def delete(self):
+        response = QtWidgets.QMessageBox.question(self, "Delete Task", "Are you sure you want to delete this task?",
+                                                  QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No)
+
+        if response == QtWidgets.QMessageBox.StandardButton.Yes: # If the user clicks Yes, the task will be deleted.
+            self.deletion_function()
+            self.accept()
+
+        else: # If the user doesn't want to delete the task, then the dialog will close.
+            return

@@ -3,8 +3,8 @@
 # *  Inputs: None
 # *  Outputs: None
 # *  Additional code sources: None
-# *  Developers: Jacob Wilkus
-# *  Date: 2/25/2025
+# *  Developers: Jacob Wilkus, Mo Morgan
+# *  Date: 3/10/2025
 # *  Last Modified: 2/25/2025
 # *  Preconditions: None
 # *  Postconditions: None
@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest taskw-ng
+          pip install pytest taskw-ng PySide6
           sudo apt-get install taskwarrior
       - name: Initialize Taskwarrior
         run: |
@@ -57,7 +57,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest taskw-ng
+          pip install pytest taskw-ng PySide6
           sudo apt-get install taskwarrior
       - name: Initialize Taskwarrior
         run: |

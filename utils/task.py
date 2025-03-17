@@ -33,7 +33,10 @@ class Task(task.Task):
         return self['description']  # Return the description field.
 
     def get_due(self) -> fields.DateField:
-        return self['due']  # Return the due field.
+        if 'due' not in self:  # If the due field does not exist
+            return None  # Return None
+        else:  # If the due field exists
+            return self['due']  # Return the due field.
     
     def set_due(self, due : str) -> None:
         self.set('due', due)  # Set the due field to the given due date.

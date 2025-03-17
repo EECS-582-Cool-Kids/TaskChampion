@@ -6,13 +6,13 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/28/2025
+ *  Last Modified: 3/14/2025
  *  Preconditions: None
  *  Postconditions: None
- *  Error/Exception conditions: None
+ *  Error/Exception conditions: If attempting to add a task after another task has been deleted
  *  Side effects: None
  *  Invariants: None
- *  Known Faults: None encountered
+ *  Known Faults: RuntimeError: Internal C++ object (Checkbox) already deleted.
 """
 
 from PySide6 import QtWidgets
@@ -24,7 +24,6 @@ from components.GUI.textbox import Textbox
 from components.GUI.buttonbox import ButtonBox
 from components.GUI.xp_bar import XpBar
 from components.Dialogs.edit_task_dialog import EditTaskDialog
-from styles.extra_styles import get_style
 from typing import Callable, Final
 
 # The names of the columns.
@@ -33,6 +32,24 @@ from typing import Callable, Final
 COLS: Final = ( 'description', 'id', 'start', 'priority', 'project', 'recur', 'due', 'until','urgency')
 
 class TaskRow:
+    # Minimum size for each column to maintain a consistent width
+    COLUMN_WIDTHS = {
+        'checkbox': 50,
+
+        'description': 150,  # Set width per column as needed
+        'id': 30,
+        'start': 45,
+        'priority': 60,
+        'project': 80,
+        'recur': 45,
+        'due': 45,
+        'until': 45,
+        'urgency': 60,
+
+        'edit': 60,
+        'delete': 65
+    }
+
     def __init__(self, row_num: int, fetch_xp_brs : Callable[[Task], list[XpBar]]):
         self.idx = row_num
 
@@ -45,7 +62,6 @@ class TaskRow:
         self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]  # Create a list of textboxes.
 
         self.edit_button = ButtonBox(row_num, self.get_task, "edit", self.edit_task)  # Create an edit button.
-        self.delete_button = ButtonBox(row_num, self.get_task, "delete", self.delete_task)  # Create a delete button.
 
         # Initial fetch of function calls
         if self.task is not None:
@@ -57,22 +73,9 @@ class TaskRow:
         # Row stretch of 0 means take up bare minimum amount of space?
         grid.setRowStretch(row_num, 0)  # Set the row stretch of the grid.
 
-        # Set fixed size for each column to maintain a consistent width
-        column_widths = {
-            'description': 150,  # Set width per column as needed
-            'id': 30,
-            'start': 45,
-            'priority': 60,
-            'project': 80,
-            'recur': 45,
-            'due': 45,
-            'until': 45,
-            'urgency': 60
-        }
-
         column_height = 50  # Set height per column as needed
 
-        self.check.setFixedWidth(50)  # Checkbox width
+        self.check.setMinimumWidth(self.COLUMN_WIDTHS['checkbox'])  # Checkbox width
         self.check.setFixedHeight(column_height)  # Checkbox height
         grid.addWidget(self.check, row_num, 0)  # Add the checkbox to the grid
         # set style for the checkbox
@@ -80,47 +83,54 @@ class TaskRow:
 
         for i in range(len(self.cols)):  # Loop through the columns.
             col_name = COLS[i]  # Get the name of the column.
-            if col_name in column_widths:  # If the column name is in the column widths.
-                self.cols[i].setFixedWidth(column_widths[col_name])  # Apply fixed width
+            if col_name in self.COLUMN_WIDTHS:  # If the column name is in the column widths.
+                self.cols[i].setMinimumWidth(self.COLUMN_WIDTHS[col_name])  # Apply fixed width
             self.cols[i].setFixedHeight(column_height)  # Apply fixed height
             grid.addWidget(self.cols[i], row_num, i + 1)
 
         # Set fixed sizes for buttons
-        self.edit_button.setFixedWidth(60)  # Set the fixed width of the edit button.
-        self.delete_button.setFixedWidth(65)  # Set the fixed width of the delete button.
+        self.edit_button.setMinimumWidth(self.COLUMN_WIDTHS['edit'])  # Set the fixed width of the edit button.
         self.edit_button.setFixedHeight(column_height)  # Set the fixed height of the edit button.
-        self.delete_button.setFixedHeight(column_height)  # Set the fixed height of the delete button.
 
         grid.addWidget(self.edit_button, row_num, len(self.cols) + 1)  # Add the edit button
-        grid.addWidget(self.delete_button, row_num, len(self.cols) + 2)  # Add the delete button
 
     def update_task(self):
+        """
+        Updates the task elements and associated components within the application.
+        This method retrieves the task at the specified index, updates associated
+        checkbox, column elements, edit and delete buttons, and binds external
+        functions if the task is valid.
+
+        Returns:
+            None
+        """
         self.task = api.task_at(self.idx)  # Get the task at the index.
 
         self.check.update_task()  # Update the checkbox.
         for i in range(len(self.cols)):  # Loop through the columns.
             self.cols[i].update_task()  # Update the column.
         self.edit_button.update_task()  # Update the edit button.
-        self.delete_button.update_task()  # Update the delete button.
 
         if self.task is not None:  # If the task is not None.
             self._bind_xp_fns(self.fetch_xp_brs(self.task))  # Bind the xp functions.
-    
+
     def edit_task(self):
         if not self.task:  # If the task is None.
             return  # Return.
 
-        edit_task_dialog = EditTaskDialog(str(self.task.get("description") or ""),
-            str(self.task.get("due") or ""),
-            str(self.task.get("priority") or ""))  # Create an instance of the EditTaskDialog class.
-        
+        edit_task_dialog = EditTaskDialog(
+            delete_task=self.delete_task,
+            description=str(self.task.get("description") or ""),
+            due=str(self.task.get("due") or ""),
+            priority=str(self.task.get("priority") or ""))  # Create an instance of the EditTaskDialog class.
+
         if edit_task_dialog.exec():  # If the dialog is executed.
             self.task.set("description", edit_task_dialog.description or None)  # Set the description of the task.
             self.task.set("due", edit_task_dialog.due or None)  # Set the due date of the task.
             self.task.set("priority", edit_task_dialog.priority or None)  # Set the priority of the task.
             api.update_task(self.task)  # Update the task.
             self.update_task()  # Update the task.
-            
+
     def delete_task(self):
         api.delete_at(self.idx)  # Delete the task at the index.
         self.remove_task_row()  # remove the task row from the UI
@@ -130,9 +140,12 @@ class TaskRow:
         grid = self.check.parentWidget().layout()  # Get the layout of the parent widget.
         if not grid:  # If the grid is None.
             return  # Return.
-    
+
+        # Get the current row index
+        row_idx = grid.indexOf(self.check)  # Get the index of the checkbox.
+
         # Loop through the widgets in the row and remove them
-        for widget in [self.check] + self.cols + [self.edit_button, self.delete_button]:
+        for widget in [self.check] + self.cols + [self.edit_button]:
             grid.removeWidget(widget)  # Remove the widget from the grid.
             widget.deleteLater()  # Delete the widget.
         # add an empty row to the grid to maintain the same number of rows
@@ -143,9 +156,9 @@ class TaskRow:
         grid = self.check.parentWidget().layout()  # Get the layout of the parent widget.
         if not grid:  # If the grid is None.
             return  # Return.
-    
+
         # Loop through the widgets in the row and remove them
-        for widget in [self.check] + self.cols + [self.edit_button, self.delete_button]:  # Loop through the widgets.
+        for widget in [self.check] + self.cols + [self.edit_button]:  # Loop through the widgets.
             grid.removeWidget(widget)  # Remove the widget from the grid.
             widget.deleteLater()  # Delete the widget.
         # add an empty row to the grid to maintain the same number of rows
@@ -159,7 +172,7 @@ class TaskRow:
         for xp_bar in xp_bars:
             self.xp_add_calls.append(xp_bar.add_xp)  # Append the add xp function.
             self.xp_sub_calls.append(xp_bar.sub_xp)  # Append the sub xp function.
-    
+
     def _update_xp_bars(self, checkbox_state : bool) -> None:
         if self.task is None:  # If the task is None.
             return  # Return.

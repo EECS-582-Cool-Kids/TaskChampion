@@ -17,16 +17,6 @@
 
 from PySide6 import QtWidgets
 from components.GUI.task_champion_widget import TaskChampionWidget
-from PySide6.QtCore import qInstallMessageHandler, Qt
-
-
-def handler(msg_type, context, msg):
-    """Suppresses QSS style sheet warnings (which are not errors)."""
-    if "Could not parse" in msg:  # If the message contains "Could not parse"
-        pass  # Do nothing.
-
-qInstallMessageHandler(handler)  # Install the message handler.
-
 
 class TaskChampionGUI:
     """The main application class for Task Champion."""  

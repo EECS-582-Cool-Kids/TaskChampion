@@ -44,12 +44,14 @@ class TaskChampionWidget(QtWidgets.QWidget):
 
         self.main_tab = QtWidgets.QTabWidget()  # Create a tab widget.
         self.add_button = QtWidgets.QPushButton("Add Task")  # Create a push button.
+        self.new_mod_button = QtWidgets.QPushButton("New Module")  # Create a push button for adding a new module.
         self.xp_bars = XpControllerWidget() # Create XP Controller Widget
 
         self.add_button.setMaximumWidth(100)  # Set the maximum width of the push button.
         self.add_button.clicked.connect(lambda: self.add_task())  # Connect the clicked signal of the push button to the addTask method.
  
         self.task_layout.addWidget(self.add_button)  # Add the push button to the layout.
+        self.task_layout.addWidget(self.new_mod_button)  # Add the push button for adding a new module to the layout.
         self.task_layout.addWidget(self.main_tab)  # Add the tab widget to the layout.
         self.main_layout.addWidget(self.xp_bars) # Add the xp bar widget to the layout.
 
@@ -94,3 +96,9 @@ class TaskChampionWidget(QtWidgets.QWidget):
     def set_menu_bar(self):
         """Sets the menu bar for the application."""  
         self.menu_bar = MenuBar()  # Create a new menu bar.
+
+    def add_new_module(self, load_styles : Callable[[], None]) -> None:
+        """Adds a new module to the GUI."""
+        new_grid = GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars)  # Create a new grid widget.
+        self.main_tab.addTab(new_grid.scroll_area, "New Module")  # Add the new grid widget to the tab widget.
+        self.grids.append(new_grid)  # Append the new grid widget to the list of grid widgets.

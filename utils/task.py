@@ -63,7 +63,10 @@ class Task(task.Task):
         return self['parent']  # Return the parent field.
 
     def get_priority(self) -> priority_t:
-        return cast(priority_t, str(self['priority']))  # Return the priority field.
+        try:  # Try to return the priority field.
+            return cast(priority_t, str(self['priority']))  # Return the priority field.
+        except KeyError:  # If the priority field does not exist
+            return None  # Return None
     
     def set_priority(self, priority : str) -> None:
         self.set("priority", priority)  # Set the priority field to the given priority.

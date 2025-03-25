@@ -49,6 +49,8 @@ class TaskChampionWidget(QtWidgets.QWidget):
 
         self.add_button.setMaximumWidth(100)  # Set the maximum width of the push button.
         self.add_button.clicked.connect(lambda: self.add_task())  # Connect the clicked signal of the push button to the addTask method.
+        self.new_mod_button.setMaximumWidth(100)  # Set the maximum width of the push button for adding a new module.
+        self.new_mod_button.clicked.connect(lambda: self.add_new_module(load_styles))  # Connect the clicked signal of the push button for adding a new module to the addNewModule method.
  
         self.task_layout.addWidget(self.add_button)  # Add the push button to the layout.
         self.task_layout.addWidget(self.new_mod_button)  # Add the push button for adding a new module to the layout.

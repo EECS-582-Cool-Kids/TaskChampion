@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/25/2025
+ *  Last Modified: 3/24/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -30,16 +30,11 @@ class TaskChampionGUI:
         self.main_widget.resize(800, 400) # set basic window size.
         self.main_widget.show() # show the window
 
-        # self.main_widget.move(0, 0)
         self.move_window()
-
 
         self.style_str = ""  # Initialize the style string.
         with open ('styles/style.qss', 'r')as f:  # Open the style file.
             self.style_str = f.read()  # Read the style file.
-
-        # self.main_widget.show() # show the window
-        # self.main_widget.move(0, 0) # move the window to 0,0
 
         self.load_styles()  # Load the styles.
     
@@ -54,7 +49,6 @@ class TaskChampionGUI:
             window_height = self.main_widget.height()  # Get the height of the window.
             x = screen_width - window_width  # Calculate the x position of the window.
             y = 0  # Calculate the y position of the window
-        # print(f"Moving window to {x}, {y}")
         self.main_widget.move(x, y)  # Move the window to the x, y position.
 
     def load_tasks(self):

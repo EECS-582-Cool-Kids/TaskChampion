@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 2/25/2025
+ *  Last Modified: 3/26/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -128,8 +128,6 @@ class TaskAPIImpl(TaskAPI):
         return task  # Return the task.
 
     def add_task(self, t: Task) -> None:
-        # Unused at the moment.
-
         self.warrior.task_add(t)  # Add a task.
         self._init_task_list()  # Initialize the task list.
 

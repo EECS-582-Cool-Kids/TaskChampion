@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 3/2/2025
+ *  Last Modified: 3/26/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -61,12 +61,14 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.task_layout.addWidget(self.main_tab)  # Add the tab widget to the layout.
         self.main_layout.addWidget(self.xp_bars) # Add the xp bar widget to the layout.
 
-        self.grids : list = [GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars), GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars)]  # Create a list of grid widgets.
+        self.grids : list = [GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars)]  # Create a list of grid widgets.
         self.new_mod_button.clicked.connect(lambda: self.add_new_module(load_styles)) # Connect the clicked signal of the push button for adding a new module to the addNewModule method.
 
         self.main_tab.addTab(self.grids[0].scroll_area, "Main")  # Add the first grid widget to the tab widget.
         # self.main_tab.addTab(self.grids[1].scroll_area, "Example Empty Tab")  # Add the second grid widget to the tab widget.
         self.main_tab.setStyleSheet(get_style('example_tab'))  # Set the style of the tab widget.
+        self.main_tab.currentChanged.connect(lambda: self.update_current_grid(self.main_tab.currentIndex()))
+
 
         # Set grid widget to take up 75% of the app's width.
         self.main_layout.setStretch(0, 3)  # Set the stretch of the first grid widget to 3.
@@ -102,20 +104,18 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.grids[self.current_grid].add_task()  # Add the new task to the current grid.
         self.xp_bars.update_bars()  # Update the XP bars.
 
-        self.main_tab.currentChanged.connect(lambda: self.update_current_grid(self.main_tab.currentIndex()))
-
     def set_menu_bar(self):
-        """Sets the menu bar for the application."""  
+        """Sets the menu bar for the application."""
         self.menu_bar = MenuBar()  # Create a new menu bar.
 
     def add_new_module(self, load_styles : Callable[[], None]) -> None:
         """Adds a new module to the GUI."""
         new_grid = GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars)  # Create a new grid widget.
         self.main_tab.addTab(new_grid.scroll_area, "New Module")  # Add the new grid widget to the tab widget.
+        new_grid.fill_grid()
         self.grids.append(new_grid)  # Append the new grid widget to the list of grid widgets.
 
-    def update_current_grid(self) -> None:
+    def update_current_grid(self, idx) -> None:
         """Updates the current grid to the selected grid."""
         # use qt library to change self.current_grid to the index of the selected tab
-        self.current_grid = self.main_tab.currentIndex() # Set the current grid to the index of the selected tab.
-        print(f"Current Grid: {self.current_grid}")
+        self.current_grid = idx # Set the current grid to the index of the selected tab.

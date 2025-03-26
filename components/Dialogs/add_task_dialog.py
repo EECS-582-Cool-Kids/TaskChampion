@@ -6,7 +6,7 @@
  *  Additional code sources: None
  *  Developers: Ethan Berkley, Jacob Wilkus, Mo Morgan, Richard Moser, Derek Norton
  *  Date: 2/15/2025
- *  Last Modified: 3/16/2025
+ *  Last Modified: 3/26/2025
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
@@ -147,7 +147,7 @@ class AddTaskDialog(QtWidgets.QDialog):
 
         for task in api.task_list:
             task_project = task.get_project()
-            if task_project != None and not task_project in prev_proj:
+            if task_project is not None and not task_project in prev_proj:
                 self.projects.addItem(task_project)
                 prev_proj.append(task_project)
 

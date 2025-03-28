@@ -24,6 +24,7 @@ from utils.task import Task
 from typing import Callable, Optional
 import uuid
 from PySide6 import QtCore
+import json
 
 class TaskAPI:
     def __init__(self):
@@ -92,7 +93,13 @@ class TaskAPI:
 
     def num_tasks(self, mod: str) -> int:
         return len(self.task_dict[mod])  # Return the number of tasks.
-        
+    
+    def add_module(self, mod: str):
+        if self.task_dict.get(mod, None) == None:
+            self.task_dict[mod] = []
+        else:
+            raise ValueError(f"module {mod} already found in TaskAPI.")
+
     def task_at(self, idx: int, mod: str) -> Optional[Task]:
         if len(self.task_dict[mod]) <= idx:  # If the index is out of bounds.
             return None  # Return None.
@@ -126,19 +133,23 @@ class TaskAPIImpl(TaskAPI):
 
         super()._init_task_list()  # Call the parent init task list method.
     
-    def add_new_task(self, description: str, tags=None, due="", module="Main", nonstandard_cols: dict[str, str]={}, **kw) -> Task:  # Add a new task.
+    def add_new_task(self, description: str, tags=None, module="Main", nonstandard_cols: dict[str, str]={}, **kw) -> Task:  # Add a new task.
         """TODO: This needs to be updated to allow for module to be set here."""
-        if due:
-            due = QtCore.QDate.fromString(due, "yyyy-MM-dd").toString("yyyy-MM-dd")
-
+        if kw["due"]:
+            due = QtCore.QDate.fromString(kw["due"], "yyyy-MM-dd").toString("yyyy-MM-dd")
+        
+        print(kw)
         # Idk how to init a task without taskwarrior's help so we just do after.
         task = Task(self.warrior.task_add(description, tags, **kw))  # Add a task.
 
-        task.set_module(module)
-        for col in nonstandard_cols:
-            task.set_nonstandard_col(col, nonstandard_cols[col])
-        
-        task = Task(self.warrior.task_update(task))
+        self.warrior.task_annotate(task, json.dumps({"module": module}))
+        # task.set_module(module)
+        # for col in nonstandard_cols:
+            # task.set_nonstandard_col(col, nonstandard_cols[col])
+        task = Task(self.warrior.get_task(uuid=task.get_uuid())[1])
+        # abc=self.warrior.task_update(task)
+        # print(abc)
+        # task = Task(abc)
         self._init_task_list()  # Initialize the task list.
 
         return task  # Return the task.

@@ -25,15 +25,26 @@ priority_t: TypeAlias = Literal['H', 'M', 'L'] | None
 
 class Task(task.Task):
     def get_module(self) -> str: 
-        annotations = str(self.get('annotations', '{}'))
-        annotation_dict:dict[str, str] = json.loads(annotations)
+        annotations = str(self.get('annotations', '[]'))
+        print(annotations)
+        ls=json.loads(annotations)
+        if len(ls) == 0:
+            return "Main"
+        
+        annotation_dict:dict[str, str] = ls[0]
         return annotation_dict.get("module", "Main")
 
     def set_module(self, s: str) -> None:
-        annotations = str(self.get('annotations', '{}'))
-        annotation_dict: dict[str, str] = json.loads(annotations)
+        annotations = str(self.get('annotations', '[]'))
+        ls = json.loads(annotations)
+        annotation_dict: dict[str, str]
+        if len(ls) == 0:
+            annotation_dict = {}
+        else:
+            annotation_dict = ls[0]
+        
         annotation_dict["module"] = s
-        self['annotations'] = json.dumps(annotation_dict)
+        self["annotations"] = json.dumps([annotation_dict])
 
     def get_nonstandard_col(self, colname: str) -> str:
         annotations = str(self.get('annotations', '{}'))

@@ -117,6 +117,7 @@ class TaskChampionWidget(QtWidgets.QWidget):
         new_mod_details: AddModuleDialog.ModuleDetails | None = self.new_mod_dialog.add_module()
         if new_mod_details is None:
             return # Do nothing if the module name is None.
+        api.add_module(new_mod_details.grid_name)
         new_grid = GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars, new_mod_details.grid_name)  # Create a new grid widget.
 
         self.main_tab.addTab(new_grid.scroll_area, f"{new_mod_details.grid_name}")  # Add the new grid widget to the tab widget.

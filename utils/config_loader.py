@@ -30,7 +30,7 @@ def load_module_config(config_file):
             module_data = json.load(file)
             return module_data['modules']
     except (FileNotFoundError, json.JSONDecodeError):
-        return {"modules": {}}
+        return {"modules": {"Main": ["Priority", "Due Date", "Project", "Tags", "Recur", "Status", "Start", "Urgency"]}}
 
 def save_module_config(config, config_file):
     with open(config_file, 'w') as file:

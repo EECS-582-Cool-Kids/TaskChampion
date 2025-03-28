@@ -50,14 +50,15 @@ class TaskRow:
         'delete': 65
     }
 
-    def __init__(self, row_num: int, fetch_xp_brs : Callable[[Task], list[XpBar]]):
+    def __init__(self, row_num: int, fetch_xp_brs : Callable[[Task], list[XpBar]], module_name):
         self.idx = row_num
 
         self.xp_add_calls : list[Callable[[int], int]] = [] # list of function calls to call when a task is checked
         self.xp_sub_calls : list[Callable[[int], int]] = [] # list of function calls to call when a task is unchecked
         self.fetch_xp_brs : Callable[[Task], list[XpBar]] = fetch_xp_brs # call to fetch relevant xp functions
+        self.module_name = module_name
 
-        self.task = api.task_at(self.idx)  # Get the task at the index.
+        self.task = api.task_at(self.idx, module_name)  # Get the task at the index.
         self.check = Checkbox(row_num, self.get_task, self._update_xp_bars)  # Create a checkbox.
         self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]  # Create a list of textboxes.
 
@@ -104,7 +105,7 @@ class TaskRow:
         Returns:
             None
         """
-        self.task = api.task_at(self.idx)  # Get the task at the index.
+        self.task = api.task_at(self.idx, self.module_name)  # Get the task at the index.
 
         self.check.update_task()  # Update the checkbox.
         for i in range(len(self.cols)):  # Loop through the columns.
@@ -118,6 +119,7 @@ class TaskRow:
         if not self.task:  # If the task is None.
             return  # Return.
 
+        # TODO: I bet we are gonna have to do something slightly awkward related to nonstandard cols here. Get ready for that.
         edit_task_dialog = EditTaskDialog(
             delete_task=self.delete_task,
             description=str(self.task.get("description") or ""),

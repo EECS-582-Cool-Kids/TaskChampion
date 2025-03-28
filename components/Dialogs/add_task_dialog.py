@@ -139,13 +139,14 @@ class AddTaskDialog(QtWidgets.QDialog):
 
         self.tag.clear()  # Clear the input field after adding the tag
 
-    def add_task(self) -> Optional[TaskDetails]:
+    def add_task(self, module: str) -> Optional[TaskDetails]:
+        """TODO: This will have to read the list of nonstandard columns somehow."""
         # Define the projects
         self.projects.clear()
         self.projects.addItem("New Project...")
         prev_proj = []
 
-        for task in api.task_list:
+        for task in api.task_dict[module]:
             task_project = task.get_project()
             if task_project is not None and not task_project in prev_proj:
                 self.projects.addItem(task_project)

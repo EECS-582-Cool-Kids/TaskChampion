@@ -40,6 +40,8 @@ class AddModuleDialog(QDialog):
         self.config_file = config_file
         self.config: dict[str, list[str]] = load_module_config(self.config_file)
 
+        print(self.config)
+
         self.new_module = QLineEdit()
         self.new_module.setPlaceholderText("Module Name")
 
@@ -78,7 +80,7 @@ class AddModuleDialog(QDialog):
         self.modules.clear() # Clear the modules to prevent duplicates.
         self.modules.addItem("New Module...") # Add the option to create a new module.
         attributes = [] # Create an empty list to store the attributes.
-        for module in self.config.keys():
+        for module in self.config:
             self.modules.addItems(module) # Add all past module
 
         if self.exec(): # If the dialog is accepted...

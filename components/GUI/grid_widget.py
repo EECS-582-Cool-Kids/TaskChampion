@@ -20,7 +20,7 @@ from PySide6 import QtCore, QtWidgets
 from components.GUI.task_row import TaskRow, COLS
 from components.GUI.xp_bar import XpBar
 from styles.extra_styles import get_style
-
+from typing import Optional
 from utils.task import Task
 from utils.task_api import api
 from utils.logger import logger
@@ -36,12 +36,12 @@ class GridWidget(QtWidgets.QWidget):
     #   recur,  due,    until,  urgency,    edit,   delete.
         0,      3,      0,      2,          1,      1)
 
-    def __init__(self, load_styles : Callable[[], None], fetch_xp_fns : Callable[[Task], list[XpBar]]):
+    def __init__(self, load_styles : Callable[[], None], fetch_xp_fns : Callable[[Task], list[XpBar]], module_name="Main"):
         super().__init__()  # Call the parent constructor.
         self.setObjectName('GridWidget')  # Set the object name for styling.
         self.setFixedHeight(200)  # Set the fixed height of the widget.
 
-        self.module_name = None # This will be set explicitly for the Main module and dynamically for other modules.
+        self.module_name = module_name # This will be set explicitly for the Main module and dynamically for other modules.
         self.scroll_area = QtWidgets.QScrollArea()  # Create a scroll area.
         self.scroll_area.setWidgetResizable(True)  # Set the scroll area to be resizable.
         self.scroll_area.setWidget(self)  # Set the widget of the scroll area to be this widget.
@@ -109,28 +109,12 @@ class GridWidget(QtWidgets.QWidget):
             self.grid.setColumnStretch(i, self.COL_STRETCH[i])
 
     def fill_grid(self):
-        # Also adds tasks to the grid, which doesn't work for the "example" tab. So for now, it's empty.
 
-        #only fill the grid with tasks if the module_name is the same as the task's "annotations" attribute
-        for i in range(api.num_tasks()):
-            task = api.task_at(i)
-            annotations = task.get_annotations()
-            if self.module_name == annotations: # If the module name is the same as the task's annotations, add the task to the grid.
-                try:
-                    row = TaskRow(i, self.fetch_xp_fns)
-                    row.insert(self.grid, i+1)
-                    self.row_arr.append(row)
-                except ValueError as err:
-                    logger.log_error(str(err))
-
-            if self.module_name == "Main" and task.get_annotations() == "": # If the module name is "Main" and the task's annotations are empty, add the task to the grid.
-                try:
-                    row = TaskRow(i, self.fetch_xp_fns)
-                    row.insert(self.grid, i+1)
-                    self.row_arr.append(row)
-                except ValueError as err:
-                    logger.log_error(str(err))
-
+        for i in range(self.DEFAULT_ROWS):
+            
+            row = TaskRow(i, self.fetch_xp_fns, self.module_name)
+            row.insert(self.grid, i+1)
+            self.row_arr.append(row)
 
         self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.
 

@@ -164,16 +164,18 @@ class XpControllerWidget(QtWidgets.QWidget):
         xp_poss : int = 0  # Initialize the possible XP value
         xp_gain : int = 0  # Initialize the gained XP value
 
-        for i in range(0, api.num_tasks()):  # For each task
-            task : Task = api.task_at(i)  # Get the task at the index
-
-            if task is None:
-                continue  # Continue
-            
-            completion_value : int = self.get_completion_value(task.get_priority(), task.get_project(), task.get_tags())  # Get the completion value
-            xp_poss += completion_value  # Add the completion value to the possible XP value
-            xp_gain += completion_value if task.get_status() == "completed" else 0  # Add the completion value to the gained XP value if the task is completed
         
+        for module in api.task_dict:
+            for i in range(0, api.num_tasks(module)):  # For each task
+                task : Task | None = api.task_at(i, module)  # Get the task at the index
+
+                if task is None:
+                    continue  # Continue
+                
+                completion_value : int = self.get_completion_value(task.get_priority(), task.get_project(), task.get_tags())  # Get the completion value
+                xp_poss += completion_value  # Add the completion value to the possible XP value
+                xp_gain += completion_value if task.get_status() == "completed" else 0  # Add the completion value to the gained XP value if the task is completed
+            
         self.main_xp_bar.set_max_xp(xp_poss)  # Set the maximum XP value of the main XP bar
         self.main_xp_bar.add_xp(xp_gain)  # Add the gained XP value to the main XP bar
 

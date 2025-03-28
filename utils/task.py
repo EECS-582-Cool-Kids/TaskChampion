@@ -17,12 +17,34 @@
 
 from taskw_ng import task, fields
 from typing import TypeAlias, Literal, cast
+import json
 
 # creating type aliases for the status and priority fields
 status_t: TypeAlias = Literal['pending', 'completed', 'deleted', 'waiting', 'recurring'] | None
 priority_t: TypeAlias = Literal['H', 'M', 'L'] | None
 
 class Task(task.Task):
+    def get_module(self) -> str: 
+        annotations = str(self.get('annotations', '{}'))
+        annotation_dict:dict[str, str] = json.loads(annotations)
+        return annotation_dict.get("module", "Main")
+
+    def set_module(self, s: str) -> None:
+        annotations = str(self.get('annotations', '{}'))
+        annotation_dict: dict[str, str] = json.loads(annotations)
+        annotation_dict["module"] = s
+        self['annotations'] = json.dumps(annotation_dict)
+
+    def get_nonstandard_col(self, colname: str) -> str:
+        annotations = str(self.get('annotations', '{}'))
+        annotation_dict: dict[str, str] = json.loads(annotations)
+        return annotation_dict.get(colname, "")
+
+    def set_nonstandard_col(self, colname: str, val: str) -> None:
+        annotations = str(self.get('annotations', '{}'))
+        annotation_dict: dict[str, str] = json.loads(annotations)
+        annotation_dict[colname] = val
+
     def get_annotations(self) -> fields.AnnotationArrayField:
         return self.get('annotations', "")  # Return the annotations field.
 

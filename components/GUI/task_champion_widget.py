@@ -62,7 +62,7 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.task_layout.addWidget(self.main_tab)  # Add the tab widget to the layout.
         self.main_layout.addWidget(self.xp_bars) # Add the xp bar widget to the layout.
 
-        self.grids : list = [GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars)]  # Create a list of grid widgets. Initially only has the Main grid.
+        self.grids = [GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars)]  # Create a list of grid widgets. Initially only has the Main grid.
         self.grids[0].module_name = "Main"
         self.add_mod_button.clicked.connect(lambda: self.add_new_module(load_styles)) # Connect the clicked signal of the push button for adding a new module to the addNewModule method.
 
@@ -92,8 +92,8 @@ class TaskChampionWidget(QtWidgets.QWidget):
 
     def add_task(self) -> None:
         """Add a task to the GUI list and link it to a new task in TaskWarrior."""
-        new_task_details : AddTaskDialog.TaskDetails | None = self.add_task_dialog.add_task()  # Get the details of the new task from the add task dialog.
-        task_annotations = self.grids[self.current_grid].module_name # Get the annotations for the task. This will link tasks to their respective modules.
+        module_name = self.grids[self.current_grid].module_name # Get the annotations for the task. This will link tasks to their respective modules.
+        new_task_details : AddTaskDialog.TaskDetails | None = self.add_task_dialog.add_task(module_name)  # Get the details of the new task from the add task dialog.
         
         if new_task_details is None:  # If the new task details are None.
             return  # Return.
@@ -105,7 +105,7 @@ class TaskChampionWidget(QtWidgets.QWidget):
             project     = new_task_details.project,
             recur       = new_task_details.recurrence,
             due         = new_task_details.due,
-            annotations = task_annotations # Add the task's module to its hidden annotations field.
+            module      = module_name
         )  # Create a new task with the details from the add task dialog.
 
         self.grids[self.current_grid].add_task()  # Add the new task to the current grid.
@@ -120,8 +120,8 @@ class TaskChampionWidget(QtWidgets.QWidget):
         new_mod_details: AddModuleDialog.ModuleDetails | None = self.new_mod_dialog.add_module()
         if new_mod_details is None:
             return # Do nothing if the module name is None.
-        new_grid = GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars)  # Create a new grid widget.
-        new_grid.module_name = new_mod_details.grid_name  # Set the module name of the new grid widget.
+        new_grid = GridWidget(load_styles, self.xp_bars.get_relevant_xp_bars, new_mod_details.grid_name)  # Create a new grid widget.
+
         self.main_tab.addTab(new_grid.scroll_area, f"{new_mod_details.grid_name}")  # Add the new grid widget to the tab widget.
         new_grid.fill_grid()
         self.grids.append(new_grid)  # Append the new grid widget to the list of grid widgets.

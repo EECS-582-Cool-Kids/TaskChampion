@@ -16,6 +16,8 @@
 """
 
 from taskw_ng.warrior import TaskWarrior
+
+# from components.GUI.grid_widget import GridWidget as Module
 from utils.singleton import singleton
 from utils.sortmetric import SortMetric
 from utils.task import Task
@@ -29,6 +31,7 @@ class TaskAPI:
 
         # The list that is sorted according to some criteria.
         self.task_list: list[Task] = []  # List of tasks.
+        # self.module_list: list[Module] = []  # List of modules.
 
         self._init_task_list()  # Initialize the task list.
         

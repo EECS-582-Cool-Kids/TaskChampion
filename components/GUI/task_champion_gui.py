@@ -55,7 +55,6 @@ class TaskChampionGUI:
         self.main_widget.grids[0].fillGrid()  # Fill the grid.
         self.load_styles()  # Load the styles.
 
-
     def load_styles(self):
         self.qtapp.setStyleSheet(self.style_str)  # Set the style sheet of the Qt Application to be the style string.
 

@@ -24,7 +24,10 @@ priority_t: TypeAlias = Literal['H', 'M', 'L'] | None
 
 class Task(task.Task):
     def get_annotations(self) -> fields.AnnotationArrayField:
-        return self['annotations']  # Return the annotations field.
+        return self.get('annotations', "")  # Return the annotations field.
+
+    def has_annotations(self) -> bool:
+        return 'annotations' in self # Check if the annotations field exists.
 
     def get_depends(self) -> fields.CommaSeparatedUUIDField:
         return self['depends']  # Return the depends field.
@@ -112,6 +115,6 @@ class Task(task.Task):
 
     def get_wait(self) -> fields.DateField:
         return self['wait']  # Return the wait field.
-    
-    
+
+
 

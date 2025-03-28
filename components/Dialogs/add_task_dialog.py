@@ -15,7 +15,7 @@
  *  Known Faults: None encountered
 """
 
-from PySide6 import QtWidgets, QtCore, QtGui
+from PySide6 import QtWidgets
 from typing import Optional
 from utils.task_api import api
 
@@ -98,12 +98,12 @@ class AddTaskDialog(QtWidgets.QDialog):
 
         self.tag.mousePressEvent = self.show_tag_menu # Connect tag input field to show menu on focus
 
-    def show_tag_menu(self, event):
+    def show_tag_menu(self):
         menu = QtWidgets.QMenu(self)
 
         for tag in self.tag_history: # Add tag actions from the history
             action = menu.addAction(tag)
-            action.triggered.connect(lambda checked, t=tag: self.tag.setText(t))
+            action.triggered.connect(lambda t=tag: self.tag.setText(t))
 
         menu.setFixedWidth(self.tag.width()) # Set menu width equal to tag input field width
 
@@ -116,7 +116,7 @@ class AddTaskDialog(QtWidgets.QDialog):
         if tag_text and tag_text not in self.tag_history: 
             self.tag_history.append(tag_text)  # Add the tag to history
 
-        if tag_text not in self.tags_list: #if tag is already added dont add the new tag
+        if tag_text not in self.tags_list: #if tag is already added don't add the new tag
             self.tags_list.append(tag_text) #add the new tag name to the list of tags present
             tag_button = QtWidgets.QPushButton(tag_text)
             tag_button.setStyleSheet("""  
@@ -165,6 +165,8 @@ class AddTaskDialog(QtWidgets.QDialog):
             task_project = self.projects.currentText()
             if self.projects.currentText() == "New Project...":
                 task_project = self.new_project.text()
+
+            # set the variable `module` to the current text of the annotation field
 
             task_details = AddTaskDialog.TaskDetails(self.description.text(), self.tag.text(), self.priorities.currentText(),
                                                      task_project, self.recurrence, self.due_date) # create a variable for the task details

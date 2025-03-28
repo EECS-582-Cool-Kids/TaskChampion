@@ -105,6 +105,10 @@ QScrollArea {
         background-color: #8aa1f6;
         color: red;
     }
+    AddModuleDialog {
+        background-color: #8aa1f6;
+        color: red;
+    }
 
 
 /* most text in the app and dialog boxes */

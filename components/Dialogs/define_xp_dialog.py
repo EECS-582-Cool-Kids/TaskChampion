@@ -22,8 +22,10 @@ from PySide6.QtWidgets import QDialog, QVBoxLayout, QTableWidget, QPushButton, Q
     QMessageBox, QComboBox
 from PySide6.QtCore import Signal
 from typing import Any
-from utils.config_loader import load_config, save_config
+from utils.config_loader import load_config, save_xp_config
 import os
+from utils.config_paths import CONFIG_DIR, XP_CONFIG_FILE
+
 
 class XPConfigDialog(QDialog):
 
@@ -31,9 +33,9 @@ class XPConfigDialog(QDialog):
     PRIORITY_T = ["H", "M", "L"]
     xp_values_updated = Signal(dict) # Signal to indicate that the XP values have been updated
 
-    def __init__(self, config_file="config/user_defined_xp.json"):
+    def __init__(self, config_file=XP_CONFIG_FILE):
         super().__init__()
-        os.makedirs('config/', exist_ok=True)
+        os.makedirs(CONFIG_DIR, exist_ok=True)
         self.setWindowTitle("Edit XP Configuration")
         self.config_file = config_file
         self.config: dict[str, Any] = load_config(self.config_file)
@@ -75,6 +77,11 @@ class XPConfigDialog(QDialog):
             self.project_table.setItem(row, 0, QTableWidgetItem(project))
             self.project_table.setItem(row, 1, QTableWidgetItem(str(xp)))
 
+        # Table for editing module xp values
+        self.module_table = QTableWidget(len(self.config['modules']), 2)
+        self.module_table.setHorizontalHeaderLabels(["Module", "XP"])
+        layout.addWidget(self.module_table)
+
         # Add tag button
         add_tag_button = QPushButton("Add Tag")
         add_tag_button.clicked.connect(self.add_tag_row)
@@ -84,6 +91,11 @@ class XPConfigDialog(QDialog):
         add_project_button = QPushButton("Add Project")
         add_project_button.clicked.connect(self.add_project_row)
         layout.addWidget(add_project_button)
+
+        # Add module button
+        add_module_button = QPushButton("Add Module")
+        add_module_button.clicked.connect(self.add_module_row)
+        layout.addWidget(add_module_button)
 
         # Save button
         save_button = QPushButton("Save")
@@ -95,6 +107,8 @@ class XPConfigDialog(QDialog):
         priorities = {}
         tags = {}
         projects = {}
+        modules = {}
+
         for row in range(self.priority_table.rowCount()):
             priority = self.priority_table.item(row, 0).text()
             xp = float(self.priority_table.item(row, 1).text())
@@ -109,15 +123,21 @@ class XPConfigDialog(QDialog):
             project = self.project_table.item(row, 0).text()
             xp = float(self.project_table.item(row, 1).text())
             projects[project] = xp
+
+        for row in range(not self.module_table.rowCount()):
+            module = self.module_table.item(row, 0).text()
+            xp = float(self.module_table.item(row, 1).text())
+            modules[module] = xp
             
         self.config['priorities'] = priorities # Update the priorities
         self.config['tags'] = tags
         self.config['projects'] = projects
+        self.config['modules'] = modules
 
         # Tell XpControllerWidget to update stuff.
         self.xp_values_updated.emit(self.config)
 
-        save_config(self.config, self.config_file)
+        save_xp_config(self.config, self.config_file)
 
         QMessageBox.information(self, "Success", "Configuration saved!", QMessageBox.StandardButtons.Ok)
 
@@ -144,9 +164,30 @@ class XPConfigDialog(QDialog):
         Adds a new row to the project table within the Config menu. Each added row will have two
         empty cells initialized in the newly created row. The row is appended
         at the current count of rows in the table.
+
+        Raises
+        ------
+        TypeError
+            If the project_table is not properly instantiated or configured.
         """
         row_position = self.project_table.rowCount()
         self.project_table.insertRow(row_position)
         self.project_table.setItem(row_position, 0, QTableWidgetItem(""))
         self.project_table.setItem(row_position, 1, QTableWidgetItem(""))
+
+    def add_module_row(self):
+        """
+        Adds a new row to the module table within the Config menu. Each added row will have two
+        empty cells initialized in the newly created row. The row is appended
+        at the current count of rows in the table.
+
+        Raises
+        ------
+        TypeError
+            If the module_table is not properly instantiated or configured.
+        """
+        row_position = self.module_table.rowCount()
+        self.module_table.insertRow(row_position)
+        self.module_table.setItem(row_position, 0, QTableWidgetItem(""))
+        self.module_table.setItem(row_position, 1, QTableWidgetItem(""))
 

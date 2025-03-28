@@ -24,7 +24,7 @@ from components.Dialogs.define_xp_dialog import XPConfigDialog
 
 
 class XpControllerWidget(QtWidgets.QWidget):
-    PRIORITY_MULT_MAP : dict[priority_t, int] = { 'H':3, 'M':2, 'L':1 }  # Default priority multipliers
+    PRIORITY_MULT_MAP : dict[priority_t, int] = { 'H':3, 'M':2, 'L':1, 'None': 0.5}  # Default priority multipliers
     PROJECT_MULT_MAP : dict[str, int] = {}  # Default project multipliers
     TAG_MULT_MAP : dict[str, int] = {}  # Default tag multipliers
 
@@ -55,7 +55,7 @@ class XpControllerWidget(QtWidgets.QWidget):
         int
             The computed completion value after applying all relevant multipliers.
         """
-        completion_value : int = XpControllerWidget.PRIORITY_MULT_MAP[priority if priority != None else '']  # Get the base completion value
+        completion_value : int = XpControllerWidget.PRIORITY_MULT_MAP.get(priority, 0)  # Get the base completion value
 
         if projects is not None:
             for project in projects:  # For each project

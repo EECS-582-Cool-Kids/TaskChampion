@@ -40,15 +40,14 @@ class GridWidget(QtWidgets.QWidget):
         super().__init__()  # Call the parent constructor.
         self.setObjectName('GridWidget')  # Set the object name for styling.
         self.setFixedHeight(200)  # Set the fixed height of the widget.
-        # self.setFixedWidth(765)
 
+        self.module_name = None # This will be set explicitly for the Main module and dynamically for other modules.
         self.scroll_area = QtWidgets.QScrollArea()  # Create a scroll area.
         self.scroll_area.setWidgetResizable(True)  # Set the scroll area to be resizable.
         self.scroll_area.setWidget(self)  # Set the widget of the scroll area to be this widget.
 
         # set a horizontal scroll bar policy
         self.scroll_area.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn)  # Set the horizontal scroll bar policy of the scroll area.
-
 
         self.grid = QtWidgets.QGridLayout()  # Create a grid layout.
 
@@ -73,11 +72,11 @@ class GridWidget(QtWidgets.QWidget):
         2) broadcast to all `TaskRow`s to update their current task.
         """
         num_tasks = api.num_tasks()  # Increment the number of rows.
-            
+
         if self.grid.rowCount() == num_tasks:  # If the row count of the grid is equal to the number of rows.
             self.setMinimumHeight(num_tasks * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the number of rows times the row height.
 
-            row = TaskRow(num_tasks, self.fetch_xp_fns)
+            row = TaskRow(num_tasks, self.fetch_xp_fns, self.module_name)  # Create a new task row.
             row.insert(self.grid, num_tasks) # Row inserts itself into the grid, insertion logic is handled in `TaskRow` obj.
             self.row_arr.append(row)
             
@@ -112,13 +111,26 @@ class GridWidget(QtWidgets.QWidget):
     def fill_grid(self):
         # Also adds tasks to the grid, which doesn't work for the "example" tab. So for now, it's empty.
 
-        for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
-            # Append a new task row to the row array.
-            try:
-                row = TaskRow(i, self.fetch_xp_fns)  # Create a new task row.
-                row.insert(self.grid, i+1)  # Insert the row into the grid.
-                self.row_arr.append(row)  # Append the row to the row array.
-            except ValueError as err:  # If a value error is raised.
-                logger.log_error(str(err))  # Log the error.
+        #only fill the grid with tasks if the module_name is the same as the task's "annotations" attribute
+        for i in range(api.num_tasks()):
+            task = api.task_at(i)
+            annotations = task.get_annotations()
+            if self.module_name == annotations: # If the module name is the same as the task's annotations, add the task to the grid.
+                try:
+                    row = TaskRow(i, self.fetch_xp_fns)
+                    row.insert(self.grid, i+1)
+                    self.row_arr.append(row)
+                except ValueError as err:
+                    logger.log_error(str(err))
+
+            if self.module_name == "Main" and task.get_annotations() == "": # If the module name is "Main" and the task's annotations are empty, add the task to the grid.
+                try:
+                    row = TaskRow(i, self.fetch_xp_fns)
+                    row.insert(self.grid, i+1)
+                    self.row_arr.append(row)
+                except ValueError as err:
+                    logger.log_error(str(err))
+
 
         self.setMinimumHeight(self.DEFAULT_ROWS * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the default number of rows times the row height.
+

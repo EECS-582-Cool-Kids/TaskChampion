@@ -74,9 +74,6 @@ class TaskChampionWidget(QtWidgets.QWidget):
         self.main_layout.setStretch(0, 3)  # Set the stretch of the first grid widget to 3.
         self.main_layout.setStretch(1, 1)  # Set the stretch of the second grid widget to 1.
 
-        # TODO: reinstate this when we have a second tab
-        # self.main_tab.addTab(self.grids[1].scroll_area, "Example Empty Tab")  # Add the second grid widget to the tab widget.
-
         self.current_grid = 0  # Set the current grid to 0.
 
         self.add_task_dialog : AddTaskDialog = AddTaskDialog()  # Create an instance of the AddTaskDialog class.

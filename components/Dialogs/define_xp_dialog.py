@@ -16,14 +16,11 @@
  *  Known Faults: None encountered
 """
 
-import json
-
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QTableWidget, QPushButton, QTableWidgetItem, \
     QMessageBox, QComboBox
 from PySide6.QtCore import Signal
 from typing import Any
-from utils.config_loader import load_config, save_config
-import os
+from utils.config_loader import load_config, save_config, XP_CONFIG
 
 class XPConfigDialog(QDialog):
 
@@ -31,9 +28,8 @@ class XPConfigDialog(QDialog):
     PRIORITY_T = ["H", "M", "L"]
     xp_values_updated = Signal(dict) # Signal to indicate that the XP values have been updated
 
-    def __init__(self, config_file="config/user_defined_xp.json"):
+    def __init__(self, config_file=XP_CONFIG):
         super().__init__()
-        os.makedirs('config/', exist_ok=True)
         self.setWindowTitle("Edit XP Configuration")
         self.config_file = config_file
         self.config: dict[str, Any] = load_config(self.config_file)

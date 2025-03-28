@@ -95,14 +95,14 @@ class GridWidget(QtWidgets.QWidget):
         # QLabel is just simple text.
         self.grid.addWidget(QtWidgets.QLabel("Done?"), 0, 0)  # Add a label to the grid.
         self.grid.addWidget(QtWidgets.QLabel(""), 0, 10)  # Add a blank label cell to the grid
-        self.grid.addWidget(QtWidgets.QLabel(""), 0, 11)  # Add a blank label cell to the grid
-
+        self.grid.itemAtPosition(0, 0).widget().setObjectName("rowLabels")
         self.grid.itemAtPosition(0, 0).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the "Done?" label
+        self.grid.itemAtPosition(0, 10).widget().setObjectName("rowLabels")
         self.grid.itemAtPosition(0, 10).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the blank label cell
-        self.grid.itemAtPosition(0, 11).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the blank label cell
 
         for i in range(len(COLS)):  # Loop through the columns.
             self.grid.addWidget(QtWidgets.QLabel(COLS[i]), 0, i+1)  # Add a label to the grid.
+            self.grid.itemAtPosition(0, i+1).widget().setObjectName("rowLabels")
             self.grid.itemAtPosition(0, i+1).widget().setStyleSheet(get_style("rowLabels"))  # Set the style of the label to be the row labels style.
             self.grid.itemAtPosition(0, i+1).widget().setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)  # Set the alignment of the label to be centered.
 

@@ -35,7 +35,6 @@ def get_style(style_name):
     if start == -1:  # If the style name is not found.
         return None
     
-    start = style_string.find("{", start) +1  # Find the opening curly brace.
     end = style_string.find("}", start)  # Find the closing curly brace.
     # print(f"Found style {style_name} contents: {style_string[start:end]}")
     return style_string[start:end+1]  # Return the style contents

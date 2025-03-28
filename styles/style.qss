@@ -42,7 +42,7 @@ XpBarChild::chunk {
     border-radius:2px;
 
     text-align: center;
-}
+} */
 
 
 /* Example color styling. */
@@ -150,12 +150,12 @@ EditTaskDialog {
 
 
 
-
-"Done?" {
+/* Not sure what this was for */
+/* "Done?" {
     background-color: black;
     color: yellow;
     border: 2px solid yellow;
-}
+} */
 
 /* ### additional styles ### */
 #rowLabels {

@@ -33,13 +33,18 @@ class TaskAPI:
         # The list that is sorted according to some criteria.
         self.task_dict: dict[str, list[Task]] = {}  # List of tasks.
         # self.module_list: list[Module] = []  # List of modules.
-
+        self.module_list: set[str] = set()
         self._init_task_list()  # Initialize the task list.
         
     def _init_task_list(self) -> None:
         k, r = self._get_sort_params(self.sort_metric)  # Get the sort parameters.
         for key in self.task_dict:
             self.task_dict[key].sort(key=k, reverse=r)  # Sort the task list.
+
+        # We gotta do this bc otherwise deleting every task in a module will raise an error later on.
+        for mod in self.module_list:
+            if self.task_dict.get(mod, None) == None:
+                self.task_dict[mod] = []
     
     @staticmethod
     def _get_sort_params(metric: SortMetric) -> tuple[Callable[[Task], str | int], bool]:
@@ -97,10 +102,12 @@ class TaskAPI:
     def add_module(self, mod: str):
         if self.task_dict.get(mod, None) == None:
             self.task_dict[mod] = []
-        else:
-            raise ValueError(f"module {mod} already found in TaskAPI.")
+        self.module_list.add(mod)
+
+        
 
     def task_at(self, idx: int, mod: str) -> Optional[Task]:
+        print(self.task_dict)
         if len(self.task_dict[mod]) <= idx:  # If the index is out of bounds.
             return None  # Return None.
         
@@ -108,7 +115,7 @@ class TaskAPI:
     
     def add_new_task(self, description: str, tags=None,  module="Main", nonstandard_cols: dict[str, str]={}, **kw) -> Task: ...  # Add a new task.
     def add_task(self, t: Task) -> None: ...  # Add a task.
-    def delete_at(self, idx: int) -> None: ...  # Delete a task at the index.
+    def delete_at(self, idx: int, module: str) -> None: ...  # Delete a task at the index.
     def update_task(self, new_task: Task) -> None: ...  # Update a task.
     def set_sort_metric(self, metric: SortMetric): ...      # Set the sort metric.
     def clear_tasks(self): ...  # Clear the tasks.
@@ -138,21 +145,24 @@ class TaskAPIImpl(TaskAPI):
         if kw["due"]:
             due = QtCore.QDate.fromString(kw["due"], "yyyy-MM-dd").toString("yyyy-MM-dd")
         
-        print(kw)
+        print(module)
+        print(self.task_dict)
         # Idk how to init a task without taskwarrior's help so we just do after.
         task = Task(self.warrior.task_add(description, tags, **kw))  # Add a task.
+        
+        task.set_module(module)
+        for col in nonstandard_cols:
+            task.set_nonstandard_col(col, nonstandard_cols[col])
+        # There's no task_annotations_update method afaik, so we have to delete them
+        # and then update them. Otherwise it will just add a new annotation.
+        annotations = task.get_annotations()
+        
+        
+        task = self.warrior.task_annotate(task, annotations)
 
-        self.warrior.task_annotate(task, json.dumps({"module": module}))
-        # task.set_module(module)
-        # for col in nonstandard_cols:
-            # task.set_nonstandard_col(col, nonstandard_cols[col])
-        task = Task(self.warrior.get_task(uuid=task.get_uuid())[1])
-        # abc=self.warrior.task_update(task)
-        # print(abc)
-        # task = Task(abc)
         self._init_task_list()  # Initialize the task list.
 
-        return task  # Return the task.
+        return Task(task)  # Return the task.
 
     def add_task(self, t: Task) -> None:
         self.warrior.task_add(t)  # Add a task.
@@ -168,7 +178,13 @@ class TaskAPIImpl(TaskAPI):
     def update_task(self, new_task: Task) -> None:
         if new_task.get_due() is not None:  # If the task has a due date.
             new_task['due'] = QtCore.QDate.fromString(new_task['due'], "yyyy-MM-dd").toString("yyyy-MM-dd")  # Set the due date.
+        
+        annotations=new_task.get_annotations()
+        if len(annotations) > 3:
+            new_task=Task(self.warrior.task_denotate(new_task, ""))
+        
         self.warrior.task_update(new_task)  # Update the task.
+        self.warrior.task_annotate(new_task, annotations)
         self._init_task_list()  # Initialize the task list.
 
     def set_sort_metric(self, metric: SortMetric):
@@ -196,7 +212,6 @@ class FakeTaskAPI(TaskAPI):
         return self.task_dict[module][idx]  # Return the task at the index.
     
     def add_new_task(self, description: str = "", tags=None, priority="", project="", recur="", due="", module="Main", nonstandard_cols: dict[str, str]={}) -> Task:
-        """TODO: This needs updated too."""
         if due:
             due = QtCore.QDate.fromString(due, "yyyy-MM-dd").toString("yyyy-MM-dd")
         d = dict({'uuid': str(uuid.uuid1()), 'id': str(self.cur_id), 'description': description, 'tags': [tags], 'priority': priority, 'project': project, 'recur': recur, 'due': due})

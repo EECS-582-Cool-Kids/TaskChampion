@@ -42,6 +42,7 @@ class GridWidget(QtWidgets.QWidget):
         self.setFixedHeight(200)  # Set the fixed height of the widget.
 
         self.module_name = module_name # This will be set explicitly for the Main module and dynamically for other modules.
+        print(self.module_name)
         self.scroll_area = QtWidgets.QScrollArea()  # Create a scroll area.
         self.scroll_area.setWidgetResizable(True)  # Set the scroll area to be resizable.
         self.scroll_area.setWidget(self)  # Set the widget of the scroll area to be this widget.
@@ -71,7 +72,7 @@ class GridWidget(QtWidgets.QWidget):
         1) See if we need to add a new `TaskRow`
         2) broadcast to all `TaskRow`s to update their current task.
         """
-        num_tasks = api.num_tasks()  # Increment the number of rows.
+        num_tasks = api.num_tasks(self.module_name)  # Increment the number of rows.
 
         if self.grid.rowCount() == num_tasks:  # If the row count of the grid is equal to the number of rows.
             self.setMinimumHeight(num_tasks * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the number of rows times the row height.

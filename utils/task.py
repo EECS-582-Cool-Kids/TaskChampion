@@ -25,8 +25,8 @@ priority_t: TypeAlias = Literal['H', 'M', 'L'] | None
 
 class Task(task.Task):
     def get_module(self) -> str: 
-        annotations = str(self.get('annotations', '[]'))
-        print(annotations)
+        annotations = str(self.get('annotations', '[]')).replace("'","")
+
         ls=json.loads(annotations)
         if len(ls) == 0:
             return "Main"
@@ -34,10 +34,13 @@ class Task(task.Task):
         annotation_dict:dict[str, str] = ls[0]
         return annotation_dict.get("module", "Main")
 
+
     def set_module(self, s: str) -> None:
-        annotations = str(self.get('annotations', '[]'))
+        annotations = str(self.get('annotations', '[]')).replace("'","")
+
         ls = json.loads(annotations)
         annotation_dict: dict[str, str]
+
         if len(ls) == 0:
             annotation_dict = {}
         else:
@@ -47,17 +50,49 @@ class Task(task.Task):
         self["annotations"] = json.dumps([annotation_dict])
 
     def get_nonstandard_col(self, colname: str) -> str:
-        annotations = str(self.get('annotations', '{}'))
-        annotation_dict: dict[str, str] = json.loads(annotations)
+        annotations = str(self.get('annotations', '{}')).replace("'","")
+
+        ls = json.loads(annotations)
+
+        if len(ls) == 0:
+            return ""
+            
+        annotation_dict: dict[str, str] = json.loads(annotations)[0]
+
         return annotation_dict.get(colname, "")
 
     def set_nonstandard_col(self, colname: str, val: str) -> None:
-        annotations = str(self.get('annotations', '{}'))
-        annotation_dict: dict[str, str] = json.loads(annotations)
-        annotation_dict[colname] = val
 
-    def get_annotations(self) -> fields.AnnotationArrayField:
-        return self.get('annotations', "")  # Return the annotations field.
+        """It is up to the caller to update taskAPI."""
+        annotations = str(self.get('annotations', '[]')).replace("'","")
+
+        ls = json.loads(annotations)
+        annotation_dict: dict[str, str]
+
+        if len(ls) == 0:
+            annotation_dict = {}
+        else:
+            annotation_dict = ls[0]
+        
+        annotation_dict[colname] = val
+        self["annotations"] = json.dumps([annotation_dict])
+
+    def get_annotations(self) -> str:
+        """`Task['annotations']` returns something like
+            `"['{<actual annotations>}']"`, 
+        this function returns 
+            `"{<actual annotations>}"`"""
+        annotations = str(self.get('annotations', '[]')).replace("'","")
+        ls = json.loads(annotations)
+        annotation_dict: dict[str, str]
+
+        if len(ls) == 0:
+            annotation_dict = {}
+        else:
+            annotation_dict = ls[0]
+        
+        return json.dumps(annotation_dict)
+        
 
     def has_annotations(self) -> bool:
         return 'annotations' in self # Check if the annotations field exists.

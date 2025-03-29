@@ -134,7 +134,7 @@ class TaskRow:
             self.update_task()  # Update the task.
 
     def delete_task(self):
-        api.delete_at(self.idx)  # Delete the task at the index.
+        api.delete_at(self.idx, self.module_name)  # Delete the task at the index.
         self.remove_task_row()  # remove the task row from the UI
 
     def remove_task_row(self):

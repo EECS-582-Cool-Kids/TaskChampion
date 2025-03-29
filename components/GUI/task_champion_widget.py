@@ -136,7 +136,8 @@ class TaskChampionWidget(QtWidgets.QWidget):
         """Creates all the grids for the modules. The grids are created based on the data in the modules_data dictionary
         which is stored in a config file. All module tabs are created and added to the main tab widget."""
         for module_name, headers in modules_data.items():
-            new_grid = GridWidget(load_styles, fetch_xp_fns)
+            api.add_module(module_name)
+            new_grid = GridWidget(load_styles, fetch_xp_fns, module_name)
             self.main_tab.addTab(new_grid.scroll_area, f"{module_name}")
             new_grid.fill_grid()
             self.grids.append(new_grid)

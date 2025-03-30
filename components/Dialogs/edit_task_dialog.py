@@ -121,9 +121,9 @@ class EditTaskDialog(QtWidgets.QDialog):
     def due(self):
         return self.due_date.date().toString("yyyy-MM-dd")
 
-    @property
-    def project(self):
-        return self.project_text.text()
+    # @property
+    # def project(self):
+        # return self.project_text.text()
 
     @property
     def tags(self):

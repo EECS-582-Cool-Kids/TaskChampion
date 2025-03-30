@@ -40,9 +40,9 @@ class EditTaskDialog(QtWidgets.QDialog):
         self.priority_text.addItems(["None", "H", "M", "L"]) # Add the priority options to the combo box
         self.priority_text.setCurrentText(priority) # Set the current text to the priority of the task
 
+        # OK and Cancel buttons
         button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok
                                       | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
-
         self.delete_button = QtWidgets.QPushButton("Delete Task")
         self.delete_button.clicked.connect(self.delete)
 
@@ -99,7 +99,8 @@ class EditTaskDialog(QtWidgets.QDialog):
         # Add all the widgets to the form layout
         self.form.addRow("Description", self.description_text)
         self.form.addRow("Priority", self.priority_text)
-        # self.form.addRow("Project", self.project_text)
+        # self.form.addRow("Project", self.projects)
+        # self.form.addRow("New Project", self.new_project)
         self.form.addRow("Due Date", self.due_date)
         self.form.addRow("Tags", self.tag_layout)
         self.form.addRow(self.tag_bubble_widget)
@@ -121,11 +122,7 @@ class EditTaskDialog(QtWidgets.QDialog):
     def due(self):
         return self.due_date.date().toString("yyyy-MM-dd")
 
-    # @property
-    # def project(self):
-        # return self.project_text.text()
 
-    @property
     def tags(self):
         return self.tags_list
 

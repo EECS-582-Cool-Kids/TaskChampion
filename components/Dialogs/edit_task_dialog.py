@@ -17,9 +17,13 @@
 
 from PySide6 import QtWidgets
 
+from utils.task_api import api
+
+
 class EditTaskDialog(QtWidgets.QDialog):
-    def __init__(self, delete_task, description="", due="", priority="",   project="", tags=[]):
+    def __init__(self, delete_task, description="", due="", priority="", project="", tags=[]):
         super().__init__()
+        self.setWindowTitle("Edit Task")
         self.form = QtWidgets.QFormLayout()
         self.deletion_function = delete_task
 
@@ -53,10 +57,29 @@ class EditTaskDialog(QtWidgets.QDialog):
 
         self.setLayout(layout)
 
-        self.setWindowTitle("Edit Task")
-
+        # delete confirmation popup
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
+
+        # handle projects
+        # Create a line edit for the project input
+        self.projects = QtWidgets.QComboBox()
+        self.new_project = QtWidgets.QLineEdit()
+
+        # Store previously used projects
+        self.project_history = []  # List to store previously used projects
+        self.project_list = []  # List to store currently added projects
+
+        # Create "Add Project" button
+        self.add_project_button = QtWidgets.QPushButton("Add Project")
+        self.add_project_button.clicked.connect(self.add_project_to_list)
+
+        # Create a layout to hold the project input field and button side by side
+        self.project_layout = QtWidgets.QHBoxLayout()
+        self.project_layout.addWidget(self.add_project_button)
+
+        self.populate_project_list() # Populate the project list with existing projects
+
 
         # handle tags
         # Create a line edit for the tag input
@@ -75,32 +98,30 @@ class EditTaskDialog(QtWidgets.QDialog):
         self.tag_layout = QtWidgets.QHBoxLayout()
         self.tag_layout.addWidget(self.tag)
         self.tag_layout.addWidget(self.add_tag_button)
+        self.tag_layout.addStretch()
+
 
         # Create a layout to hold the added tag "bubbles"
         self.tag_bubble_widget = QtWidgets.QWidget()
         self.tag_bubble_layout = QtWidgets.QHBoxLayout(self.tag_bubble_widget)
         self.tag_bubble_layout.setContentsMargins(0, 0, 0, 0)
-        self.tag_bubble_layout.setSpacing(5)  # Space between tags
-        # self.form.addRow(self.tag_bubble_widget)
+        self.tag_bubble_layout.setSpacing(2)  # Space between tags
 
-        # for each existing tag, call populate_tag_list to create a button
-        # for tag in tags:
-            # self.tag_history.append(tag)
-            # self.populate_tag_list(tag)
         self.populate_tag_list(tags)
 
 
         self.tag.mousePressEvent = lambda event: self.show_tag_menu() # Connect tag input field to show menu on focus
 
-        self.tag_layout.addWidget(self.tag)
-        # Add the tag input field to the layout
-        self.tag_layout.addWidget(self.add_tag_button)
+        # self.tag_layout.addWidget(self.tag)
+        # self.tag_layout.addWidget(self.add_tag_button)
+
+
 
         # Add all the widgets to the form layout
         self.form.addRow("Description", self.description_text)
         self.form.addRow("Priority", self.priority_text)
-        # self.form.addRow("Project", self.projects)
-        # self.form.addRow("New Project", self.new_project)
+        self.form.addRow("Project", self.projects)
+        self.form.addRow("New Project", self.new_project)
         self.form.addRow("Due Date", self.due_date)
         self.form.addRow("Tags", self.tag_layout)
         self.form.addRow(self.tag_bubble_widget)
@@ -122,6 +143,13 @@ class EditTaskDialog(QtWidgets.QDialog):
     def due(self):
         return self.due_date.date().toString("yyyy-MM-dd")
 
+    @property
+    def project(self):
+        if self.projects.currentText() == "New Project...":
+            return self.new_project.text()
+        if self.projects.currentText() == "":
+            return None
+        return self.projects.currentText()
 
     def tags(self):
         return self.tags_list
@@ -137,11 +165,32 @@ class EditTaskDialog(QtWidgets.QDialog):
         else: # If the user doesn't want to delete the task, then the dialog will close.
             return
 
+    def populate_project_list(self):
+        project_history = []
+        for task in api.task_list:  # Iterate through the task list
+            task_project = task.get_project()  # Get the project of the task
+            if task_project is not None and not task_project in project_history:  # If the project is not already in the list
+                self.projects.addItem(task_project)  # Add the project to the projects list
+                project_history.append(task_project)  # Add the project to the previous projects list
+        self.projects.addItem("New Project...")
+
+    def add_project_to_list(self):
+        project_text = self.new_project.text().strip()  # Get the text from the project input field
+        if project_text == '':  #if button is pressed while empty skips adding
+            return
+        if project_text and project_text not in self.project_history:  # Add the project to history
+            self.project_history.append(project_text)
+
+
+    def remove_project(self, project_button):
+        """Remove a project from the UI only."""
+        self.project_list.remove(project_button.text())
+        project_button.deleteLater()  # Delete the widget
+
     def populate_tag_list(self, tags):
         for tag_text in tags:
             if tag_text and tag_text not in self.tag_history:
                 self.tag_history.append(tag_text)  # Add the tag to history
-
             if tag_text not in self.tags_list: #if tag is already added dont add the new tag
                 self.tags_list.append(tag_text) #add the new tag name to the list of tags present
                 tag_button = QtWidgets.QPushButton(tag_text)
@@ -157,9 +206,7 @@ class EditTaskDialog(QtWidgets.QDialog):
                                 background-color: #f0f0f0;
                             }
                         """) # Create a button for the tag, styled like a bubble
-
                 tag_button.clicked.connect(lambda: self.remove_tag(tag_button)) # remove tag when clicked
-
                 tag_button.setFixedSize(tag_button.sizeHint())  # Ensure the size is adjusted properly
                 self.tag_bubble_layout.addWidget(tag_button)  # Add the tag button to the layout
 

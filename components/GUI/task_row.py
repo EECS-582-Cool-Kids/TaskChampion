@@ -130,7 +130,7 @@ class TaskRow:
             self.task.set("description", edit_task_dialog.description or None)  # Set the description of the task.
             self.task.set("due", edit_task_dialog.due or None)  # Set the due date of the task.
             self.task.set("priority", edit_task_dialog.priority or None)  # Set the priority of the task.
-            # self.task.set("project", edit_task_dialog.project or None)  # Set the project of the task.
+            self.task.set("project", edit_task_dialog.project or None)  # Set the project of the task.
             self.task.set("tags", edit_task_dialog.tags_list or None)  # Set the tags of the task.
             api.update_task(self.task)  # Update the task.
             self.update_task()  # Update the task.

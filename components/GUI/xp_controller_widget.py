@@ -55,7 +55,7 @@ class XpControllerWidget(QtWidgets.QWidget):
         int
             The computed completion value after applying all relevant multipliers.
         """
-        completion_value : int = XpControllerWidget.PRIORITY_MULT_MAP[priority]  # Get the base completion value
+        completion_value : int = XpControllerWidget.PRIORITY_MULT_MAP[priority if priority != None else '']  # Get the base completion value
 
         if projects is not None:
             for project in projects:  # For each project

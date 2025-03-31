@@ -151,6 +151,7 @@ class EditTaskDialog(QtWidgets.QDialog):
             return None  # If the user doesn't select a project, return None
         return self.projects.currentText()  # Return the selected project from the combo box
 
+    @property
     def tags(self):
         return self.tags_list  # Return the list of tags
 

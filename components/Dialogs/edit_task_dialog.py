@@ -70,13 +70,8 @@ class EditTaskDialog(QtWidgets.QDialog):
         self.project_history = []  # List to store previously used projects
         self.project_list = []  # List to store currently added projects
 
-        # Create "Add Project" button
-        self.add_project_button = QtWidgets.QPushButton("Add Project")  # Create a button to add a project
-        self.add_project_button.clicked.connect(self.add_project_to_list)  # Connect the button to the add project function
-
         # Create a layout to hold the project input field and button side by side
         self.project_layout = QtWidgets.QHBoxLayout()  # Create a horizontal layout for the project input field and button
-        self.project_layout.addWidget(self.add_project_button)  # Add the button to the layout
 
         self.populate_project_list() # Populate the project list with existing projects
 
@@ -111,11 +106,6 @@ class EditTaskDialog(QtWidgets.QDialog):
 
 
         self.tag.mousePressEvent = lambda event: self.show_tag_menu() # Connect tag input field to show menu on focus
-
-        # self.tag_layout.addWidget(self.tag)
-        # self.tag_layout.addWidget(self.add_tag_button)
-
-
 
         # Add all the widgets to the form layout
         self.form.addRow("Description", self.description_text)      # description

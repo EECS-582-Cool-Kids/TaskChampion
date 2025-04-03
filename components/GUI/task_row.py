@@ -50,7 +50,7 @@ class TaskRow:
         'delete': 65
     }
 
-    def __init__(self, row_num: int, fetch_xp_brs : Callable[[Task], list[XpBar]]):
+    def __init__(self, row_num: int, fetch_xp_brs : Callable[[Task], list[XpBar]], reflow_module: Callable[[], None]):
         self.idx = row_num
 
         self.xp_add_calls : list[Callable[[int], int]] = [] # list of function calls to call when a task is checked
@@ -62,7 +62,7 @@ class TaskRow:
         self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]  # Create a list of textboxes.
 
         self.edit_button = ButtonBox(row_num, self.get_task, "edit", self.edit_task)  # Create an edit button.
-
+        self.reflow_module = reflow_module
         # Initial fetch of function calls
         if self.task is not None:
             self._bind_xp_fns(self.fetch_xp_brs(self.task))  # Bind the xp functions.
@@ -129,11 +129,13 @@ class TaskRow:
             self.task.set("due", edit_task_dialog.due or None)  # Set the due date of the task.
             self.task.set("priority", edit_task_dialog.priority or None)  # Set the priority of the task.
             api.update_task(self.task)  # Update the task.
-            self.update_task()  # Update the task.
+            # self.update_task()  # called by reflow_module()
+            self.reflow_module()
 
     def delete_task(self):
         api.delete_at(self.idx)  # Delete the task at the index.
-        self.remove_task_row()  # remove the task row from the UI
+        self.reflow_module()
+        # self.remove_task_row()  # remove the task row from the UI
 
     def remove_task_row(self):
         # Get the parent grid layout

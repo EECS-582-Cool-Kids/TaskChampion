@@ -63,6 +63,21 @@ class GridWidget(QtWidgets.QWidget):
         self.refresh_styles = load_styles
         self.fetch_xp_fns = fetch_xp_fns
 
+    def reflow_module(self) -> None:
+        """Called by taskrows when their task is updated or deleted. 
+        
+        Also called by add_task"""
+
+        # TODO: This will have to be updated to work with MODULES!!!
+        if api.num_tasks() > len(self.row_arr):
+            self.row_arr[-1].annihilate()
+        
+
+        for row in range(len(self.row_arr)):
+            self.row_arr[row].update_task()
+        
+        self.refresh_styles()
+
     def add_task(self) -> None:
         """Assumes that addTask has already been called in TaskChampionGUI. 
         .
@@ -77,14 +92,11 @@ class GridWidget(QtWidgets.QWidget):
         if self.grid.rowCount() == num_tasks:  # If the row count of the grid is equal to the number of rows.
             self.setMinimumHeight(num_tasks * self.ROW_HEIGHT)  # Set the minimum height of the widget to be the number of rows times the row height.
 
-            row = TaskRow(num_tasks, self.fetch_xp_fns)
+            row = TaskRow(num_tasks, self.fetch_xp_fns, self.reflow_module)
             row.insert(self.grid, num_tasks) # Row inserts itself into the grid, insertion logic is handled in `TaskRow` obj.
             self.row_arr.append(row)
             
-        for row in range(len(self.row_arr)):
-            self.row_arr[row].update_task()
-        
-        self.refresh_styles()
+        self.reflow_module()
 
 
     def add_header(self):
@@ -115,7 +127,7 @@ class GridWidget(QtWidgets.QWidget):
         for i in range(self.DEFAULT_ROWS):  # Loop through the default number of rows.
             # Append a new task row to the row array.
             try:
-                row = TaskRow(i, self.fetch_xp_fns)  # Create a new task row.
+                row = TaskRow(i, self.fetch_xp_fns, self.reflow_module)  # Create a new task row.
                 row.insert(self.grid, i+1)  # Insert the row into the grid.
                 self.row_arr.append(row)  # Append the row to the row array.
             except ValueError as err:  # If a value error is raised.

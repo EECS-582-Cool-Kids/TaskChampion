@@ -122,12 +122,16 @@ class TaskRow:
             delete_task=self.delete_task,
             description=str(self.task.get("description") or ""),
             due=str(self.task.get("due") or ""),
-            priority=str(self.task.get("priority") or ""))  # Create an instance of the EditTaskDialog class.
+            priority=str(self.task.get("priority") or ""),
+            project=str(self.task.get("project") or ""),
+            tags=[str(tag) for tag in self.task.get("tags") or []])  # Create an instance of the EditTaskDialog class.
 
         if edit_task_dialog.exec():  # If the dialog is executed.
             self.task.set("description", edit_task_dialog.description or None)  # Set the description of the task.
             self.task.set("due", edit_task_dialog.due or None)  # Set the due date of the task.
             self.task.set("priority", edit_task_dialog.priority or None)  # Set the priority of the task.
+            self.task.set("project", edit_task_dialog.project or None)  # Set the project of the task.
+            self.task.set("tags", edit_task_dialog.tags_list or None)  # Set the tags of the task.
             api.update_task(self.task)  # Update the task.
             self.update_task()  # Update the task.
 

@@ -42,7 +42,7 @@ class GridWidget(QtWidgets.QWidget):
         self.setFixedHeight(200)  # Set the fixed height of the widget.
 
         self.module_name = module_name # This will be set explicitly for the Main module and dynamically for other modules.
-        print(self.module_name)
+        logger.info(self.module_name)
         self.scroll_area = QtWidgets.QScrollArea()  # Create a scroll area.
         self.scroll_area.setWidgetResizable(True)  # Set the scroll area to be resizable.
         self.scroll_area.setWidget(self)  # Set the widget of the scroll area to be this widget.

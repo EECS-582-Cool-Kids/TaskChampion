@@ -209,6 +209,8 @@ class FakeTaskAPI(TaskAPI):
         return self.task_dict[module][idx]  # Return the task at the index.
     
     def add_new_task(self, description: str = "", tags=None, priority="", project="", recur="", due="", module="Main", nonstandard_cols: dict[str, str]={}) -> Task:
+        if module not in self.task_dict:
+            self.task_dict[module] = []  # If the module is not in the task list, add it.
         if due:
             due = QtCore.QDate.fromString(due, "yyyy-MM-dd").toString("yyyy-MM-dd")
         d = dict({'uuid': str(uuid.uuid1()), 'id': str(self.cur_id), 'description': description, 'tags': [tags], 'priority': priority, 'project': project, 'recur': recur, 'due': due})

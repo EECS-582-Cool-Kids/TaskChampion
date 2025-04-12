@@ -16,8 +16,6 @@
  *  Known Faults: None encountered
 """
 
-import json
-
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QTableWidget, QPushButton, QTableWidgetItem, \
     QMessageBox, QComboBox
 from PySide6.QtCore import Signal
@@ -25,7 +23,6 @@ from typing import Any
 from utils.config_loader import load_config, save_xp_config
 import os
 from utils.config_paths import CONFIG_DIR, XP_CONFIG_FILE
-
 
 class XPConfigDialog(QDialog):
 
@@ -36,6 +33,7 @@ class XPConfigDialog(QDialog):
     def __init__(self, config_file=XP_CONFIG_FILE):
         super().__init__()
         os.makedirs(CONFIG_DIR, exist_ok=True)
+
         self.setWindowTitle("Edit XP Configuration")
         self.config_file = config_file
         self.config: dict[str, Any] = load_config(self.config_file)

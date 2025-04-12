@@ -1,4 +1,26 @@
+""" Prologue
+ *  Module Name: config_loader.py
+ *  Purpose: Exports tools for dealing with config files.
+ *  Inputs: None
+ *  Outputs: None
+ *  Additional code sources: None
+ *  Developers: Jacob Wilkus, Ethan Berkley, Mo Morgan
+ *  Date: 3/12/2025
+ *  Last Modified: 4/12/2025
+ *  Preconditions: None
+ *  Postconditions: None
+ *  Error/Exception conditions: FileNotFoundError: if the configuration file does not exist, json.JSONDecodeError:
+                                if the contents of the configuration file are not valid JSON.
+ *  Side effects: None
+ *  Invariants: None
+ *  Known Faults: None encountered
+"""
+
 import json
+import os
+
+# Used by XPConfigDialog
+XP_CONFIG="config/user_defined_xp.json"
 
 def load_config(config_file):
     """
@@ -20,7 +42,9 @@ def load_config(config_file):
         # return some arbitrary default config if the file doesn't exist
         return {"priorities": {'H': 10, 'M': 5, 'L': 1, None: 0.5}, "tags": {}, "projects": {}, "modules": {}}
 
-def save_xp_config(config, config_file):
+
+def save_config(config, config_file):
+    os.makedirs('config/', exist_ok=True)
     with open(config_file, 'w') as file:
         json.dump(config, file, indent=2)
 

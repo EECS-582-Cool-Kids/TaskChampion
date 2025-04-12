@@ -141,8 +141,8 @@ class TaskAPIImpl(TaskAPI):
     
     def add_new_task(self, description: str, tags=None, module="Main", nonstandard_cols: dict[str, str]={}, **kw) -> Task:  # Add a new task.
         """TODO: This needs to be updated to allow for module to be set here."""
-        if kw["due"]:
-            due = QtCore.QDate.fromString(kw["due"], "yyyy-MM-dd").toString("yyyy-MM-dd")
+        if kw.get("due"):
+            due = QtCore.QDate.fromString(kw.get("due"), "yyyy-MM-dd").toString("yyyy-MM-dd")
         
         # Idk how to init a task without taskwarrior's help so we just do after.
         task = Task(self.warrior.task_add(description, tags, **kw))  # Add a task.

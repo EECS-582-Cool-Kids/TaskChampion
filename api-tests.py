@@ -39,23 +39,23 @@ class TestClass:
     def test_api_update_task(self):
         """Test updating a task in the API"""
 
-        task_idx = api.num_tasks() - 1
+        task_idx = api.num_tasks("Main") - 1
         assert task_idx != -1 # test that a task exists. If not, then the test method failed.
 
-        task = api.task_at(task_idx)  # get the task at the index
+        task = api.task_at(task_idx, "Main")  # get the task at the index
         assert task is not None  # test that the task exists. If not, then the test method failed.
 
         task.set("description", "New Description")  # set the description of the task
         api.update_task(task)  # update the task in the API
         
-        t = api.task_at(task_idx)  # get the task at the index
+        t = api.task_at(task_idx, "Main")  # get the task at the index
         assert t is not None  # test that the task exists. If not, then the test method failed.
         assert t.get_description() == "New Description"  # test if the description is set
     
     def test_api_delete_task(self):
         """Test deleting a task in the API"""
-        task_idx = api.num_tasks() - 1  # get the index of the last task
+        task_idx = api.num_tasks("Main") - 1  # get the index of the last task
         assert task_idx != -1 # test that a task exists. If not, then the test method failed.
 
-        api.delete_at(task_idx)  # delete the task at the index
-        assert api.num_tasks() == 0  # test if the number of tasks is 0
+        api.delete_at(task_idx, "Main")  # delete the task at the index
+        assert api.num_tasks("Main") == 0  # test if the number of tasks is 0

@@ -107,7 +107,6 @@ class TaskAPI:
         
 
     def task_at(self, idx: int, mod: str) -> Optional[Task]:
-        print(self.task_dict)
         if len(self.task_dict[mod]) <= idx:  # If the index is out of bounds.
             return None  # Return None.
         
@@ -145,8 +144,6 @@ class TaskAPIImpl(TaskAPI):
         if kw["due"]:
             due = QtCore.QDate.fromString(kw["due"], "yyyy-MM-dd").toString("yyyy-MM-dd")
         
-        print(module)
-        print(self.task_dict)
         # Idk how to init a task without taskwarrior's help so we just do after.
         task = Task(self.warrior.task_add(description, tags, **kw))  # Add a task.
         

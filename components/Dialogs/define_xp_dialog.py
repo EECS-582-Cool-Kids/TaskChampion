@@ -122,7 +122,7 @@ class XPConfigDialog(QDialog):
             xp = float(self.project_table.item(row, 1).text())
             projects[project] = xp
 
-        for row in range(not self.module_table.rowCount()):
+        for row in range(self.module_table.rowCount()):
             module = self.module_table.item(row, 0).text()
             xp = float(self.module_table.item(row, 1).text())
             modules[module] = xp

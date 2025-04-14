@@ -32,7 +32,6 @@ class TaskAPI:
 
         # The list that is sorted according to some criteria.
         self.task_dict: dict[str, list[Task]] = {}  # List of tasks.
-        # self.module_list: list[Module] = []  # List of modules.
         self.module_list: set[str] = set()
         self._init_task_list()  # Initialize the task list.
         

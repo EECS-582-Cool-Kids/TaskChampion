@@ -49,7 +49,7 @@ class GridWidget(QtWidgets.QWidget):
         self.scroll_area = QtWidgets.QScrollArea()  # Create a scroll area.
         self.scroll_area.setWidgetResizable(True)  # Set the scroll area to be resizable.
         self.scroll_area.setWidget(self)  # Set the widget of the scroll area to be this widget.
-        
+
         self.cols: list[str] = []
         self.col_stretch:list[int] = []
         self.col_default: dict[str, bool] = {}
@@ -74,7 +74,7 @@ class GridWidget(QtWidgets.QWidget):
                     self.col_default[c] = True
                     # +1 since `Done?` isn't included in COLS
                     self.col_stretch[i] = self.COL_STRETCH[DEFAULT_COLS.index(c)+1]
-        
+
         # set a horizontal scroll bar policy
         self.scroll_area.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn)  # Set the horizontal scroll bar policy of the scroll area.
 
@@ -140,7 +140,6 @@ class GridWidget(QtWidgets.QWidget):
     def fill_grid(self):
 
         for i in range(self.DEFAULT_ROWS):
-            
             row = TaskRow(i, self.fetch_xp_fns, self.module_name)
             row.insert(self.grid, i+1)
             self.row_arr.append(row)

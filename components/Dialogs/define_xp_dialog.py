@@ -23,16 +23,17 @@ from typing import Any
 from utils.config_loader import load_config, save_config
 import os
 from utils.config_paths import CONFIG_DIR, XP_CONFIG_FILE
+from utils.config_loader import load_config, save_config
+from utils.config_paths import XP_CONFIG_FILE
 
 class XPConfigDialog(QDialog):
 
     # Add a class attribute to store the priority values
-    PRIORITY_T = ["H", "M", "L"]
+    PRIORITY_T = ["H", "M", "L", "None"] # Priority values for the dropdown
     xp_values_updated = Signal(dict) # Signal to indicate that the XP values have been updated
 
     def __init__(self, config_file=XP_CONFIG_FILE):
         super().__init__()
-        os.makedirs(CONFIG_DIR, exist_ok=True)
 
         self.setWindowTitle("Edit XP Configuration")
         self.config_file = config_file

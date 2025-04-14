@@ -35,7 +35,6 @@ class AddModuleDialog(QDialog):
         self.setWindowTitle("Add Module")
         self.form = QFormLayout() # Create a form layout for the dialog
         self.layout = QVBoxLayout()
-        self.modules = QComboBox()
 
         self.config_file = config_file
         self.config: dict[str, list[str]] = load_module_config(self.config_file)
@@ -50,7 +49,6 @@ class AddModuleDialog(QDialog):
         # Annotations field will not be offered, uuid field will be automatically generated for all tasks
         self.task_attributes = ['Priority', 'Due Date', 'Project', 'Tags', 'Recur', 'Status', 'Start', 'Urgency']
 
-        self.form.addRow("Module", self.modules)
         self.form.addRow("New Module", self.new_module)
         # self.form.addRow
 
@@ -75,21 +73,14 @@ class AddModuleDialog(QDialog):
     def add_module(self) -> Optional[ModuleDetails]:
         """Add a module to the GUI and save it to the configuration file."""
         new_module = {} # Create an empty dictionary to store the new module.
-        self.modules.clear() # Clear the modules to prevent duplicates.
-        self.modules.addItem("New Module...") # Add the option to create a new module.
         attributes = [] # Create an empty list to store the attributes.
-        for module in self.config:
-            self.modules.addItem(module) # Add all past module
 
         if self.exec(): # If the dialog is accepted...
-            module_name = self.modules.currentText() # Get the module name from the dropdown.
-            if self.modules.currentText() == "New Module...": # If the user selects the option to create a new module...
-                module_name = self.new_module.text() # Get the module name from the text field.
+            module_name = self.new_module.text() # Get the module name from the textbox.
 
             # Get the attributes from the dialog, only if the checkbox is checked.
             checkboxes = (self.attributes_layout.itemAt(i).widget() for i in range(self.attributes_layout.count()))
             for checkbox in checkboxes:
-                print(checkbox.text())
                 if checkbox.isChecked():
                     attributes.append(checkbox.text())
 
@@ -97,16 +88,13 @@ class AddModuleDialog(QDialog):
 
             new_module[module_name] = attributes # Add the module and its attributes to the dictionary.
             self.config[module_name] = attributes # Add the module and its attributes to the configuration.
-            print(self.config['modules'])
 
             save_module_config(self.config, self.config_file) # Save the configuration to the file.
 
             self.new_module.clear() # Clear the module name to prevent it showing upon the next module creation.
-            self.modules.clear()
             return AddModuleDialog.ModuleDetails(module_name, attributes)
 
         self.new_module.clear() # Clear the module name if the dialog is cancelled to prevent it showing upon the next module creation.
-        self.modules.clear()
         # uncheck all checkboxes
         for i in range(self.attributes_layout.count()):
             self.attributes_layout.itemAt(i).widget().setChecked(False)

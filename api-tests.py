@@ -20,6 +20,8 @@ register_api(TaskAPIImpl) # Order matters.
 
 from utils.task_api import api
 
+MODULE_TEST_NAME = "Main"
+
 class TestClass:
     """Taskwarrior API tests"""
     def test_api_add_task(self):
@@ -39,23 +41,24 @@ class TestClass:
     def test_api_update_task(self):
         """Test updating a task in the API"""
 
-        task_idx = api.num_tasks() - 1
+        task_idx = api.num_tasks(MODULE_TEST_NAME) - 1
         assert task_idx != -1 # test that a task exists. If not, then the test method failed.
 
-        task = api.task_at(task_idx)  # get the task at the index
-        assert task is not None  # test that the task exists. If not, then the test method failed.
+        task = api.task_at(task_idx, MODULE_TEST_NAME)  # get the task at the index
+        assert task is not None  # test that the task exists. If not, then the test method failed.annotations = task.get_annotations() # get the task annotations before updating, to confirm they remain the same.
 
         task.set("description", "New Description")  # set the description of the task
         api.update_task(task)  # update the task in the API
         
-        t = api.task_at(task_idx)  # get the task at the index
+        t = api.task_at(task_idx, MODULE_TEST_NAME)  # get the task at the index
         assert t is not None  # test that the task exists. If not, then the test method failed.
         assert t.get_description() == "New Description"  # test if the description is set
+        assert t.get_annotations() == task.get_annotations() # test if the two task annotations are identical
     
     def test_api_delete_task(self):
         """Test deleting a task in the API"""
-        task_idx = api.num_tasks() - 1  # get the index of the last task
+        task_idx = api.num_tasks(MODULE_TEST_NAME) - 1  # get the index of the last task
         assert task_idx != -1 # test that a task exists. If not, then the test method failed.
 
-        api.delete_at(task_idx)  # delete the task at the index
-        assert api.num_tasks() == 0  # test if the number of tasks is 0
+        api.delete_at(task_idx, MODULE_TEST_NAME)  # delete the task at the index
+        assert api.num_tasks("Main") == 0  # test if the number of tasks is 0

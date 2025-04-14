@@ -18,10 +18,12 @@
 from PySide6 import QtWidgets
 
 class EditTaskDialog(QtWidgets.QDialog):
-    def __init__(self, delete_task, description="", due="", priority=""):
+    def __init__(self, delete_task, description="", due="", priority="", project="", tags=[], module_name="Main"):
         super().__init__()
         self.form = QtWidgets.QFormLayout()
         self.deletion_function = delete_task
+
+        self.module_name=module_name
 
         self.description_text = QtWidgets.QLineEdit(description) # set the description text to the description of the task
 
@@ -96,4 +98,54 @@ class EditTaskDialog(QtWidgets.QDialog):
             self.accept()
 
         else: # If the user doesn't want to delete the task, then the dialog will close.
+            return  # Return to close the dialog
+
+    def populate_project_list(self):
+        project_history = []  # List to store previously used projects
+        for task in api.task_dict[self.module_name]:  # Iterate through the task list
+            task_project = task.get_project()  # Get the project of the task
+            if task_project is not None and not task_project in project_history:  # If the project is not already in the list
+                self.projects.addItem(task_project)  # Add the project to the projects list
+                project_history.append(task_project)  # Add the project to the previous projects list
+        self.projects.addItem("New Project...")
+
+    def add_project_to_list(self):
+        project_text = self.new_project.text().strip()  # Get the text from the project input field
+        if project_text == '':  #if button is pressed while empty skips adding
+            return
+        if project_text and project_text not in self.project_history:  # Add the project to history
+            self.project_history.append(project_text)
+
+
+    def remove_project(self, project_button):
+        """Remove a project from the UI only."""
+        self.project_list.remove(project_button.text())
+        project_button.deleteLater()  # Delete the widget
+
+    def populate_tag_list(self, tags):
+        for tag_text in tags:
+            if tag_text and tag_text not in self.tag_history:
+                self.tag_history.append(tag_text)  # Add the tag to history
+            if tag_text not in self.tags_list: #if tag is already added dont add the new tag
+                self.tags_list.append(tag_text) #add the new tag name to the list of tags present
+                tag_button = QtWidgets.QPushButton(tag_text)
+                tag_button.setStyleSheet("""  
+                            QPushButton {
+                                background-color: white;
+                                border: 2px solid #ccc;
+                                border-radius: 12px;
+                                padding: 5px 10px;
+                                margin: 5px;
+                            }
+                            QPushButton:hover {
+                                background-color: #f0f0f0;
+                            }
+                        """) # Create a button for the tag, styled like a bubble
+                tag_button.clicked.connect(lambda: self.remove_tag(tag_button)) # remove tag when clicked
+                tag_button.setFixedSize(tag_button.sizeHint())  # Ensure the size is adjusted properly
+                self.tag_bubble_layout.addWidget(tag_button)  # Add the tag button to the layout
+
+    def add_tag_to_list(self):
+        tag_text = self.tag.text().strip()
+        if tag_text == '': #if button is pressed while empty skips adding
             return

@@ -25,15 +25,17 @@ from components.GUI.buttonbox import ButtonBox
 from components.GUI.xp_bar import XpBar
 from components.Dialogs.edit_task_dialog import EditTaskDialog
 from typing import Callable, Final
+from utils.config_loader import load_module_config
+from utils.config_paths import MODULES_CONFIG_FILE
 
 # The names of the columns.
 # TODO: in the image Richard posted, the second col was Age instead of 'start', but taskw_ng doesn't have an age.
 # Should we keep it as start? do something else? Idk what start even means.
-COLS: Final = ( 'description', 'id', 'start', 'priority', 'project', 'recur', 'due', 'until','urgency')
+DEFAULT_COLS: Final = ( 'description', 'id', 'start', 'priority', 'project', 'recur', 'due', 'until','urgency')
 
 class TaskRow:
     # Minimum size for each column to maintain a consistent width
-    COLUMN_WIDTHS = {
+    COLUMN_WIDTHS: Final[dict[str, int]] = {
         'checkbox': 50,
 
         'description': 150,  # Set width per column as needed
@@ -50,16 +52,28 @@ class TaskRow:
         'delete': 65
     }
 
-    def __init__(self, row_num: int, fetch_xp_brs : Callable[[Task], list[XpBar]]):
+    DEFAULT_WIDTH = 40
+
+    def __init__(self, row_num: int, fetch_xp_brs : Callable[[Task], list[XpBar]], module_name):
         self.idx = row_num
 
         self.xp_add_calls : list[Callable[[int], int]] = [] # list of function calls to call when a task is checked
         self.xp_sub_calls : list[Callable[[int], int]] = [] # list of function calls to call when a task is unchecked
         self.fetch_xp_brs : Callable[[Task], list[XpBar]] = fetch_xp_brs # call to fetch relevant xp functions
+        self.module_name = module_name
+        self.col_names: list[str] = []
 
-        self.task = api.task_at(self.idx)  # Get the task at the index.
+        if module_name == 'Main':
+            self.col_names = [x for x in DEFAULT_COLS]
+        else:
+
+            mod_info = load_module_config(MODULES_CONFIG_FILE)
+            self.col_names = [x.lower() for x in mod_info[module_name]]
+
+
+        self.task = api.task_at(self.idx, module_name)  # Get the task at the index.
         self.check = Checkbox(row_num, self.get_task, self._update_xp_bars)  # Create a checkbox.
-        self.cols = [Textbox(row_num, self.get_task, attr) for attr in COLS]  # Create a list of textboxes.
+        self.cols = [Textbox(row_num, self.get_task, attr) for attr in self.col_names]  # Create a list of textboxes.
 
         self.edit_button = ButtonBox(row_num, self.get_task, "edit", self.edit_task)  # Create an edit button.
 
@@ -82,9 +96,12 @@ class TaskRow:
         # self.check.setStyleSheet(get_style("CheckBox"))
 
         for i in range(len(self.cols)):  # Loop through the columns.
-            col_name = COLS[i]  # Get the name of the column.
+            col_name = self.col_names[i]  # Get the name of the column.
             if col_name in self.COLUMN_WIDTHS:  # If the column name is in the column widths.
                 self.cols[i].setMinimumWidth(self.COLUMN_WIDTHS[col_name])  # Apply fixed width
+            else:
+                self.cols[i].setMinimumWidth(self.DEFAULT_WIDTH)
+
             self.cols[i].setFixedHeight(column_height)  # Apply fixed height
             grid.addWidget(self.cols[i], row_num, i + 1)
 
@@ -104,7 +121,7 @@ class TaskRow:
         Returns:
             None
         """
-        self.task = api.task_at(self.idx)  # Get the task at the index.
+        self.task = api.task_at(self.idx, self.module_name)  # Get the task at the index.
 
         self.check.update_task()  # Update the checkbox.
         for i in range(len(self.cols)):  # Loop through the columns.
@@ -118,21 +135,29 @@ class TaskRow:
         if not self.task:  # If the task is None.
             return  # Return.
 
+        # TODO: I bet we are gonna have to do something slightly awkward related to nonstandard cols here. Get ready for that.
         edit_task_dialog = EditTaskDialog(
             delete_task=self.delete_task,
             description=str(self.task.get("description") or ""),
             due=str(self.task.get("due") or ""),
-            priority=str(self.task.get("priority") or ""))  # Create an instance of the EditTaskDialog class.
+            priority=str(self.task.get("priority") or ""),
+            project=str(self.task.get("project") or ""),
+            tags=[str(tag) for tag in self.task.get("tags") or []],
+            module_name=self.module_name)  # Create an instance of the EditTaskDialog class.
 
         if edit_task_dialog.exec():  # If the dialog is executed.
             self.task.set("description", edit_task_dialog.description or None)  # Set the description of the task.
             self.task.set("due", edit_task_dialog.due or None)  # Set the due date of the task.
+            
             self.task.set("priority", edit_task_dialog.priority or None)  # Set the priority of the task.
+            self.task.set("project", edit_task_dialog.project or None)  # Set the project of the task.
+            self.task.set("tags", edit_task_dialog.tags_list or None)  # Set the tags of the task.
+            
             api.update_task(self.task)  # Update the task.
             self.update_task()  # Update the task.
 
     def delete_task(self):
-        api.delete_at(self.idx)  # Delete the task at the index.
+        api.delete_at(self.idx, self.module_name)  # Delete the task at the index.
         self.remove_task_row()  # remove the task row from the UI
 
     def remove_task_row(self):

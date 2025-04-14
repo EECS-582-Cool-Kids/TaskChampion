@@ -24,7 +24,7 @@ from components.Dialogs.define_xp_dialog import XPConfigDialog
 
 
 class XpControllerWidget(QtWidgets.QWidget):
-    PRIORITY_MULT_MAP : dict[priority_t, int] = { 'H':3, 'M':2, 'L':1 }  # Default priority multipliers
+    PRIORITY_MULT_MAP : dict[priority_t, int] = { 'H':3, 'M':2, 'L':1, 'None': 0.5}  # Default priority multipliers
     PROJECT_MULT_MAP : dict[str, int] = {}  # Default project multipliers
     TAG_MULT_MAP : dict[str, int] = {}  # Default tag multipliers
 
@@ -55,7 +55,9 @@ class XpControllerWidget(QtWidgets.QWidget):
         int
             The computed completion value after applying all relevant multipliers.
         """
-        completion_value : int = XpControllerWidget.PRIORITY_MULT_MAP[priority if priority != None else '']  # Get the base completion value
+
+        completion_value = XpControllerWidget.PRIORITY_MULT_MAP.get(priority, 0.5)  # fixes no priority task error
+
 
         if projects is not None:
             for project in projects:  # For each project
@@ -164,16 +166,18 @@ class XpControllerWidget(QtWidgets.QWidget):
         xp_poss : int = 0  # Initialize the possible XP value
         xp_gain : int = 0  # Initialize the gained XP value
 
-        for i in range(0, api.num_tasks()):  # For each task
-            task : Task = api.task_at(i)  # Get the task at the index
-
-            if task is None:
-                continue  # Continue
-            
-            completion_value : int = self.get_completion_value(task.get_priority(), task.get_project(), task.get_tags())  # Get the completion value
-            xp_poss += completion_value  # Add the completion value to the possible XP value
-            xp_gain += completion_value if task.get_status() == "completed" else 0  # Add the completion value to the gained XP value if the task is completed
         
+        for module in api.task_dict:
+            for i in range(0, api.num_tasks(module)):  # For each task
+                task : Task | None = api.task_at(i, module)  # Get the task at the index
+
+                if task is None:
+                    continue  # Continue
+                
+                completion_value : int = self.get_completion_value(task.get_priority(), task.get_project(), task.get_tags())  # Get the completion value
+                xp_poss += completion_value  # Add the completion value to the possible XP value
+                xp_gain += completion_value if task.get_status() == "completed" else 0  # Add the completion value to the gained XP value if the task is completed
+            
         self.main_xp_bar.set_max_xp(xp_poss)  # Set the maximum XP value of the main XP bar
         self.main_xp_bar.add_xp(xp_gain)  # Add the gained XP value to the main XP bar
 

@@ -104,8 +104,6 @@ class TaskAPI:
             self.task_dict[mod] = []
         self.module_list.add(mod)
 
-        
-
     def task_at(self, idx: int, mod: str) -> Optional[Task]:
         if len(self.task_dict[mod]) <= idx:  # If the index is out of bounds.
             return None  # Return None.
@@ -173,12 +171,7 @@ class TaskAPIImpl(TaskAPI):
         self.warrior.task_delete(uuid=str(t['uuid']))  # Delete the task.
 
     def update_task(self, new_task: Task) -> None:
-        annotations=new_task.get_annotations()
-        if len(annotations) > 3:
-            new_task=Task(self.warrior.task_denotate(new_task, ""))
-        
         self.warrior.task_update(new_task)  # Update the task.
-        self.warrior.task_annotate(new_task, annotations)
         self._init_task_list()  # Initialize the task list.
 
     def set_sort_metric(self, metric: SortMetric):

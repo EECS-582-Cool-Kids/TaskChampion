@@ -55,7 +55,6 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok
                                       | QtWidgets.QDialogButtonBox.StandardButton.Cancel)
 
-        # Add all the widgets to the form layout
         self.form.addRow("Description*", self.description)
         self.form.addRow("Priority", self.priorities)
         self.form.addRow("Project", self.projects)
@@ -88,7 +87,7 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.tag_layout.addWidget(self.add_tag_button)
 
         # Add this new layout to the form
-        self.form.addRow("Tags", self.tag_layout)
+        self.form.addRow("Tag", self.tag_layout)
 
         # Create a layout to hold the added tag "bubbles"
         self.tag_bubble_widget = QtWidgets.QWidget()

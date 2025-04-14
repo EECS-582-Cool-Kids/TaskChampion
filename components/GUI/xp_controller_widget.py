@@ -58,6 +58,7 @@ class XpControllerWidget(QtWidgets.QWidget):
 
         completion_value = XpControllerWidget.PRIORITY_MULT_MAP.get(priority, 0.5)  # fixes no priority task error
 
+
         if projects is not None:
             for project in projects:  # For each project
                 if project in XpControllerWidget.PROJECT_MULT_MAP:  # If the project is in the project multiplier map

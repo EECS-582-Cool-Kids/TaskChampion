@@ -17,13 +17,16 @@
 
 from typing import Callable
 from PySide6 import QtCore, QtWidgets
-from components.GUI.task_row import TaskRow, COLS
+from components.GUI.task_row import TaskRow, DEFAULT_COLS
 from components.GUI.xp_bar import XpBar
 from styles.extra_styles import get_style
 from typing import Optional
 from utils.task import Task
 from utils.task_api import api
 from utils.logger import logger
+from utils.config_loader import load_module_config
+from utils.config_paths import MODULES_CONFIG_FILE
+
 
 class GridWidget(QtWidgets.QWidget):
     '''The widget that corresponds to a module'''
@@ -42,11 +45,36 @@ class GridWidget(QtWidgets.QWidget):
         self.setFixedHeight(200)  # Set the fixed height of the widget.
 
         self.module_name = module_name # This will be set explicitly for the Main module and dynamically for other modules.
-        logger.info(self.module_name)
+        logger.log_info(self.module_name)
         self.scroll_area = QtWidgets.QScrollArea()  # Create a scroll area.
         self.scroll_area.setWidgetResizable(True)  # Set the scroll area to be resizable.
         self.scroll_area.setWidget(self)  # Set the widget of the scroll area to be this widget.
+        
+        self.cols: list[str] = []
+        self.col_stretch:list[int] = []
+        self.col_default: dict[str, bool] = {}
 
+        if module_name == 'Main':
+            for i in range(len(DEFAULT_COLS)):
+                x = DEFAULT_COLS[i]
+                self.cols.append(x)
+                self.col_default[x] = True
+                # +1 since `Done?` isn't included in COLS
+                self.col_stretch.append(self.COL_STRETCH[i+1])
+
+        else:
+            mod_info = load_module_config(MODULES_CONFIG_FILE)
+            self.cols: list[str] = [x.lower() for x in mod_info[module_name]]
+            self.col_stretch = [0 for _ in self.cols]
+            for i in range(len(self.cols)):
+                c = self.cols[i]
+                if c not in DEFAULT_COLS:
+                    self.col_default[c] = False
+                else:
+                    self.col_default[c] = True
+                    # +1 since `Done?` isn't included in COLS
+                    self.col_stretch[i] = self.COL_STRETCH[DEFAULT_COLS.index(c)+1]
+        
         # set a horizontal scroll bar policy
         self.scroll_area.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOn)  # Set the horizontal scroll bar policy of the scroll area.
 
@@ -94,14 +122,14 @@ class GridWidget(QtWidgets.QWidget):
         
         # QLabel is just simple text.
         self.grid.addWidget(QtWidgets.QLabel("Done?"), 0, 0)  # Add a label to the grid.
-        self.grid.addWidget(QtWidgets.QLabel(""), 0, 10)  # Add a blank label cell to the grid
+        self.grid.addWidget(QtWidgets.QLabel(""), 0, len(self.cols)+1)  # Add a blank label cell to the grid
         self.grid.itemAtPosition(0, 0).widget().setObjectName("rowLabels")
         self.grid.itemAtPosition(0, 0).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the "Done?" label
-        self.grid.itemAtPosition(0, 10).widget().setObjectName("rowLabels")
-        self.grid.itemAtPosition(0, 10).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the blank label cell
+        self.grid.itemAtPosition(0, len(self.cols)+1).widget().setObjectName("rowLabels")
+        self.grid.itemAtPosition(0, len(self.cols)+1).widget().setStyleSheet(get_style("rowLabels"))  # set the style for the blank label cell
 
-        for i in range(len(COLS)):  # Loop through the columns.
-            self.grid.addWidget(QtWidgets.QLabel(COLS[i]), 0, i+1)  # Add a label to the grid.
+        for i in range(len(self.cols)):  # Loop through the columns.
+            self.grid.addWidget(QtWidgets.QLabel(self.cols[i]), 0, i+1)  # Add a label to the grid.
             self.grid.itemAtPosition(0, i+1).widget().setObjectName("rowLabels")
             self.grid.itemAtPosition(0, i+1).widget().setStyleSheet(get_style("rowLabels"))  # Set the style of the label to be the row labels style.
             self.grid.itemAtPosition(0, i+1).widget().setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)  # Set the alignment of the label to be centered.

@@ -21,11 +21,13 @@ from utils.task_api import api
 
 
 class EditTaskDialog(QtWidgets.QDialog):
-    def __init__(self, delete_task, description="", due="", priority="", project="", tags=[]):
+    def __init__(self, delete_task, description="", due="", priority="", project="", tags=[], module_name="Main"):
         super().__init__()
         self.setWindowTitle("Edit Task")  # Set the title of the dialog
         self.form = QtWidgets.QFormLayout()  # Create a form layout for the dialog
         self.deletion_function = delete_task  # Function to delete the task
+
+        self.module_name=module_name
 
         self.description_text = QtWidgets.QLineEdit(description) # set the description text to the description of the task
 
@@ -158,7 +160,7 @@ class EditTaskDialog(QtWidgets.QDialog):
 
     def populate_project_list(self):
         project_history = []  # List to store previously used projects
-        for task in api.task_list:  # Iterate through the task list
+        for task in api.task_dict[self.module_name]:  # Iterate through the task list
             task_project = task.get_project()  # Get the project of the task
             if task_project is not None and not task_project in project_history:  # If the project is not already in the list
                 self.projects.addItem(task_project)  # Add the project to the projects list

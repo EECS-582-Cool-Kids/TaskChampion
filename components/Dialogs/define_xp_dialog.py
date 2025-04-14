@@ -20,7 +20,7 @@ from PySide6.QtWidgets import QDialog, QVBoxLayout, QTableWidget, QPushButton, Q
     QMessageBox, QComboBox
 from PySide6.QtCore import Signal
 from typing import Any
-from utils.config_loader import load_config, save_xp_config
+from utils.config_loader import load_config, save_config
 import os
 from utils.config_paths import CONFIG_DIR, XP_CONFIG_FILE
 
@@ -135,7 +135,7 @@ class XPConfigDialog(QDialog):
         # Tell XpControllerWidget to update stuff.
         self.xp_values_updated.emit(self.config)
 
-        save_xp_config(self.config, self.config_file)
+        save_config(self.config, self.config_file)
 
         QMessageBox.information(self, "Success", "Configuration saved!", QMessageBox.StandardButtons.Ok)
 

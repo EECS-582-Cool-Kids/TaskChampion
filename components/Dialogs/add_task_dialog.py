@@ -147,10 +147,10 @@ class AddTaskDialog(QtWidgets.QDialog):
         self.projects.addItem("New Project...")
         prev_proj = []
 
-        for task in api.task_list:  # Iterate through the task list
+        for task in api.task_dict[module]:  # Iterate through the task list
             task_project = task.get_project()  # Get the project of the task
             if task_project is not None and not task_project in prev_proj:  # If the project is not already in the list
-                self.projects.addItem(task_project)  # Add the project to the projects list
+                self.projects.addItem(str(task_project))  # Add the project to the projects list
                 prev_proj.append(task_project)  # Add the project to the previous projects list
 
         if self.exec():

@@ -178,10 +178,11 @@ class TaskAPIImpl(TaskAPI):
         
         annotations=new_task.get_annotations()
         if len(annotations) > 3:
-            new_task=Task(self.warrior.task_denotate(new_task, ""))
+            new_task.denotate()
         
         self.warrior.task_update(new_task)  # Update the task.
         self.warrior.task_annotate(new_task, annotations)
+        
         self._init_task_list()  # Initialize the task list.
 
     def set_sort_metric(self, metric: SortMetric):

@@ -77,6 +77,13 @@ class Task(task.Task):
         annotation_dict[colname] = val
         self["annotations"] = json.dumps([annotation_dict])
 
+    
+    def denotate(self):
+        """Helps to ensure that task warrior doesn't freak out about how we are doing nonstandard cols.
+
+        It is UP TO THE CALLER to keep track of annotations and reset them after."""
+        self.pop("annotations")
+
     def get_annotations(self) -> str:
         """`Task['annotations']` returns something like
             `"['{<actual annotations>}']"`, 

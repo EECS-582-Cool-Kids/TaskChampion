@@ -173,9 +173,6 @@ class TaskAPIImpl(TaskAPI):
         self.warrior.task_delete(uuid=str(t['uuid']))  # Delete the task.
 
     def update_task(self, new_task: Task) -> None:
-        if new_task.get_due() is not None:  # If the task has a due date.
-            new_task['due'] = QtCore.QDate.fromString(new_task['due'], "yyyy-MM-dd").toString("yyyy-MM-dd")  # Set the due date.
-        
         annotations=new_task.get_annotations()
         if len(annotations) > 3:
             new_task=Task(self.warrior.task_denotate(new_task, ""))

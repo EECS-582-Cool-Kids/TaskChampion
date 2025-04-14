@@ -104,8 +104,6 @@ class TaskAPI:
             self.task_dict[mod] = []
         self.module_list.add(mod)
 
-        
-
     def task_at(self, idx: int, mod: str) -> Optional[Task]:
         if len(self.task_dict[mod]) <= idx:  # If the index is out of bounds.
             return None  # Return None.

@@ -43,7 +43,7 @@ class TestClass:
         assert task_idx != -1 # test that a task exists. If not, then the test method failed.
 
         task = api.task_at(task_idx, "Main")  # get the task at the index
-        assert task is not None  # test that the task exists. If not, then the test method failed.
+        assert task is not None  # test that the task exists. If not, then the test method failed.annotations = task.get_annotations() # get the task annotations before updating, to confirm they remain the same.
 
         task.set("description", "New Description")  # set the description of the task
         api.update_task(task)  # update the task in the API
@@ -51,6 +51,7 @@ class TestClass:
         t = api.task_at(task_idx, "Main")  # get the task at the index
         assert t is not None  # test that the task exists. If not, then the test method failed.
         assert t.get_description() == "New Description"  # test if the description is set
+        assert t.get_annotations() == task.get_annotations() # test if the two task annotations are identical
     
     def test_api_delete_task(self):
         """Test deleting a task in the API"""

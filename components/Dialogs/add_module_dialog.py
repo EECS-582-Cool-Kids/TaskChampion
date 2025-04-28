@@ -10,17 +10,21 @@
  *  Preconditions: None
  *  Postconditions: None
  *  Error/Exception conditions: None
- *  Side effects: None
+ *  Side effects:   Updates the `self.config` dictionary with the new module and its attributes.
+                    Saves the updated configuration to the configuration file using `save_module_config`.
+
  *  Invariants: None
  *  Known Faults: None encountered
 """
 
 from PySide6.QtWidgets import QDialog, QLineEdit, QGroupBox, QVBoxLayout, QCheckBox, \
-    QDialogButtonBox, QFormLayout, QComboBox
+    QDialogButtonBox, QFormLayout, QPushButton, QMessageBox
+from PySide6.QtCore import Signal
 from typing import Optional
 import os
 from utils.config_loader import load_module_config, save_module_config
 from utils.config_paths import CONFIG_DIR, MODULES_CONFIG_FILE
+from components.Dialogs.preset_modules_dialog import PresetModulesDialog
 
 
 class AddModuleDialog(QDialog):
@@ -50,7 +54,6 @@ class AddModuleDialog(QDialog):
         self.task_attributes = ['Priority', 'Due Date', 'Project', 'Tags', 'Recur', 'Status', 'Start', 'Urgency']
 
         self.form.addRow("New Module", self.new_module)
-        # self.form.addRow
 
         for attr in self.task_attributes:
             checkbox = QCheckBox(attr)
@@ -68,6 +71,14 @@ class AddModuleDialog(QDialog):
         self.buttons.rejected.connect(self.reject)
 
         self.setLayout(self.layout)
+
+        #Add "Preset Modules" button to the dialog
+        self.preset_modules_button = QPushButton("Preset Modules") # Create a button for preset modules
+        self.preset_modules_button.clicked.connect(self.open_preset_modules_dialog) # Connect the button to the open_preset_modules_dialog method
+        self.layout.addWidget(self.preset_modules_button) # Add the button to the layout
+
+        # Signal to notify when a module is created
+        self.module_created = Signal()
 
 
     def add_module(self) -> Optional[ModuleDetails]:
@@ -100,4 +111,39 @@ class AddModuleDialog(QDialog):
             self.attributes_layout.itemAt(i).widget().setChecked(False)
         return None
 
+    def open_preset_modules_dialog(self):
+        """Opens the Preset Modules dialog, allowing the user to select a predefined module."""
+        dialog = PresetModulesDialog()
+        if dialog.exec():
+            selected_module = dialog.get_selected_module()
+            if selected_module:
+                self.create_preset_module(selected_module)
+
+    def create_preset_module(self, selected_module):
+        """ Creates a preset module with predefined attributes based on the selected module name.
+            The module and its attributes are saved to the configuration file.
+
+            Args:
+                selected_module (str): The name of the selected preset module.
+                                       Expected values are "Workouts", "Personal Finance", or "Programming Project".
+        """
+        if selected_module == "Workouts":
+            attributes = ["Description", "Type of Workout", "Number of Sets", "Number of Reps", "Weight", "Duration"]
+            self.config["Workouts"] = attributes
+            save_module_config(self.config, self.config_file)
+        elif selected_module == "Personal Finance":
+            attributes = ["Description", "Cash In", "Cash Out", "Transaction Type", "Transaction Date", "Date"]
+            self.config["Personal Finance"] = attributes
+            save_module_config(self.config, self.config_file)
+        else:
+            attributes = ["Description", "Project", "Due Date", "Priority"]
+            self.config["Programming Project"] = attributes
+            save_module_config(self.config, self.config_file)
+
+        # Tell the user that the app has to be reset to see the new preset module using a message box
+        user_notice = QMessageBox()
+        user_notice.setWindowTitle("Restart Required")
+        user_notice.setText(f"Please restart TaskChampion to see the new preset module: {selected_module}.")
+        user_notice.setStandardButtons(QMessageBox.StandardButton.Ok)
+        user_notice.exec()
 

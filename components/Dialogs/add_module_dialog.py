@@ -70,8 +70,7 @@ class AddModuleDialog(QDialog):
 
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
-        self.buttons.setStyleSheet("background-color: #8aa1f6; ")
-
+        self.buttons.setStyleSheet("background-color: #8aa1f6;")
         self.setLayout(self.layout)
 
         #Add "Preset Modules" button to the dialog

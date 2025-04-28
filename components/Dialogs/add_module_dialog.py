@@ -57,6 +57,7 @@ class AddModuleDialog(QDialog):
 
         for attr in self.task_attributes:
             checkbox = QCheckBox(attr)
+            checkbox.setStyleSheet("color: black;")  # Make text black
             self.attributes_layout.addWidget(checkbox)
 
         self.attributes_group.setLayout(self.attributes_layout)
@@ -69,6 +70,7 @@ class AddModuleDialog(QDialog):
 
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
+        self.buttons.setStyleSheet("background-color: #8aa1f6; ")
 
         self.setLayout(self.layout)
 
@@ -114,6 +116,7 @@ class AddModuleDialog(QDialog):
     def open_preset_modules_dialog(self):
         """Opens the Preset Modules dialog, allowing the user to select a predefined module."""
         dialog = PresetModulesDialog()
+        dialog.setStyleSheet("background-color: #8aa1f6; color: black;")
         if dialog.exec():
             selected_module = dialog.get_selected_module()
             if selected_module:
@@ -142,6 +145,7 @@ class AddModuleDialog(QDialog):
 
         # Tell the user that the app has to be reset to see the new preset module using a message box
         user_notice = QMessageBox()
+        user_notice.setStyleSheet("background-color: #8aa1f6; color: black;")
         user_notice.setWindowTitle("Restart Required")
         user_notice.setText(f"Please restart TaskChampion to see the new preset module: {selected_module}.")
         user_notice.setStandardButtons(QMessageBox.StandardButton.Ok)
